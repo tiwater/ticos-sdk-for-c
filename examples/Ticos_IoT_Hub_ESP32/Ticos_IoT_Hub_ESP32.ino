@@ -60,9 +60,9 @@
 static const char* ssid = IOT_CONFIG_WIFI_SSID;
 static const char* password = IOT_CONFIG_WIFI_PASSWORD;
 static const char* host = IOT_CONFIG_IOTHUB_FQDN;
-static const char* mqtt_broker_uri = "mqtts://" IOT_CONFIG_IOTHUB_FQDN;
+static const char* mqtt_broker_uri = "mqtt://" IOT_CONFIG_IOTHUB_FQDN;
 static const char* device_id = IOT_CONFIG_DEVICE_ID;
-static const int mqtt_port = TI_IOT_DEFAULT_MQTT_CONNECT_PORT;
+static const int mqtt_port = 1883; // TI_IOT_DEFAULT_MQTT_CONNECT_PORT;
 
 // Memory allocated for the sample's variables and structures.
 static esp_mqtt_client_handle_t mqtt_client;
@@ -232,15 +232,17 @@ static int initializeMqttClient()
   mqtt_config.client_id = mqtt_client_id;
   mqtt_config.username = mqtt_username;
 
-  Logger.Info("MQTT client using X509 Certificate authentication");
-  mqtt_config.client_cert_pem = IOT_CONFIG_DEVICE_CERT;
-  mqtt_config.client_key_pem = IOT_CONFIG_DEVICE_CERT_PRIVATE_KEY;
+//  Logger.Info("MQTT client using X509 Certificate authentication");
+//  mqtt_config.client_cert_pem = IOT_CONFIG_DEVICE_CERT;
+//  mqtt_config.client_key_pem = IOT_CONFIG_DEVICE_CERT_PRIVATE_KEY;
 
   mqtt_config.keepalive = 30;
   mqtt_config.disable_clean_session = 0;
   mqtt_config.disable_auto_reconnect = false;
   mqtt_config.event_handle = mqtt_event_handler;
   mqtt_config.user_context = NULL;
+//  mqtt_config.use_secure_element = false;
+//  mqtt_config.skip_cert_common_name_check = true;
 //  mqtt_config.cert_pem = (const char*)ca_pem;
 
   mqtt_client = esp_mqtt_client_init(&mqtt_config);
