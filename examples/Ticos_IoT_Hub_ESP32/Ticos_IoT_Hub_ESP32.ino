@@ -62,6 +62,7 @@ static const char* password = IOT_CONFIG_WIFI_PASSWORD;
 static const char* host = IOT_CONFIG_IOTHUB_FQDN;
 static const char* mqtt_broker_uri = "mqtt://" IOT_CONFIG_IOTHUB_FQDN;
 static const char* device_id = IOT_CONFIG_DEVICE_ID;
+static const char* product_id = IOT_CONFIG_PRODUCT_ID;
 static const int mqtt_port = 1883; // TI_IOT_DEFAULT_MQTT_CONNECT_PORT;
 
 // Memory allocated for the sample's variables and structures.
@@ -74,7 +75,7 @@ static char mqtt_password[200];
 static uint8_t sas_signature_buffer[256];
 static unsigned long next_telemetry_send_time_ms = 0;
 static char telemetry_topic[128];
-static uint8_t telemetry_payload[100];
+static uint8_t telemetry_payload[256];
 static uint32_t telemetry_send_count = 0;
 
 #define INCOMING_DATA_BUFFER_SIZE 128
@@ -204,20 +205,29 @@ static void initializeIoTHubClient()
     return;
   }
 
-  size_t client_id_length;
-  if (ti_result_failed(ti_iot_hub_client_get_client_id(
-          &client, mqtt_client_id, sizeof(mqtt_client_id) - 1, &client_id_length)))
-  {
-    Logger.Error("Failed getting client id");
-    return;
-  }
+  // 暂时写死
+  ti_span span_client_id = TI_SPAN_FROM_BUFFER(mqtt_client_id);
+  span_client_id = ti_span_copy(span_client_id, TI_SPAN_FROM_STR(IOT_CONFIG_DEVICE_ID));
+  span_client_id = ti_span_copy(span_client_id, TI_SPAN_FROM_STR("@@@"));
+  span_client_id = ti_span_copy(span_client_id, TI_SPAN_FROM_STR(IOT_CONFIG_PRODUCT_ID));
 
-  if (ti_result_failed(ti_iot_hub_client_get_user_name(
-          &client, mqtt_username, sizeofarray(mqtt_username), NULL)))
-  {
-    Logger.Error("Failed to get MQTT clientId, return code");
-    return;
-  }
+  ti_span span_username = TI_SPAN_FROM_BUFFER(mqtt_username);
+  span_username = ti_span_copy(span_username, TI_SPAN_FROM_STR(IOT_CONFIG_DEVICE_ID));
+
+//  size_t client_id_length;
+//  if (ti_result_failed(ti_iot_hub_client_get_client_id(
+//          &client, mqtt_client_id, sizeof(mqtt_client_id) - 1, &client_id_length)))
+//  {
+//    Logger.Error("Failed getting client id");
+//    return;
+//  }
+//
+//  if (ti_result_failed(ti_iot_hub_client_get_user_name(
+//          &client, mqtt_username, sizeofarray(mqtt_username), NULL)))
+//  {
+//    Logger.Error("Failed to get MQTT clientId, return code");
+//    return;
+//  }
 
   Logger.Info("Client ID: " + String(mqtt_client_id));
   Logger.Info("Username: " + String(mqtt_username));
@@ -289,8 +299,18 @@ static void getTelemetryPayload(ti_span payload, ti_span* out_payload)
   ti_span original_payload = payload;
 
   payload = ti_span_copy(
-      payload, TI_SPAN_FROM_STR("{ \"msgCount\": "));
-  (void)ti_span_u32toa(payload, telemetry_send_count++, &payload);
+      payload, TI_SPAN_FROM_STR("{ \"$dtId\": \""));
+  payload = ti_span_copy(payload, TI_SPAN_FROM_STR(IOT_CONFIG_DEVICE_ID));
+  payload = ti_span_copy(payload, TI_SPAN_FROM_STR("\","));
+  payload = ti_span_copy(payload, TI_SPAN_FROM_STR("\"temperature\":"));
+  (void)ti_span_dtoa(payload, random(0, 4000) / 100.0, 2, &payload);
+  payload = ti_span_copy(payload, TI_SPAN_FROM_STR(", \"pressure\":"));
+  (void)ti_span_u32toa(payload, random(500, 1000), &payload);
+  payload = ti_span_copy(payload, TI_SPAN_FROM_STR(", \"oxygen\":"));
+  (void)ti_span_dtoa(payload, random(480, 800) / 100.0, 2, &payload);
+  payload = ti_span_copy(payload, TI_SPAN_FROM_STR(", \"$metadata\":{\"$model\":\"dtmi:tiwater:"));
+  payload = ti_span_copy(payload, TI_SPAN_FROM_STR(IOT_CONFIG_PRODUCT_ID));
+  payload = ti_span_copy(payload, TI_SPAN_FROM_STR(";1\"}"));
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(" }"));
   payload = ti_span_copy_u8(payload, '\0');
 

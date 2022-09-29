@@ -53,12 +53,13 @@
 #endif // IOT_CONFIG_USE_X509_CERT
 
 // Ticos IoT
-#define IOT_CONFIG_IOTHUB_FQDN "mqtt.ticosdev.cc"
-#define IOT_CONFIG_DEVICE_ID "t1001"
+#define IOT_CONFIG_IOTHUB_FQDN "hub.ticos.cn"
+#define IOT_CONFIG_DEVICE_ID "DEV221874VFdYTeZzSb"
+#define IOT_CONFIG_PRODUCT_ID "G0U71ZP9BG"
 // Use device key if not using certificates
 #ifndef IOT_CONFIG_USE_X509_CERT
   #define IOT_CONFIG_DEVICE_KEY "Device Key"
 #endif  // IOT_CONFIG_USE_X509_CERT
 
-// Publish 1 message every 2 seconds
-#define TELEMETRY_FREQUENCY_MILLISECS 2000
+// Publish 1 message every 5 seconds
+#define TELEMETRY_FREQUENCY_MILLISECS 5000
