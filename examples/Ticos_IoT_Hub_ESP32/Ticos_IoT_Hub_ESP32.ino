@@ -38,6 +38,7 @@
 // Additional sample headers
 #include "SerialLogger.h"
 #include "iot_configs.h"
+#include "ti_thingmodel.h"
 
 // When developing for your own Arduino-based platform,
 // please follow the format '(ard;<platform>)'.
@@ -302,12 +303,9 @@ static void getTelemetryPayload(ti_span payload, ti_span* out_payload)
       payload, TI_SPAN_FROM_STR("{ \"$dtId\": \""));
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(IOT_CONFIG_DEVICE_ID));
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR("\","));
-  payload = ti_span_copy(payload, TI_SPAN_FROM_STR("\"temperature\":"));
-  (void)ti_span_dtoa(payload, random(0, 4000) / 100.0, 2, &payload);
-  payload = ti_span_copy(payload, TI_SPAN_FROM_STR(", \"pressure\":"));
-  (void)ti_span_u32toa(payload, random(500, 1000), &payload);
-  payload = ti_span_copy(payload, TI_SPAN_FROM_STR(", \"oxygen\":"));
-  (void)ti_span_dtoa(payload, random(300, 800) / 100.0, 2, &payload);
+
+  payload = ti_iot_property_msgs_pack(payload);
+
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(", \"$metadata\":{\"$model\":\"dtmi:tiwater:"));
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(IOT_CONFIG_PRODUCT_ID));
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(";1\"}"));
@@ -334,6 +332,7 @@ static void sendTelemetry()
   }
 
   getTelemetryPayload(telemetry, &telemetry);
+  printf("mqtt msg: %s\n", (const char*)ti_span_ptr(telemetry));
 
   if (esp_mqtt_client_publish(
           mqtt_client,
