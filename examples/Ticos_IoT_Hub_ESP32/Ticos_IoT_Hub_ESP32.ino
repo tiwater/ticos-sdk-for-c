@@ -307,7 +307,7 @@ static void getTelemetryPayload(ti_span payload, ti_span* out_payload)
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(", \"pressure\":"));
   (void)ti_span_u32toa(payload, random(500, 1000), &payload);
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(", \"oxygen\":"));
-  (void)ti_span_dtoa(payload, random(480, 800) / 100.0, 2, &payload);
+  (void)ti_span_dtoa(payload, random(300, 800) / 100.0, 2, &payload);
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(", \"$metadata\":{\"$model\":\"dtmi:tiwater:"));
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(IOT_CONFIG_PRODUCT_ID));
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(";1\"}"));
