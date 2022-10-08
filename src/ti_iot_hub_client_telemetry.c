@@ -16,7 +16,7 @@
 static const uint8_t null_terminator = '\0';
 static const ti_span telemetry_topic_prefix = TI_SPAN_LITERAL_FROM_STR("devices/");
 static const ti_span telemetry_topic_modules_mid = TI_SPAN_LITERAL_FROM_STR("/modules/");
-static const ti_span telemetry_topic_suffix = TI_SPAN_LITERAL_FROM_STR("/telemetry/");
+static const ti_span telemetry_topic_suffix = TI_SPAN_LITERAL_FROM_STR("/telemetry");
 
 TI_NODISCARD ti_result ti_iot_hub_client_telemetry_get_publish_topic(
     ti_iot_hub_client const* client,
