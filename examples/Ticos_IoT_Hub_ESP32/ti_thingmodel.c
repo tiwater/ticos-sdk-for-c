@@ -1,8 +1,13 @@
 #include "ti_thingmodel.h"
 
-const ti_iot_prop_info_t ti_iot_prop_info_map[] = {
+const ti_iot_prop_info_t ti_iot_prop_info_get_tab[] = {
     {"pressure", TICOS_IOT_VAL_TYPE_INTEGER},
     {"temperature", TICOS_IOT_VAL_TYPE_FLOAT},
+    {"oxygen", TICOS_IOT_VAL_TYPE_FLOAT},
+    {"warn_info", TICOS_IOT_VAL_TYPE_STRING},
+};
+
+const ti_iot_prop_info_t ti_iot_prop_info_set_tab[] = {
     {"oxygen", TICOS_IOT_VAL_TYPE_FLOAT},
     {"warn_info", TICOS_IOT_VAL_TYPE_STRING},
 };
@@ -18,6 +23,9 @@ const void *ti_iot_set_func_tab[] = {
     ti_iot_set_oxygen,
     ti_iot_set_warn_info,
 };
+
+const int read_prop_cnt = 4;
+const int write_prop_cnt = 2;
 
 float ti_iot_get_temperature()
 {
