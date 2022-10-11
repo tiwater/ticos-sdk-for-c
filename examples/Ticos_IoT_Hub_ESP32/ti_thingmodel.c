@@ -1,61 +1,65 @@
 #include "ti_thingmodel.h"
 
-const ti_iot_prop_info_t ti_iot_prop_info_get_tab[] = {
-    {"pressure", TICOS_IOT_VAL_TYPE_INTEGER},
-    {"temperature", TICOS_IOT_VAL_TYPE_FLOAT},
-    {"oxygen", TICOS_IOT_VAL_TYPE_FLOAT},
-    {"warn_info", TICOS_IOT_VAL_TYPE_STRING},
+int ti_iot_telemetry_pressure()
+{
+    return 1023;
+}
+
+float ti_iot_telemetry_temperature()
+{
+    return 22.4;
+}
+
+float ti_iot_telemetry_oxygen()
+{
+    return 12.6;
+}
+
+const char* ti_iot_telemetry_warn_info()
+{
+    return "add your code";
+}
+
+int ti_iot_property_humi_upload()
+{
+    return 76;
+}
+
+int ti_iot_property_light_upload()
+{
+    return 1;
+}
+
+int ti_iot_property_light_download(int light)
+{
+    // op
+    return 0;
+}
+
+int ti_iot_command_oxygen(float oxygen)
+{
+    // op
+    return 0;
+}
+
+int ti_iot_command_temperature(float temperature)
+{
+
+}
+
+const ti_iot_telemetry_info_t ti_iot_telemetry_tab[] = {
+    {"pressure", TICOS_IOT_VAL_TYPE_INTEGER, ti_iot_telemetry_pressure},
+    {"temperature", TICOS_IOT_VAL_TYPE_FLOAT, ti_iot_telemetry_temperature},
+    {"oxygen", TICOS_IOT_VAL_TYPE_FLOAT, ti_iot_telemetry_oxygen},
+    {"warn_info", TICOS_IOT_VAL_TYPE_STRING, ti_iot_telemetry_warn_info},
 };
 
-const ti_iot_prop_info_t ti_iot_prop_info_set_tab[] = {
-    {"oxygen", TICOS_IOT_VAL_TYPE_FLOAT},
-    {"warn_info", TICOS_IOT_VAL_TYPE_STRING},
+const ti_iot_property_info_t ti_iot_property_tab[] = {
+    {"humi", TICOS_IOT_VAL_TYPE_FLOAT, ti_iot_property_humi_upload, NULL},
+    {"light", TICOS_IOT_VAL_TYPE_STRING, ti_iot_property_light_upload, ti_iot_property_light_download},
 };
 
-const void *ti_iot_get_func_tab[] = {
-    ti_iot_get_pressure,
-    ti_iot_get_temperature,
-    ti_iot_get_oxygen,
-    ti_iot_get_warn_info,
+const ti_iot_command_info_t ti_iot_command_tab[] = {
+    {"oxygen", TICOS_IOT_VAL_TYPE_FLOAT, ti_iot_command_oxygen},
+    {"temperature", TICOS_IOT_VAL_TYPE_FLOAT, ti_iot_command_temperature},
 };
-
-const void *ti_iot_set_func_tab[] = {
-    ti_iot_set_oxygen,
-    ti_iot_set_warn_info,
-};
-
-const int read_prop_cnt = 4;
-const int write_prop_cnt = 2;
-
-float ti_iot_get_temperature()
-{
-    //#error "add your code!"
-    return 12.12;
-}
-
-int ti_iot_get_pressure()
-{
-    //#error "add your code!"
-    return 1022;
-}
-
-float ti_iot_get_oxygen()
-{
-    //#error "add your code!"
-    return 20.1;
-}
-
-const char *ti_iot_get_warn_info()
-{
-    return "add your code!";
-}
-
-void ti_iot_set_oxygen(float oxygen)
-{
-    //#error "add your code!"
-}
-
-void ti_iot_set_warn_info(const char *warn_info)
-{
-    //#error "add your code!"
-}
