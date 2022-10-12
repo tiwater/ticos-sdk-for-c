@@ -44,7 +44,8 @@ int ti_iot_command_oxygen(float oxygen)
 
 int ti_iot_command_temperature(float temperature)
 {
-
+    // op
+    return 0;
 }
 
 const ti_iot_telemetry_info_t ti_iot_telemetry_tab[] = {
@@ -56,7 +57,7 @@ const ti_iot_telemetry_info_t ti_iot_telemetry_tab[] = {
 
 const ti_iot_property_info_t ti_iot_property_tab[] = {
     {"humi", TICOS_IOT_VAL_TYPE_FLOAT, ti_iot_property_humi_upload, NULL},
-    {"light", TICOS_IOT_VAL_TYPE_STRING, ti_iot_property_light_upload, ti_iot_property_light_download},
+    {"light", TICOS_IOT_VAL_TYPE_INTEGER, ti_iot_property_light_upload, ti_iot_property_light_download},
 };
 
 const ti_iot_command_info_t ti_iot_command_tab[] = {
