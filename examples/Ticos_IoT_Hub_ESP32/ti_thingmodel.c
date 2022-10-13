@@ -44,7 +44,7 @@ int ti_iot_command_oxygen(float oxygen)
 
 int ti_iot_command_temperature(float temperature)
 {
-    // op
+    printf("[%s:%d] temperature = %f\n", __func__, __LINE__, temperature);
     return 0;
 }
 

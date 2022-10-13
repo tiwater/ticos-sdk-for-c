@@ -178,6 +178,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
       }
       incoming_data[i] = '\0';
       Logger.Info("Data: " + String(incoming_data));
+      ti_iot_command_parse(event->data, event->data_len);
 
       break;
     case MQTT_EVENT_BEFORE_CONNECT:

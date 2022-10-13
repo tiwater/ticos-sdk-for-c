@@ -10,6 +10,8 @@ ti_span ti_iot_telemetry_msgs_pack(ti_span payload);
 ti_span ti_iot_telemetry_msg_pack_by_id(int index, ti_span payload);
 ti_span ti_iot_telemetry_msg_pack_by_name(const char *prop, ti_span payload);
 
+void ti_iot_command_parse(const char *dat, int len);
+
 typedef enum {
     TICOS_IOT_VAL_TYPE_BOOLEAN,
     TICOS_IOT_VAL_TYPE_INTEGER,
