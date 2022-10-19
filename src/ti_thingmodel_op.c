@@ -1,4 +1,4 @@
-#include "ti_thingmode_type.h"
+#include "ti_thingmodel_type.h"
 #include "ti_core.h"
 #include "ti_iot.h"
 #include <stdio.h>
