@@ -34,11 +34,14 @@
 // Ticos IoT SDK for C includes
 #include <ti_core.h>
 #include <ti_iot.h>
+#include "ti_iot_api.h"
 
 // Additional sample headers
 #include "SerialLogger.h"
 #include "iot_configs.h"
 #include "ti_thingmodel.h"
+
+#define PROPERTY_TOPIC    "devices/" IOT_CONFIG_DEVICE_ID "/twin/patch/desired"
 
 // When developing for your own Arduino-based platform,
 // please follow the format '(ard;<platform>)'.
@@ -81,6 +84,16 @@ static uint32_t telemetry_send_count = 0;
 
 #define INCOMING_DATA_BUFFER_SIZE 128
 static char incoming_data[INCOMING_DATA_BUFFER_SIZE];
+
+extern "C" int ti_iot_mqtt_client_publish(const char *topic, const char *data, int len, int qos, int retain)
+{
+    return esp_mqtt_client_publish(mqtt_client, topic, data, len, qos, retain);
+}
+
+extern "C" const char *ti_iot_get_device_id(void)
+{
+    return IOT_CONFIG_DEVICE_ID;
+}
 
 static void connectToWiFi()
 {
@@ -139,7 +152,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
     case MQTT_EVENT_CONNECTED:
       Logger.Info("MQTT event MQTT_EVENT_CONNECTED");
 
-      r = esp_mqtt_client_subscribe(mqtt_client, TI_IOT_HUB_CLIENT_C2D_SUBSCRIBE_TOPIC, 1);
+      r = esp_mqtt_client_subscribe(mqtt_client, PROPERTY_TOPIC, 1);
       if (r == -1)
       {
         Logger.Error("Could not subscribe for cloud-to-device messages.");
@@ -178,8 +191,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
       }
       incoming_data[i] = '\0';
       Logger.Info("Data: " + String(incoming_data));
-      ti_iot_command_parse(event->data, event->data_len);
-
+      ti_iot_property_receive(event->data, event->data_len);
       break;
     case MQTT_EVENT_BEFORE_CONNECT:
       Logger.Info("MQTT event MQTT_EVENT_BEFORE_CONNECT");
@@ -305,7 +317,7 @@ static void getTelemetryPayload(ti_span payload, ti_span* out_payload)
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(IOT_CONFIG_DEVICE_ID));
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR("\","));
 
-  payload = ti_iot_telemetry_msgs_pack(payload);
+  //payload = ti_iot_telemetry_msgs_pack(payload);
 
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(", \"$metadata\":{\"$model\":\"dtmi:tiwater:"));
   payload = ti_span_copy(payload, TI_SPAN_FROM_STR(IOT_CONFIG_PRODUCT_ID));
@@ -367,7 +379,7 @@ void loop()
   }
   else if (millis() > next_telemetry_send_time_ms)
   {
-    sendTelemetry();
+    ti_iot_property_report();
     next_telemetry_send_time_ms = millis() + TELEMETRY_FREQUENCY_MILLISECS;
   }
 }
