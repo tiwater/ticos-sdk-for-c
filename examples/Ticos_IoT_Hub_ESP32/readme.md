@@ -1,27 +1,6 @@
-> ## Before you proceed
->
->_This sample is based on the Ticos IoT SDK for C, uses a bare metal (no RTOS) approach and has support for Arduino IDE._
->
-
-# How to Setup and Run Ticos SDK for Embedded C IoT Hub Client on Espressif ESP32
-
-  - [How to Setup and Run Ticos SDK for Embedded C IoT Hub Client on Espressif ESP32](#how-to-setup-and-run-ticos-sdk-for-embedded-c-iot-hub-client-on-espressif-esp32)
-  - [Introduction](#introduction)
-  - [What is Covered](#what-is-covered)
-  - [Prerequisites](#prerequisites)
-  - [Setup and Run Instructions](#setup-and-run-instructions)
-  - [License](#license)
-
 ## Introduction
 
-This is a "to-the-point" guide outlining how to run an Ticos SDK for Embedded C IoT Hub telemetry sample on an ESP32 microcontroller. The command line examples are tailored to Debian/Ubuntu environments.
-
-### What is Covered
-
-- Configuration instructions for the Arduino IDE to compile a sample using the [Ticos SDK for Embedded C](https://github.com/tiwater/ticos-sdk-for-c).
-- Configuration, build, and run instructions for the IoT Hub telemetry sample.
-
-_The following was run on Windows 10 and Ubuntu Desktop 20.04 environments, with Arduino IDE 1.8.15 and ESP32 board library version 1.0.6._
+This is a "to-the-point" guide outlining how to run an Ticos SDK IoT Hub sample on an ESP32 microcontroller.
 
 ## Prerequisites
 

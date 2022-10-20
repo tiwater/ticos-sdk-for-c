@@ -1,3 +1,13 @@
+/*************************************************************************
+  * @file ti_thingmodel.c 物模型代码文件
+  * @generate date: 2022-10-19 16:42:13
+  * 请在下面各个telemetry, property和command函数中写入相关的业务逻辑代码
+  * ti_iot_telemetry_xxx 填写要上报的telemetry的值
+  * ti_iot_property_xxx_upload 填写要上报的property的值
+  * ti_iot_property_xxx_download 处理云端下发的property值
+  * ti_iot_command_xxx 处理云端下发的命令
+  ************************************************************************/
+
 #include "ti_thingmodel.h"
 #include <stdio.h>
 #include "user_app.h"

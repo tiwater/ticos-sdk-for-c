@@ -1,3 +1,9 @@
+/*************************************************************************
+  * @file ti_thingmodel.h 物模型代码文件
+  * @generate date: 2022-10-19 16:42:13
+  * 此文件为自动生成，请不要更改文件内容
+  ************************************************************************/
+
 #pragma once
 
 #include <_ti_cfg_prefix.h>
@@ -15,9 +21,6 @@ int ti_iot_telemetry_pressure();
 float ti_iot_telemetry_temperature();
 float ti_iot_telemetry_oxygen();
 const char* ti_iot_telemetry_warn_info();
-
-// ti_iot_val_duration_t ti_iot_telemetry_xx_duration();
-// time_t ti_iot_telemetry_xx_time();
 
 typedef enum {
     TICOS_IOT_PROPERTY_switch,
