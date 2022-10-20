@@ -40,6 +40,7 @@
 #include "SerialLogger.h"
 #include "iot_configs.h"
 #include "ti_thingmodel.h"
+#include "user_app.h"
 
 #define PROPERTY_TOPIC    "devices/" IOT_CONFIG_DEVICE_ID "/twin/patch/desired"
 
@@ -368,18 +369,11 @@ static void sendTelemetry()
 
 void setup()
 {
+  user_init();
   establishConnection();
 }
 
 void loop()
 {
-  if (WiFi.status() != WL_CONNECTED)
-  {
-    connectToWiFi();
-  }
-  else if (millis() > next_telemetry_send_time_ms)
-  {
-    ti_iot_property_report();
-    next_telemetry_send_time_ms = millis() + TELEMETRY_FREQUENCY_MILLISECS;
-  }
+  key_scan();
 }
