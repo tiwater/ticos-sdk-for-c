@@ -1,5 +1,6 @@
 #include "ti_thingmodel.h"
 #include <stdio.h>
+#include "user_app.h"
 
 int ti_iot_telemetry_pressure()
 {
@@ -23,7 +24,7 @@ const char* ti_iot_telemetry_warn_info()
 
 int ti_iot_property_switch_upload()
 {
-    return 1;
+    return get_switch_state();
 }
 
 int ti_iot_property_switch_download(int switch_)
@@ -34,13 +35,14 @@ int ti_iot_property_switch_download(int switch_)
 
 int ti_iot_property_light_upload()
 {
-    return 12;
+    return get_led_light();
 }
 
 int ti_iot_property_light_download(int light)
 {
     // op
     printf("receive light: %d\r\n", light);
+    set_led_light(light);
     return 0;
 }
 
