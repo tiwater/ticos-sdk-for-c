@@ -1,0 +1,21 @@
+/************************************************************************
+  * @file ti_thingmodel.h 物模型代码文件
+  * @generate date: ${GEN_DATE}
+  ***********************************************************************/
+
+#ifndef __TI_THING_MODEL_H
+#define __TI_THING_MODEL_H
+
+#include <_ti_cfg_prefix.h>
+#include "ti_thingmodel_type.h"
+
+typedef enum {${TELEMETRY_ENUM}} ti_iot_telemetry_t;
+
+typedef enum {${PROPERTY_ENUM}} ti_iot_property_t;
+
+typedef enum {${COMMAND_ENUM}} ti_iot_command_t;
+${FUNC_DECS}
+
+#include <_ti_cfg_suffix.h>
+
+#endif // __TI_THING_MODEL_H
