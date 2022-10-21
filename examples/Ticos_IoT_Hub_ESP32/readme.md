@@ -27,7 +27,7 @@ This is a "to-the-point" guide outlining how to run an Ticos SDK IoT Hub sample 
 
 4. Configure the ESPRESSIF ESP32 sample.
 
-    Enter your Ticos IoT Hub and device information into the sample's `iot_configs.h`:
+    Enter your Ticos IoT Hub and device information into the sample's `ti_iot_hal.cpp`:
     - Add your Wi-Fi SSID to `IOT_CONFIG_WIFI_SSID`
     - Add your Wi-Fi password to `IOT_CONFIG_WIFI_PASSWORD`
     - Add you IoTHub Name to `IOT_CONFIG_IOTHUB_FQDN`
