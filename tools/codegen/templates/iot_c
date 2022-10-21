@@ -1,0 +1,19 @@
+/*************************************************************************
+  * @file ti_thingmodel.c 物模型代码文件
+  * @generate date: ${GEN_DATE}
+  ************************************************************************/
+
+#include "ti_thingmodel.h"
+${FUNC_DEFS}
+const ti_iot_telemetry_info_t ti_iot_telemetry_tab[] = {${TELEMETRY_TABS}
+};
+
+const ti_iot_property_info_t ti_iot_property_tab[] = {${PROPERTY_TABS}
+};
+
+const ti_iot_command_info_t ti_iot_command_tab[] = {${COMMAND_TABS}
+};
+
+const int ti_iot_telemetry_cnt = TICOS_IOT_TELEMETRY_MAX;
+const int ti_iot_property_cnt = TICOS_IOT_PROPERTY_MAX;
+const int ti_iot_command_cnt = TICOS_IOT_COMMAND_MAX;

@@ -1,27 +1,6 @@
-> ## Before you proceed
->
->_This sample is based on the Ticos IoT SDK for C, uses a bare metal (no RTOS) approach and has support for Arduino IDE._
->
-
-# How to Setup and Run Ticos SDK for Embedded C IoT Hub Client on Espressif ESP32
-
-  - [How to Setup and Run Ticos SDK for Embedded C IoT Hub Client on Espressif ESP32](#how-to-setup-and-run-ticos-sdk-for-embedded-c-iot-hub-client-on-espressif-esp32)
-  - [Introduction](#introduction)
-  - [What is Covered](#what-is-covered)
-  - [Prerequisites](#prerequisites)
-  - [Setup and Run Instructions](#setup-and-run-instructions)
-  - [License](#license)
-
 ## Introduction
 
-This is a "to-the-point" guide outlining how to run an Ticos SDK for Embedded C IoT Hub telemetry sample on an ESP32 microcontroller. The command line examples are tailored to Debian/Ubuntu environments.
-
-### What is Covered
-
-- Configuration instructions for the Arduino IDE to compile a sample using the [Ticos SDK for Embedded C](https://github.com/tiwater/ticos-sdk-for-c).
-- Configuration, build, and run instructions for the IoT Hub telemetry sample.
-
-_The following was run on Windows 10 and Ubuntu Desktop 20.04 environments, with Arduino IDE 1.8.15 and ESP32 board library version 1.0.6._
+This is a "to-the-point" guide outlining how to run an Ticos SDK IoT Hub sample on an ESP32 microcontroller.
 
 ## Prerequisites
 
@@ -39,26 +18,23 @@ _The following was run on Windows 10 and Ubuntu Desktop 20.04 environments, with
 2. Install the Ticos SDK for Embedded C library.
 
     - On the Arduino IDE, go to menu `Sketch`, `Include Library`, `Manage Libraries...`.
-    - Search for and install `ticos-sdk-for-c`.
+    - Search for and install `ticos-sdk-for-c`. (not valid current, please contact Tiwater Technology Co. Ltd)
 
 3. Open the ESPRESSIF ESP32 sample.
 
     - On the Arduino IDE, go to menu `File`, `Examples`, `ticos-sdk-for-c`.
-    - Click on `ti_esp32` to open the sample.
+    - Click on `Ticos_Iot_Hub_ESP32` to open the sample.
 
 4. Configure the ESPRESSIF ESP32 sample.
 
-    Enter your Ticos IoT Hub and device information into the sample's `iot_configs.h`:
+    Enter your Ticos IoT Hub and device information into the file `ti_iot_hal.c`:
+    - Add you IoTHub Name to `IOT_CONFIG_IOTHUB_FQDN`
+    - Add your product ID to `IOT_CONFIG_PRODUCT_ID`
+    - Add your Device ID to `IOT_CONFIG_DEVICE_ID`
+
+    Enter your Wi-Fi information into the file `Ticos_Iot_Hub_ESP32.ino`:
     - Add your Wi-Fi SSID to `IOT_CONFIG_WIFI_SSID`
     - Add your Wi-Fi password to `IOT_CONFIG_WIFI_PASSWORD`
-    - Add you IoTHub Name to `IOT_CONFIG_IOTHUB_FQDN`
-    - Add your Device ID to `IOT_CONFIG_DEVICE_ID`
-    - If using **X.509 Cert**:
-        - Uncomment the `#define IOT_CONFIG_USE_X509_CERT`
-        - Add your cert to `IOT_CONFIG_USE_X509_CERT`
-        - Add your cert PK to `IOT_CONFIG_DEVICE_CERT_PRIVATE_KEY`
-    - If using **Symmetric Key**:
-        - Add your device key to `IOT_CONFIG_DEVICE_KEY`
 
 5. Connect the ESP32 microcontroller to your USB port.
 
