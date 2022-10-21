@@ -163,3 +163,11 @@ void ti_iot_cloud_start()
   hal_mqtt_client_init();
 }
 
+ /**
+ * @brief 停止ti iot cloud服务
+ * @note  该函数停止mqtt client与云端的连接, 需要用户根据平台实现
+ */
+void ti_iot_cloud_stop()
+{
+  esp_mqtt_client_stop(mqtt_client);
+}
