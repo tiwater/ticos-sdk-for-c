@@ -16,16 +16,35 @@ static ti_iot_hub_client client;
 static char mqtt_client_id[128];
 static char mqtt_username[128];
 
+/**
+ * @brief mqtt客户端向云端推送数据的接口
+ * @note  ticos sdk会调用此接口，完成数据的上传。需要用户实现此函数
+ * @param topic 上报信息的topic
+ * @param data 上报的数据内容
+ * @param len  上报的数据长度
+ * @param qos  通信质量
+ * @param retain retain flag
+ * @return TI_OK for success, other for fail.
+ */
 int ti_iot_mqtt_client_publish(const char *topic, const char *data, int len, int qos, int retain)
 {
     return esp_mqtt_client_publish(mqtt_client, topic, data, len, qos, retain);
 }
 
+/**
+ * @brief 获取设备ID的接口
+ * @note  ticos sdk会调用此接口，获取设备ID。用户可以定义IOT_CONFIG_DEVICE_ID宏, 或者改写此函数将设备ID从其它地方输入
+ */
 const char *ti_iot_get_device_id(void)
 {
     return IOT_CONFIG_DEVICE_ID;
 }
 
+/**
+ * @brief 平台相关mqtt事件回调接口
+ * @note  当使用mqtt client连接云端成功后，会产生MQTT_EVENT_CONNECTED事件，此时用户需要订阅属性相关的topic(由宏PROPERTY_TOPIC定义)
+ * 当client从云端接收到数据后，会产生MQTT_EVENT_DATA事件，此时用户需要回调ti_iot_property_receive将数据传给sdk进行处理
+ */
 static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
 {
   int r;
@@ -73,6 +92,10 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
   return ESP_OK;
 }
 
+ /**
+ * @brief 该函数为平台相关的mqtt函数，用户需要根据不同平台进行实现。
+ * @note  用户设置好url, port, client, username后，会调用esp_mqtt_client_start()连接到ticos iot hub
+ */
 static int hal_mqtt_client_init()
 {
   esp_mqtt_client_config_t mqtt_config;
@@ -110,6 +133,10 @@ static int hal_mqtt_client_init()
   }
 }
 
+ /**
+ * @brief 启动ti iot cloud服务
+ * @note  该函数先初始化ti_iot_hub_client，然后调用平台相关的mqtt client连接到云端, 用户需要实现hal_mqtt_client_init函数
+ */
 void ti_iot_cloud_start()
 {
   ti_iot_hub_client_options options = ti_iot_hub_client_options_default();
