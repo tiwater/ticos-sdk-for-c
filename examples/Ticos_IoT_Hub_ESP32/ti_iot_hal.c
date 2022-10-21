@@ -26,12 +26,12 @@ static ti_iot_hub_client client;
 static char mqtt_client_id[128];
 static char mqtt_username[128];
 
-extern "C" int ti_iot_mqtt_client_publish(const char *topic, const char *data, int len, int qos, int retain)
+int ti_iot_mqtt_client_publish(const char *topic, const char *data, int len, int qos, int retain)
 {
     return esp_mqtt_client_publish(mqtt_client, topic, data, len, qos, retain);
 }
 
-extern "C" const char *ti_iot_get_device_id(void)
+const char *ti_iot_get_device_id(void)
 {
     return IOT_CONFIG_DEVICE_ID;
 }
@@ -144,7 +144,7 @@ static int initializeMqttClient()
   }
 }
 
-extern "C" void ti_iot_cloud_start()
+void ti_iot_cloud_start()
 {
   initializeIoTHubClient();
   (void)initializeMqttClient();
