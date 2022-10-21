@@ -18,7 +18,7 @@ This is a "to-the-point" guide outlining how to run an Ticos SDK IoT Hub sample 
 2. Install the Ticos SDK for Embedded C library.
 
     - On the Arduino IDE, go to menu `Sketch`, `Include Library`, `Manage Libraries...`.
-    - Search for and install `ticos-sdk-for-c`.
+    - Search for and install `ticos-sdk-for-c`. (not valid current, please contact Tiwater Technology Co. Ltd)
 
 3. Open the ESPRESSIF ESP32 sample.
 
