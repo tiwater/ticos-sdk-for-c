@@ -115,7 +115,7 @@ def gen_iot(date, tmpl_dir, json_file):
     import json
 
     raw = None
-    with open(json_file, 'r') as f:
+    with open(json_file, 'r', encoding='utf-8') as f:
         raw = json.load(f)
 
     if not raw:
@@ -154,7 +154,7 @@ def gen_iot(date, tmpl_dir, json_file):
     cmmd_enum += gen_enum({ TYPE:CMMD, NAME:'MAX'}) + '\n'
 
     dot_c_lines = []
-    with open(tmpl_dir + 'iot_c', 'r') as f:
+    with open(tmpl_dir + 'iot_c', 'r', encoding='utf-8') as f:
         tmpl = Template(f.read())
         dot_c_lines.append(tmpl.substitute(
                     GEN_DATE = date,
@@ -162,11 +162,11 @@ def gen_iot(date, tmpl_dir, json_file):
                     TELEMETRY_TABS = tele_tabs,
                     PROPERTY_TABS = prop_tabs,
                     COMMAND_TABS = cmmd_tabs))
-    with open('ti_thingmodel.c', 'w') as f:
+    with open('ti_thingmodel.c', 'w', encoding='utf-8') as f:
         f.writelines(dot_c_lines)
 
     dot_h_lines = []
-    with open(tmpl_dir + 'iot_h', 'r') as f:
+    with open(tmpl_dir + 'iot_h', 'r', encoding='utf-8') as f:
         tmpl = Template(f.read())
         dot_h_lines.append(tmpl.substitute(
                     GEN_DATE = date,
@@ -175,7 +175,7 @@ def gen_iot(date, tmpl_dir, json_file):
                     PROPERTY_ENUM = prop_enum,
                     COMMAND_ENUM = cmmd_enum))
 
-    with open('ti_thingmodel.h', 'w') as f:
+    with open('ti_thingmodel.h', 'w', encoding='utf-8') as f:
         f.writelines(dot_h_lines)
 
 def generate(json_file=''):
