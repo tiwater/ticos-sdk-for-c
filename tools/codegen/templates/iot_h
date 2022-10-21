@@ -7,6 +7,7 @@
 #define __TI_THING_MODEL_H
 
 #include <_ti_cfg_prefix.h>
+#include <stdbool.h>
 #include "ti_thingmodel_type.h"
 
 typedef enum {${TELEMETRY_ENUM}} ti_iot_telemetry_t;
