@@ -2,6 +2,7 @@
 #include "ti_core.h"
 #include "ti_iot.h"
 #include "ti_iot_api.h"
+#include "ti_iot_hal.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
