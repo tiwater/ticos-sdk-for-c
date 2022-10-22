@@ -25,6 +25,8 @@ static int key_down()
 static key_cb_t key_cb;
 static void *key_user_data = NULL;
 static int key_process = 0;
+static int switch_state = 0;
+static int led_light = 0;
 
 void set_key_cb(key_cb_t cb, void *user_data)
 {
@@ -35,18 +37,24 @@ void set_key_cb(key_cb_t cb, void *user_data)
 void key_scan()
 {
     if (key_down()) {
+      // 响应按键按下动作
         if (!key_process) {
             key_process = 1;
-            if (key_cb)
+            if (key_cb) {
                 key_cb(1, key_user_data);
+            }
         }
     } else {
-        key_process = 0;
+        // 抬起按键，清除状态
+        if(key_process) {
+          key_process = 0;
+          switch_state = 0;
+          // 上报按键状态
+          ti_iot_property_report();
+        }
     }
 }
 
-static int switch_state = 0;
-static int led_light = 0;
 int get_led_light()
 {
     return led_light;
@@ -65,11 +73,10 @@ int get_switch_state()
 
 static void user_key_cb(int key, void *user_data)
 {
-    if (switch_state) {
-        switch_state = 0;
-    } else {
-        switch_state = 1;
-    }
+    // 更新按键状态
+    switch_state = 1;
+
+    // 翻转 LED 状态
     if (led_light) {
         led_light = 0;
     } else {

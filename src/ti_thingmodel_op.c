@@ -1,6 +1,7 @@
 #include "ti_thingmodel_type.h"
 #include "ti_core.h"
 #include "ti_iot.h"
+#include "ti_iot_api.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -25,9 +26,6 @@ extern const ti_iot_command_info_t ti_iot_command_tab[];
 extern const int ti_iot_telemetry_cnt;
 extern const int ti_iot_property_cnt;
 extern const int ti_iot_command_cnt;
-
-int ti_iot_mqtt_client_publish(const char *topic, const char *data, int len, int qos, int retain);
-const char *ti_iot_get_device_id(void);
 
 static ti_span __ti_iot_property_msg_pack(int index, ti_span payload)
 {
@@ -299,15 +297,15 @@ static int ti_iot_property_free(cJSON *property)
 
 void ti_iot_property_receive(const char *dat, int len)
 {
-    cJSON *propretys = cJSON_Parse(dat);
-    if (!propretys)
+    cJSON *properties = cJSON_Parse(dat);
+    if (!properties)
         return;
 
-    char *log_info = cJSON_Print(propretys);
+    char *log_info = cJSON_Print(properties);
     printf("property receive: \n%s\n", log_info);
     cJSON_free(log_info);
 
-    cJSON *metadata = cJSON_GetObjectItem(propretys, "$metadata");
+    cJSON *metadata = cJSON_GetObjectItem(properties, "$metadata");
     if (metadata && cJSON_IsObject(metadata)) {
         int size = cJSON_GetArraySize(metadata);
         for (int i = 0; i < size; i++) {
@@ -344,22 +342,22 @@ void ti_iot_property_receive(const char *dat, int len)
             }
         }
     }
-    cJSON_Delete(propretys);
+    cJSON_Delete(properties);
 }
 
 int ti_iot_property_report(void)
 {
-    cJSON *propretys = ti_iot_property_pack();
-    if (!propretys)
+    cJSON *properties = ti_iot_property_pack();
+    if (!properties)
         return -1;
-    char *propertys_str = cJSON_Print(propretys);
+    char *propertys_str = cJSON_Print(properties);
     printf("property report: \n%s\n", propertys_str);
 
     char report_topic[128];
     sprintf(report_topic, "devices/%s/twin/patch/reported", ti_iot_get_device_id());
     int ret = ti_iot_mqtt_client_publish(report_topic, propertys_str, strlen(propertys_str), 1, 0);
     cJSON_free(propertys_str);
-    ti_iot_property_free(propretys);
+    ti_iot_property_free(properties);
     return ret;
 }
 

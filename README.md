@@ -1,37 +1,58 @@
-## 概述
+# 概述
 
-ticos-sdk-for-c 提供了 ticos cloud 协议接入方案，SDK使用了 mqtt 协议用于和云端进行通信，支持开发者快速接入WIFI设备到ticos cloud平台。
-ticos-sdk-for-c 封装了协议实现细节和数据传输过程，让开发者可以聚焦在数据处理上，以达到快速开发的目的。
+Ticos SDK 提供了 Ticos Cloud 协议接入方案，SDK使用了 MQTT 协议用于和云端进行通信，支持开发者快速接入WIFI设备到 Ticos Cloud平台。
+Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以聚焦在数据处理上，以达到快速开发的目的。
 
 
-## 使用说明
+# 使用说明
 
-* 基于esp32系列的工程示例: [Ticos IoT Hub ESPRESSIF ESP-32](examples/Ticos_IoT_Hub_ESP32/readme.md)
+## 安装 SDK
+
+### Arduino
+
+1. Arduino IDE 安装
+- 在 Arduino IDE 中, 选择菜单 `项目`, `加载库`, `管理库...`。
+- 搜索并安装 `ticos-sdk-for-c`。 (当前库还未过审，请参考下面步骤手动安装)
+2. 手动安装
+- 将本 [ticos sdk](https://github.com/tiwater/ticos-sdk-for-c-arduino) 克隆至 Arduino 库目录，通常该目录在 ～/Documents/Arduino/libraries，请根据你的开发平台中 Arduino IDE 的配置确定。
+
+### 平台原生开发环境
+
+- 将本 [ticos sdk](https://github.com/tiwater/ticos-sdk-for-c-arduino) 克隆至你工程开发环境，确保编译时包含本 SDK 的所有代码。
+
+## 主要接口说明
 * api接口: src/ti_iot_api.h
 
-- MCU在网络顺畅的情况下，调用提供ti_iot_cloud_start()启动云服务
-- 连接成功后，用户可主动调用ti_iot_property_report()上报属性到云端
-- 云端下发数据时，需要调用ti_iot_property_receive()进行解析
-- 用户可主动调用ti_iot_cloud_stop()结束云端的连接
+- MCU在网络顺畅的情况下，调用提供ti_iot_cloud_start()启动云服务；
+- 连接成功后，物模型属性发生改变时，用户可主动调用ti_iot_property_report()上报属性到云端；
+- 云端下发数据时，需要调用ti_iot_property_receive()进行解析；
+- 用户可主动调用ti_iot_cloud_stop()结束云端的连接。
 
+## SDK 集成
 
-## 软件移植
+开发者集成本 SDK 接入 Ticos Cloud 需要做的工作有：
 
-开发者接入 ticos cloud 需要做的工作有：
+1. 在[河图](https://console.ticos.cn)中创建硬件产品，并根据产品需求定义出物模型；
+   
+2. 通过脚本将物模型文件转换为C代码，添加相应的数据处理：
 
-1. 提供mqtt client接入云端服务器，参考examples/Ticos_Iot_Hub_ESP32/ti_iot_hal.cpp相应的接口:
+- 要求: 已安装 python3 运行环境；
+- 将服务端下载的物模型文件(例: thing_model.json)放到tools/codegen目录下；
+- 在 tools/codegen 目录下运行: python ./ticos_thingmodel_gen.py --json thing_model.json；
+- 成功后会在当前目录下产生 ti_thingmodel.c 和 ti_thingmodel.h 文件, 将生成的文件移入用户工程中的源文件目录；
+- 在 ti_thingmodel.c 中填入完成用户的业务逻辑。_send 后缀的函数为设备端向云端发送物模型对应属性/遥测时回调的接口，函数应返回该属性/遥测的值，通常是从物理设备获取到对应的值后返回，由 SDK 将该值上传至云端；_recv 后缀的函数为设备端接收到云下发的属性/命令时调用的接口，函数的参数即为接收到的值，用户根据业务需求对该值进行处理；
 
-- 提供ti_iot_cloud_start()函数，能启动平台相关的mqtt client客户端连接到ticos cloud
-- 提供ti_iot_mqtt_client_publish()函数，将数据上报到云端
-- 提供ti_iot_get_device_id()函数，获取设备deviceID
-- mqtt连接成功后，订阅属性相关的topic: "devices/{$deviceID}/twin/patch/desired"
-- mqtt接收数据后，调用sdk中ti_iot_property_receive函数进行数据的处理
+3. 提供对应硬件平台的 MQTT client 实现，使 SDK 可接入云端服务器，可参考 examples/Ticos_Iot_Hub_ESP32/ti_iot_hal.cpp 相应的接口实现:
 
+- 提供 ti_iot_cloud_start() 函数，能启动平台相关的 MQTT client 客户端连接到 Ticos Cloud；
+- 提供 ti_iot_mqtt_client_publish() 函数，将数据上报到云端；
+- 提供 ti_iot_get_device_id() 函数，获取设备 deviceID；
+- MQTT 连接成功后，订阅属性相关的 topic: "devices/{$deviceID}/twin/patch/desired"；
+- 提供函数 ti_iot_property_receive()，在 MQTT 接收到数据后进行数据的处理；
+- 根据河图中的产品定义信息，为 MQTT 连接提供 MQTT 服务器地址(`IOT_CONFIG_IOTHUB_FQDN`)、产品 ID () `IOT_CONFIG_PRODUCT_ID`)、设备 ID (`IOT_CONFIG_DEVICE_ID`) 这几组值。
 
-2. 通过脚本将物模型文件转换为C代码，添加相应的数据处理
+执行以上步骤后，即完成了对 SDK 的集成工作，可以尝试编译运行你的项目，应可直接接入 Ticos Cloud 进行操作。
 
-- 要求: 已安装python2或python3运行环境
-- 将服务端下载的物模型文件(例: thing_model.json)放到tools/codegen目录下
-- 在tools/codegen目录下运行: ./ticos_thingmodel_gen.py --json thing_model.json
-- 成功后会在当前目录下产生ti_thingmodel.c和ti_thingmodel.h文件, 将生成的文件放入工程中编译
-- 在ti_thingmodel.c中填入完成用户的业务逻辑
+## 示例
+* 基于 esp32 系列的工程示例: [Ticos IoT Hub ESPRESSIF ESP-32](examples/Ticos_IoT_Hub_ESP32/readme.md)。
+

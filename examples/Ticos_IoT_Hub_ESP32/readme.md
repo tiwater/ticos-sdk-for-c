@@ -1,53 +1,61 @@
-## Introduction
+## 简介
 
-This is a "to-the-point" guide outlining how to run an Ticos SDK IoT Hub sample on an ESP32 microcontroller.
+本例演示如何编译并运行一个基于 ESP32 硬件平台和 Arduino 框架的 Ticos SDK IoT Hub 的示例程序。
+本示例可通过开发板上的按键或云端/小程序控制开发板上的 LED 亮灭。
 
-## Prerequisites
+## 前提条件
 
-- Have the latest [Arduino IDE](https://www.arduino.cc/en/Main/Software) installed.
+- 已安装最新的 [Arduino IDE](https://www.arduino.cc/en/Main/Software)。
+- 在 Arduino IDE 上已安装 [ESP32 板级支持包](https://github.com/espressif/arduino-esp32)。
+    - ESP32 并不是 Arduino IDE 原生支持的，你需要额外安装。
+    - 你也可以安装 Ticos 版的 [ESP32 板级支持包](https://github.com/tiwater/arduino-esp32)，以更好地适配 [Ticos Kit 开发套件](https://www.tiwater.com/ticos/kit/)。
+        - 安装方法：打开 Arduino IDE 菜单：`Arduino`，`Preferences...`，将 https://assets.ticos.cc/tiwater/package_ticos_kit_index.json 添加至`附加开发板管理器网址`，保存选项并等待 Arduino IDE 更新完成后，即可在开发板中选择和 Ticos Kit 对应的开发板了。 
+- 在[河图](https://console.ticos.cn)中创建硬件产品，并根据产品需求定义出物模型：
+    - 本示例假设该产品具有一个只读的 `switch` 属性，类型为 boolean，用于反映设备上轻触开关的状态；
+    - 本示例假设该产品具有一个可读写的 `led` 属性，类型为 boolean，用于反映及控制设备上 led 灯的状态。
 
-- Have the [ESP32 board support](https://github.com/espressif/arduino-esp32) installed on Arduino IDE.
+## 配置及运行步骤
 
-    - ESP32 boards are not natively supported by Arduino IDE, so you need to add them manually.
-    - Follow the [instructions](https://github.com/espressif/arduino-esp32) in the official ESP32 repository.
+1. 运行 Arduino IDE。
+2. 安装 SDK （如果你已经参考 SDK 中的说明完成安装，请忽略此步骤）：
+   1. Arduino IDE 中安装
+      - 在 Arduino IDE 中, 选择菜单 `项目`, `加载库`, `管理库...`。
+      - 搜索并安装 `ticos-sdk-for-c`。 (当前库还未过审，请参考下面步骤手动安装)
+   2. 手动安装
+      - 将本 [ticos sdk](https://github.com/tiwater/ticos-sdk-for-c-arduino) 克隆至 Arduino 库目录，通常该目录在 ～/Documents/Arduino/libraries，请根据你的开发平台中 Arduino IDE 的配置确定。
+3. 打开示例：
 
-## Setup and Run Instructions
+    - 从 Arduino IDE 中打开菜单 `文件`, `示例`, `Ticos SDK for C`。
+    - 点击 `Ticos_Iot_Hub_ESP32`，打开示例工程。
 
-1. Run the Arduino IDE.
+4. 配置示例：
 
-2. Install the Ticos SDK for Embedded C library.
+    在文件 `ti_iot_hal.c` 中配置你的 Ticos IoT Hub 以及设备信息：
+    - 设置 `IOT_CONFIG_IOTHUB_FQDN` 为你的 Ticos IoT Hub 域名地址；
+    - 设置 `IOT_CONFIG_PRODUCT_ID` 为你的产品 ID；
+    - 设置 `IOT_CONFIG_DEVICE_ID` 为你测试的设备 ID；
+  
+    在 `Ticos_Iot_Hub_ESP32.ino` 中输入你的 Wi-Fi 信息：
+    - 设置 `IOT_CONFIG_WIFI_SSID` 为你的 Wi-Fi 名称；
+    - 设置 `IOT_CONFIG_WIFI_PASSWORD` 为你的 Wi-Fi 密码；
+  
+    在 `user_app.c` 中根据你的开发板配置外设所连接到的 GPIO 端口：
+    - 设置 `KEY_GPIO` 为你按键 GPIO 端口；
+    - 设置 `LED_GPIO` 为你的 LED 所连接到的 GPIO 端口。
 
-    - On the Arduino IDE, go to menu `Sketch`, `Include Library`, `Manage Libraries...`.
-    - Search for and install `ticos-sdk-for-c`. (not valid current, please contact Tiwater Technology Co. Ltd)
+5. 将你的 ESP32 开发板连接至开发电脑的 USB 口。
 
-3. Open the ESPRESSIF ESP32 sample.
+6. 在 Arduino IDE 中选择开发板、端口及其他配置：
 
-    - On the Arduino IDE, go to menu `File`, `Examples`, `ticos-sdk-for-c`.
-    - Click on `Ticos_Iot_Hub_ESP32` to open the sample.
+    - 在菜单`工具`，`开发板`中选择你所持开发板的对应型号；
+    - 在菜单`工具`，`端口`中选择你的开发板所连接至的端口；
+    - `工具`菜单下的其他开发板配置项，请根据你的开发板硬件说明选择相应的配置。
 
-4. Configure the ESPRESSIF ESP32 sample.
+7. 上传项目：
 
-    Enter your Ticos IoT Hub and device information into the file `ti_iot_hal.c`:
-    - Add you IoTHub Name to `IOT_CONFIG_IOTHUB_FQDN`
-    - Add your product ID to `IOT_CONFIG_PRODUCT_ID`
-    - Add your Device ID to `IOT_CONFIG_DEVICE_ID`
+    - 在`项目`菜单中选择`上传`：
 
-    Enter your Wi-Fi information into the file `Ticos_Iot_Hub_ESP32.ino`:
-    - Add your Wi-Fi SSID to `IOT_CONFIG_WIFI_SSID`
-    - Add your Wi-Fi password to `IOT_CONFIG_WIFI_PASSWORD`
-
-5. Connect the ESP32 microcontroller to your USB port.
-
-6. On the Arduino IDE, select the board and port.
-
-    - Go to menu `Tools`, `Board` and select `ESP32`.
-    - Go to menu `Tools`, `Port` and select the port to which the microcontroller is connected.
-
-7. Upload the sketch.
-
-    - Go to menu `Sketch` and click on `Upload`.
-
-        <details><summary><i>Expected output of the upload:</i></summary>
+        <details><summary><i>可能的输出（随硬件及环境不同会有所变化）：</i></summary>
         <p>
 
         ```text
@@ -104,23 +112,26 @@ This is a "to-the-point" guide outlining how to run an Ticos SDK IoT Hub sample 
         </p>
         </details>
 
-8. Monitor the MCU (microcontroller) locally via the Serial Port.
+8. 通过串口监视单片机的输出：
 
-    - Go to menu `Tools`, `Serial Monitor`.
+    - 从菜单中选择`工具`，`串口监视器`：
 
-        If you perform this step right away after uploading the sketch, the serial monitor will show an output similar to the following upon success:
+        如果你上传后立即执行了这个动作，在连接成功的情况下，串口监视器可能会输出下列信息：
 
-        ```text
-        Connecting to WIFI SSID buckaroo
-        .......................WiFi connected, IP address:
-        192.168.1.123
-        Setting time using SNTP..............................done!
-        Current time: Thu May 28 02:55:05 2020
-        Client ID: mydeviceid
-        Username: myiothub.ticos-devices.net/mydeviceid/?api-version=2018-06-30&DeviceClientType=c%2F1.0.0
-        SharedAccessSignature sr=myiothub.ticos-devices.net%2Fdevices%2Fmydeviceid&sig=placeholder-password&se=1590620105
-        MQTT connecting ... connected.
+        ```[  1063][I][esp32-hal-psram.c:96] psramInit(): PSRAM enabled
+            [  1089][D][WiFiGeneric.cpp:929] _eventCallback(): Arduino Event: 0 - WIFI_READY
+            [  1177][D][WiFiGeneric.cpp:929] _eventCallback(): Arduino Event: 2 - STA_START
+            [  1209][D][WiFiGeneric.cpp:929] _eventCallback(): Arduino Event: 4 - STA_CONNECTED
+            [  1241][D][WiFiGeneric.cpp:929] _eventCallback(): Arduino Event: 7 - STA_GOT_IP
+            [  1242][D][WiFiGeneric.cpp:991] _eventCallback(): STA IP: 192.168.0.137, MASK: 255.255.255.0, GW: 192.168.0.1
+            MQTT client started
+            MQTT event MQTT_EVENT_BEFORE_CONNECT
+            MQTT event MQTT_EVENT_CONNECTED
+            Subscribed for cloud-to-device messages
         ```
+9. 测试：
+    - 在[河图](https://console.ticos.cn)中进入`设备管理`，选择你正在测试的设备，进入`详情`页面，选择`数字孪生`，按动开发板上的按钮，观察 LED 的亮灭，并刷新页面，观察云端的状态更新；
+    - 在[河图](https://console.ticos.cn)中进入`设备管理`，选择你正在测试的设备，进入`调试`页面，设置和 `led` 对应的属性，并按下`下发`按钮，注意观察开发板上 LED 的亮灭。
 
 ### License
 
