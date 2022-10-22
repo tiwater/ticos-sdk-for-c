@@ -3,11 +3,12 @@
 #include <mqtt_client.h>
 #include <ti_core.h>
 #include <ti_iot.h>
-#include "ti_iot_api.h"
+#include <ti_iot_hal.h>
+#include <ti_iot_api.h>
 
 #define IOT_CONFIG_IOTHUB_FQDN            "hub.ticos.cn"
-#define IOT_CONFIG_DEVICE_ID              "TEST002"
-#define IOT_CONFIG_PRODUCT_ID             "BOB45WX7H4"
+#define IOT_CONFIG_DEVICE_ID              "SLC1"
+#define IOT_CONFIG_PRODUCT_ID             "HITXM3K4IE"
 #define PROPERTY_TOPIC                    "devices/" IOT_CONFIG_DEVICE_ID "/twin/patch/desired"
 
 static esp_mqtt_client_handle_t mqtt_client;
@@ -51,41 +52,41 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
   switch (event->event_id)
   {
     case MQTT_EVENT_ERROR:
-      printf("MQTT event MQTT_EVENT_ERROR");
+      printf("MQTT event MQTT_EVENT_ERROR\n");
       break;
     case MQTT_EVENT_CONNECTED:
-      printf("MQTT event MQTT_EVENT_CONNECTED");
+      printf("MQTT event MQTT_EVENT_CONNECTED\n");
       r = esp_mqtt_client_subscribe(mqtt_client, PROPERTY_TOPIC, 1);
       if (r == -1)
       {
-        printf("Could not subscribe for cloud-to-device messages.");
+        printf("Could not subscribe for cloud-to-device messages.\n");
       }
       else
       {
-        printf("Subscribed for cloud-to-device messages; message id:");
+        printf("Subscribed for cloud-to-device messages; message id:\n");
       }
       break;
     case MQTT_EVENT_DISCONNECTED:
-      printf("MQTT event MQTT_EVENT_DISCONNECTED");
+      printf("MQTT event MQTT_EVENT_DISCONNECTED\n");
       break;
     case MQTT_EVENT_SUBSCRIBED:
-      printf("MQTT event MQTT_EVENT_SUBSCRIBED");
+      printf("MQTT event MQTT_EVENT_SUBSCRIBED\n");
       break;
     case MQTT_EVENT_UNSUBSCRIBED:
-      printf("MQTT event MQTT_EVENT_UNSUBSCRIBED");
+      printf("MQTT event MQTT_EVENT_UNSUBSCRIBED\n");
       break;
     case MQTT_EVENT_PUBLISHED:
-      printf("MQTT event MQTT_EVENT_PUBLISHED");
+      printf("MQTT event MQTT_EVENT_PUBLISHED\n");
       break;
     case MQTT_EVENT_DATA:
-      printf("MQTT event MQTT_EVENT_DATA");
+      printf("MQTT event MQTT_EVENT_DATA\n");
       ti_iot_property_receive(event->data, event->data_len);
       break;
     case MQTT_EVENT_BEFORE_CONNECT:
-      printf("MQTT event MQTT_EVENT_BEFORE_CONNECT");
+      printf("MQTT event MQTT_EVENT_BEFORE_CONNECT\n");
       break;
     default:
-      printf("MQTT event UNKNOWN");
+      printf("MQTT event UNKNOWN\n");
       break;
   }
 
@@ -115,7 +116,7 @@ static int hal_mqtt_client_init()
 
   if (mqtt_client == NULL)
   {
-    printf("Failed creating mqtt client");
+    printf("Failed creating mqtt client\n");
     return 1;
   }
 
@@ -123,12 +124,12 @@ static int hal_mqtt_client_init()
 
   if (start_result != ESP_OK)
   {
-    printf("Could not start mqtt client; error code:");
+    printf("Could not start mqtt client; error code:\n");
     return 1;
   }
   else
   {
-    printf("MQTT client started");
+    printf("MQTT client started\n");
     return 0;
   }
 }
@@ -148,7 +149,7 @@ void ti_iot_cloud_start()
           TI_SPAN_FROM_STR(IOT_CONFIG_DEVICE_ID),
           &options)))
   {
-    printf("Failed initializing Ticos IoT Hub client");
+    printf("Failed initializing Ticos IoT Hub client\n");
     return;
   }
 

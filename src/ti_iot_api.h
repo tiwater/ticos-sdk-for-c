@@ -40,5 +40,4 @@ void ti_iot_property_receive(const char *dat, int len);
  * @return void
  */
 void ti_iot_command_receive(const char *dat, int len);
-
 #include <_ti_cfg_suffix.h>

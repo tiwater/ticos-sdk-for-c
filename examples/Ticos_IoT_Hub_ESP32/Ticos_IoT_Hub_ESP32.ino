@@ -3,8 +3,8 @@
 #include "WiFi.h"
 #include "time.h"
 
-#define IOT_CONFIG_WIFI_SSID              "Tiwater"
-#define IOT_CONFIG_WIFI_PASSWORD          "Ti210223"
+#define IOT_CONFIG_WIFI_SSID              "WIFI_SSID"
+#define IOT_CONFIG_WIFI_PASSWORD          "WIFI_PWD"
 static const char* ssid = IOT_CONFIG_WIFI_SSID;
 static const char* password = IOT_CONFIG_WIFI_PASSWORD;
 
@@ -40,13 +40,18 @@ static void initializeTime()
 
 void setup()
 {
+  // 板级配置
   user_init();
+  // 连接网络
   connectToWiFi();
+  // 同步网络时间
   initializeTime();
+  // 建立和 Ticos Cloud 的连接
   ti_iot_cloud_start();
 }
 
 void loop()
 {
+  // 扫描按键，处理应用的业务逻辑
   key_scan();
 }
