@@ -3,8 +3,10 @@
 #include "WiFi.h"
 #include "time.h"
 
-#define IOT_CONFIG_WIFI_SSID              "WIFI_SSID"
-#define IOT_CONFIG_WIFI_PASSWORD          "WIFI_PWD"
+// #define IOT_CONFIG_WIFI_SSID              "WIFI_SSID"
+// #define IOT_CONFIG_WIFI_PASSWORD          "WIFI_PWD"
+#define IOT_CONFIG_WIFI_SSID              "TP-LINK_FF1E"
+#define IOT_CONFIG_WIFI_PASSWORD          "abcD1234"
 static const char* ssid = IOT_CONFIG_WIFI_SSID;
 static const char* password = IOT_CONFIG_WIFI_PASSWORD;
 
