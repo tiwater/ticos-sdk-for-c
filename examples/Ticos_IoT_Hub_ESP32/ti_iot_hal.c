@@ -12,10 +12,6 @@
 #define PROPERTY_TOPIC                    "devices/" IOT_CONFIG_DEVICE_ID "/twin/patch/desired"
 
 static esp_mqtt_client_handle_t mqtt_client;
-static ti_iot_hub_client client;
-
-static char mqtt_client_id[128];
-static char mqtt_username[128];
 
 /**
  * @brief mqtt客户端向云端推送数据的接口
@@ -33,12 +29,28 @@ int ti_iot_mqtt_client_publish(const char *topic, const char *data, int len, int
 }
 
 /**
- * @brief 获取设备ID的接口
- * @note  ticos sdk会调用此接口，获取设备ID。用户可以定义IOT_CONFIG_DEVICE_ID宏, 或者改写此函数将设备ID从其它地方输入
+ * @brief 获取设备 ID 的接口
+ * @note  Ticos SDK 会调用此接口，获取设备 ID。用户可以定义 IOT_CONFIG_DEVICE_ID 宏, 或者改写此函数将设备 ID 从其它地方输入
  */
 const char *ti_iot_get_device_id(void)
 {
     return IOT_CONFIG_DEVICE_ID;
+}
+
+/**
+ * @brief 获取 IoT Hub 域名的接口
+ * @note  Ticos SDK 会调用此接口，获取IoT Hub 域名。用户可以定义 IOT_CONFIG_IOTHUB_FQDN 宏, 或者改写此函数将域名从其它地方输入
+ */
+const char *ti_iot_get_mqtt_fqdn(void){
+    return IOT_CONFIG_IOTHUB_FQDN;
+}
+
+/**
+ * @brief 获取产品 ID 的接口
+ * @note  Ticos SDK 会调用此接口，获取产品 ID。用户可以定义 IOT_CONFIG_PRODUCT_ID 宏, 或者改写此函数将产品 ID 从其它地方输入
+ */
+const char *ti_iot_get_product_id(void){
+    return IOT_CONFIG_PRODUCT_ID;
 }
 
 /**
@@ -93,11 +105,12 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
   return ESP_OK;
 }
 
- /**
- * @brief 该函数为平台相关的mqtt函数，用户需要根据不同平台进行实现。
- * @note  用户设置好url, port, client, username后，会调用esp_mqtt_client_start()连接到ticos iot hub
+/**
+ * @brief 该函数为平台相关的mqtt函数，用户需要根据不同平台进行实现。需实现的功能为完成 MQTT client 初始化，供后续 MQTT 请求使用
+ * @param mqtt_client_id  MQTT 客户端 ID
+ * @param mqtt_username MQTT 用户名
  */
-static int hal_mqtt_client_init()
+int hal_mqtt_client_init(const char *mqtt_client_id, const char *mqtt_username)
 {
   esp_mqtt_client_config_t mqtt_config;
   memset(&mqtt_config, 0, sizeof(mqtt_config));
@@ -132,36 +145,6 @@ static int hal_mqtt_client_init()
     printf("MQTT client started\n");
     return 0;
   }
-}
-
- /**
- * @brief 启动ti iot cloud服务
- * @note  该函数先初始化ti_iot_hub_client，然后调用平台相关的mqtt client连接到云端, 用户需要实现hal_mqtt_client_init函数
- */
-void ti_iot_cloud_start()
-{
-  ti_iot_hub_client_options options = ti_iot_hub_client_options_default();
-  options.user_agent = TI_SPAN_FROM_STR("c%2F" TI_SDK_VERSION_STRING "(ard;esp32)");
-
-  if (ti_result_failed(ti_iot_hub_client_init(
-          &client,
-          TI_SPAN_FROM_STR(IOT_CONFIG_IOTHUB_FQDN),
-          TI_SPAN_FROM_STR(IOT_CONFIG_DEVICE_ID),
-          &options)))
-  {
-    printf("Failed initializing Ticos IoT Hub client\n");
-    return;
-  }
-
-  ti_span span_client_id = TI_SPAN_FROM_BUFFER(mqtt_client_id);
-  span_client_id = ti_span_copy(span_client_id, TI_SPAN_FROM_STR(IOT_CONFIG_DEVICE_ID));
-  span_client_id = ti_span_copy(span_client_id, TI_SPAN_FROM_STR("@@@"));
-  span_client_id = ti_span_copy(span_client_id, TI_SPAN_FROM_STR(IOT_CONFIG_PRODUCT_ID));
-
-  ti_span span_username = TI_SPAN_FROM_BUFFER(mqtt_username);
-  span_username = ti_span_copy(span_username, TI_SPAN_FROM_STR(IOT_CONFIG_DEVICE_ID));
-
-  hal_mqtt_client_init();
 }
 
  /**

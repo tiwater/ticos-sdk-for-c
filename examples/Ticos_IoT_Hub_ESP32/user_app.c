@@ -1,6 +1,6 @@
 #include "driver/gpio.h"
 #include "user_app.h"
-#include "ti_iot_api.h"
+#include <ti_iot_api.h>
 
 #define KEY_GPIO        16
 #define LED_GPIO        7

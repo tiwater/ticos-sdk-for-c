@@ -1,4 +1,4 @@
-# 概述
+# Ticos SDK 概述
 
 Ticos SDK 提供了 Ticos Cloud 协议接入方案，SDK使用了 MQTT 协议用于和云端进行通信，支持开发者快速接入 WIFI 设备到 Ticos Cloud平台。
 Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以聚焦在数据处理上，以达到快速开发的目的。

@@ -1,4 +1,4 @@
-## 简介
+## Ticos Iot Hub Arduino ESP32 示例简介
 
 本例演示如何编译并运行一个基于 ESP32 硬件平台和 Arduino 框架的 Ticos SDK IoT Hub 的示例程序。
 本示例可通过开发板上的按键或云端/小程序控制开发板上的 LED 亮灭。

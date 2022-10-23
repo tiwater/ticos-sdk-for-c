@@ -1,3 +1,15 @@
+// Copyright (c) Tiwater Technology Ltd. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+/**
+ * @file
+ *
+ * @brief 本头文件定义了用户通过 Ticos SDK 接入 Ticos Cloud 时需要用到的接口
+ *
+ * @note 你不能使用任何带有 '_' 前缀的标记（宏，函数，结构体，枚举等）。这些标记是 Ticos SDK 的
+ * 内部实现；我们没有为这些标记提供文档说明，它们很可能在 SDK 今后的版本中发生改变从而导致你的程序无法运行。
+ */
+
 #pragma once
 
 #include <_ti_cfg_prefix.h>
