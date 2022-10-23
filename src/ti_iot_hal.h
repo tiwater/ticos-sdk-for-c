@@ -1,3 +1,15 @@
+// Copyright (c) Tiwater Technology Ltd. All rights reserved.
+// SPDX-License-Identifier: MIT
+
+/**
+ * @file
+ *
+ * @brief 本头文件定义了使用 Ticos SDK 需要实现的平台相关函数
+ *
+ * @note 你不能使用任何带有 '_' 前缀的标记（宏，函数，结构体，枚举等）。这些标记是 Ticos SDK 的
+ * 内部实现；我们没有为这些标记提供文档说明，它们很可能在 SDK 今后的版本中发生改变从而导致你的程序无法运行。
+ */
+
 #ifndef _ti_IOT_HAL_H
 #define _ti_IOT_HAL_H
 
