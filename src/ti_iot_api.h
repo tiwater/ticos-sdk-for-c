@@ -15,20 +15,6 @@
 #include <_ti_cfg_prefix.h>
 
 /**
- * @brief 启动ticos iot 云服务.
- * @note  此接口需要用户实现，提供一个mqtt客户端服务，并启动连接到ticos cloud.
- * @return void
- */
-void ti_iot_cloud_start();
-
-/**
- * @brief 停止ticos iot 云服务.
- * @note  此接口需要用户实现，停止mqtt客户端与ticos cloud的连接.
- * @return void
- */
-void ti_iot_cloud_stop();
-
-/**
  * @brief  上报物模型属性到云端
  * @note   此接口会上报用户在ti_thingmodel.c里面定义的属性值到云端
  * @return TI_OK for success, other is error
@@ -52,4 +38,39 @@ void ti_iot_property_receive(const char *dat, int len);
  * @return void
  */
 void ti_iot_command_receive(const char *dat, int len);
+
+/**
+ * @brief 初始化 ti_iot_client
+ * @note  此函数必须先于任何其他 ti_iot 族函数被开发者调用
+ * @param mqtt_fqdn  mqtt hub 地址
+ * @param product id 产品 ID
+ * @param device id  设备 ID
+ * @return true if success, else fail
+ */
+bool ti_iot_client_init(const char* mqtt_fqdn,
+                            const char* product_id,
+                            const char* device_id);
+
+/**
+  * @brief 获取 mqtt_client_id
+  * @return mqtt_client_id
+  */
+const char* ti_iot_mqtt_client_id(void);
+
+/**
+  * @brief 获取 mqtt_username
+  * @return mqtt_username
+  */
+const char* ti_iot_mqtt_username(void);
+
+/**
+ * @brief MQTT 客户端向云端推送数据的接口
+ * @note  Ticos SDK 会调用此接口，完成数据的上传。需要用户实现此函数
+ * @param topic 上报信息的topic
+ * @param data 上报的数据内容
+ * @param len  上报的数据长度
+ * @return TI_OK for success, other for fail.
+ */
+int ti_iot_mqtt_client_publish(const char *topic, const char *data, int len);
+
 #include <_ti_cfg_suffix.h>

@@ -2,7 +2,6 @@
 #include "ti_core.h"
 #include "ti_iot.h"
 #include "ti_iot_api.h"
-#include "ti_iot_hal.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -27,6 +26,9 @@ extern const ti_iot_command_info_t ti_iot_command_tab[];
 extern const int ti_iot_telemetry_cnt;
 extern const int ti_iot_property_cnt;
 extern const int ti_iot_command_cnt;
+
+static const char* s_product_id;
+static const char* s_device_id;
 
 static ti_span __ti_iot_property_msg_pack(int index, ti_span payload)
 {
@@ -355,10 +357,50 @@ int ti_iot_property_report(void)
     printf("property report: \n%s\n", propertys_str);
 
     char report_topic[128];
-    sprintf(report_topic, "devices/%s/twin/patch/reported", ti_iot_get_device_id());
-    int ret = ti_iot_mqtt_client_publish(report_topic, propertys_str, strlen(propertys_str), 1, 0);
+    sprintf(report_topic, "devices/%s/twin/patch/reported", s_device_id);
+    int ret = ti_iot_mqtt_client_publish(report_topic, propertys_str, strlen(propertys_str));
     cJSON_free(propertys_str);
     ti_iot_property_free(properties);
     return ret;
 }
 
+bool ti_iot_client_init(const char* mqtt_fqdn, const char* product_id, const char* device_id)
+{
+    static ti_iot_hub_client client;
+    s_product_id = product_id;
+    s_device_id = device_id;
+    ti_iot_hub_client_options ops = ti_iot_hub_client_options_default();
+    //TODO: 设置真正的 agent
+    ops.user_agent = TI_SPAN_FROM_STR(
+            "c%2F" TI_SDK_VERSION_STRING "(ard;esp32)");
+
+    if (ti_result_failed(ti_iot_hub_client_init(
+                    &client,
+                    ti_span_create_from_str(mqtt_fqdn),
+                    ti_span_create_from_str(device_id),
+                    &ops)))
+    {
+        printf("Failed initializing Ticos IoT Hub client\n");
+        return false;
+    }
+    return true;
+}
+
+const char* ti_iot_mqtt_client_id(void)
+{
+    static char mqtt_client_id[128];
+    ti_span span_client_id = TI_SPAN_FROM_BUFFER(mqtt_client_id);
+    span_client_id = ti_span_copy(span_client_id, ti_span_create_from_str(s_device_id));
+    span_client_id = ti_span_copy(span_client_id, TI_SPAN_FROM_STR("@@@"));
+    span_client_id = ti_span_copy(span_client_id, ti_span_create_from_str(s_product_id));
+
+    return mqtt_client_id;
+}
+
+const char* ti_iot_mqtt_username(void)
+{
+    static char mqtt_username[128];
+    ti_span span_username = TI_SPAN_FROM_BUFFER(mqtt_username);
+    span_username = ti_span_copy(span_username, ti_span_create_from_str(s_device_id));
+    return mqtt_username;
+}
