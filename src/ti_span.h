@@ -158,7 +158,7 @@ TI_NODISCARD ti_span ti_span_create(uint8_t* ptr, int32_t size);
  * @return An #ti_span over the byte buffer where the size is set to the string's length not
  * including the `\0` terminator.
  */
-TI_NODISCARD ti_span ti_span_create_from_str(char* str);
+TI_NODISCARD ti_span ti_span_create_from_str(const char* str);
 
 /******************************  SPAN MANIPULATION */
 

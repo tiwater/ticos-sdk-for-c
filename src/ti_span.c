@@ -36,7 +36,7 @@ TI_NODISCARD ti_span ti_span_create(uint8_t* ptr, int32_t size)
 }
 #endif // TI_NO_PRECONDITION_CHECKING
 
-TI_NODISCARD ti_span ti_span_create_from_str(char* str)
+TI_NODISCARD ti_span ti_span_create_from_str(const char* str)
 {
   _ti_PRECONDITION_NOT_NULL(str);
 
