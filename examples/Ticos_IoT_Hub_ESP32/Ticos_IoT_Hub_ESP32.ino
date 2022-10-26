@@ -1,4 +1,4 @@
-#include "ti_iot_api.h"
+#include "my_mqtt.h"
 #include "user_app.h"
 #include "WiFi.h"
 #include "time.h"
@@ -7,6 +7,10 @@
 #define IOT_CONFIG_WIFI_PASSWORD          "WIFI_PWD"
 static const char* ssid = IOT_CONFIG_WIFI_SSID;
 static const char* password = IOT_CONFIG_WIFI_PASSWORD;
+
+#define IOT_CONFIG_IOTHUB_FQDN            "hub.ticos.cn"
+#define IOT_CONFIG_DEVICE_ID              "SLC1"
+#define IOT_CONFIG_PRODUCT_ID             "HITXM3K4IE"
 
 #define NTP_SERVERS "pool.ntp.org", "time.nist.gov"
 #define UNIX_TIME_NOV_13_2017 1510592825
@@ -47,7 +51,9 @@ void setup()
   // 同步网络时间
   initializeTime();
   // 建立和 Ticos Cloud 的连接
-  ti_iot_cloud_start();
+  my_mqtt_start(IOT_CONFIG_IOTHUB_FQDN,
+                IOT_CONFIG_PRODUCT_ID,
+                IOT_CONFIG_DEVICE_ID);
 }
 
 void loop()
