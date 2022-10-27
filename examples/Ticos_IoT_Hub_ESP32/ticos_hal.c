@@ -4,6 +4,7 @@
 
 #define IOT_CONFIG_DEVICE_ID              "TEST002"
 #define IOT_CONFIG_PRODUCT_ID             "BOB45WX7H4"
+#define IOT_CONFIG_DEVICE_SECRET          "7rjQAIYU7DPULJo8YlppEg=="
 
 static esp_mqtt_client_handle_t mqtt_client;
 
@@ -53,6 +54,15 @@ const char *ticos_get_product_id(void)
 }
 
 /**
+ * @brief 获取设备密钥的接口
+ * @note  ticos sdk会调用此接口，获取设备密钥。用户可以定义IOT_CONFIG_DEVICE_SECRET宏, 或者改写此函数将设备密钥从其它地方输入
+ */
+const char *ticos_get_device_secret()
+{
+    return IOT_CONFIG_DEVICE_SECRET;
+}
+
+/**
  * @brief 平台相关mqtt事件回调接口
  * @note  当使用mqtt client连接云端成功后，会产生MQTT_EVENT_CONNECTED事件，
  * 此时用户需要调用ticos_mqtt_subscribe()订阅和云端通信相关的topic
@@ -83,7 +93,8 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
  * @brief 启动平台相关的mqtt服务
  * @note  用户需要根据平台实现此函数，提供一个mqtt的客户端。ticos sdk会调用此接口连接到云端
  */
-int ticos_hal_mqtt_start(const char *url, int port, const char *client_id, const char *user_name)
+int ticos_hal_mqtt_start(const char *url, int port, const char *client_id,
+                            const char *user_name, const char *password)
 {
   esp_mqtt_client_config_t mqtt_config;
   memset(&mqtt_config, 0, sizeof(mqtt_config));
@@ -91,6 +102,7 @@ int ticos_hal_mqtt_start(const char *url, int port, const char *client_id, const
   mqtt_config.port = port;
   mqtt_config.client_id = client_id;
   mqtt_config.username = user_name;
+  mqtt_config.password = password;
 
   mqtt_config.keepalive = 30;
   mqtt_config.disable_clean_session = 0;
