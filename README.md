@@ -14,11 +14,11 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
      - 在 Arduino IDE 中, 选择菜单 `项目`, `加载库`, `管理库...`。
      - 搜索并安装 `ticos-sdk-for-c`。 (当前库还未过审，请参考下面步骤手动安装)
   2. 手动安装
-     - 将本 [Ticos SDK](https://github.com/tiwater/ticos-sdk-for-c-arduino) 克隆至 Arduino 库目录，通常该目录在 ～/Documents/Arduino/libraries，请根据你的开发平台中 Arduino IDE 的配置确定。
+     - 将本 [Ticos SDK](https://github.com/tiwater/ticos-sdk-for-c) 克隆至 Arduino 库目录，通常该目录在 ～/Documents/Arduino/libraries，请根据你的开发平台中 Arduino IDE 的配置确定。
 
 ### 平台原生开发环境
 
-  - 将本 [Ticos SDK](https://github.com/tiwater/ticos-sdk-for-c-arduino) 克隆至你工程开发环境，确保编译时包含本 SDK 的所有代码。
+  - 将本 [Ticos SDK](https://github.com/tiwater/ticos-sdk-for-c) 克隆至你工程开发环境，确保编译时包含本 SDK 的所有代码。
 
 ## 主要接口说明
   * API 接口: src/ticos_api.h
