@@ -2,9 +2,6 @@
 #include <mqtt_client.h>
 #include "ticos_api.h"
 
-#define IOT_CONFIG_DEVICE_ID              "TEST002"
-#define IOT_CONFIG_PRODUCT_ID             "BOB45WX7H4"
-
 static esp_mqtt_client_handle_t mqtt_client;
 
 /**
@@ -32,24 +29,6 @@ int ticos_hal_mqtt_publish(const char *topic, const char *data, int len, int qos
 int ticos_hal_mqtt_subscribe(const char *topic, int qos)
 {
     return esp_mqtt_client_subscribe(mqtt_client, topic, qos);
-}
-
-/**
- * @brief 获取设备ID的接口
- * @note  ticos sdk会调用此接口，获取设备ID。用户可以定义IOT_CONFIG_DEVICE_ID宏, 或者改写此函数将设备ID从其它地方输入
- */
-const char *ticos_get_device_id(void)
-{
-    return IOT_CONFIG_DEVICE_ID;
-}
-
-/**
- * @brief 获取产品ID的接口
- * @note  ticos sdk会调用此接口，获取产品ID。用户可以定义IOT_CONFIG_PRODUCT_ID宏, 或者改写此函数将产品ID从其它地方输入
- */
-const char *ticos_get_product_id(void)
-{
-    return IOT_CONFIG_PRODUCT_ID;
 }
 
 /**
