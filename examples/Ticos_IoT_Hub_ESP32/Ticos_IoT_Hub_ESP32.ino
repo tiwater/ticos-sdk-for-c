@@ -2,6 +2,7 @@
 #include "user_app.h"
 #include "WiFi.h"
 #include "time.h"
+#include <ti_iot_api.h>
 
 #define IOT_CONFIG_WIFI_SSID              "WIFI_SSID"
 #define IOT_CONFIG_WIFI_PASSWORD          "WIFI_PWD"
@@ -42,6 +43,11 @@ static void initializeTime()
   }
 }
 
+int ti_iot_mqtt_client_publish(const char* topic, const char* data, size_t len)
+{
+    return my_mqtt_client_publish(topic, data, len) ? 0 : 1;
+}
+
 void setup()
 {
   // 板级配置
@@ -51,9 +57,14 @@ void setup()
   // 同步网络时间
   initializeTime();
   // 建立和 Ticos Cloud 的连接
-  my_mqtt_start(IOT_CONFIG_IOTHUB_FQDN,
-                IOT_CONFIG_PRODUCT_ID,
-                IOT_CONFIG_DEVICE_ID);
+  ti_iot_client_init(IOT_CONFIG_IOTHUB_FQDN,
+                     IOT_CONFIG_PRODUCT_ID,
+                     IOT_CONFIG_DEVICE_ID);
+  my_mqtt_client_set_on_recv_cb(ti_iot_property_receive);
+  my_mqtt_client_start(IOT_CONFIG_IOTHUB_FQDN,
+                       ti_iot_mqtt_client_id(),
+                       ti_iot_mqtt_username(),
+                       IOT_CONFIG_DEVICE_ID);
 }
 
 void loop()

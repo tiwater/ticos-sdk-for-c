@@ -28,7 +28,7 @@ int ti_iot_property_report(void);
  * @param len 接收到的数据长度
  * @return void
  */
-void ti_iot_property_receive(const char *dat, int len);
+void ti_iot_property_receive(const char *dat, size_t len);
 
 /**
  * @brief  云端下发命令数据解析
@@ -37,7 +37,7 @@ void ti_iot_property_receive(const char *dat, int len);
  * @param len 接收到的数据长度
  * @return void
  */
-void ti_iot_command_receive(const char *dat, int len);
+void ti_iot_command_receive(const char *dat, size_t len);
 
 /**
  * @brief 初始化 ti_iot_client
@@ -50,6 +50,11 @@ void ti_iot_command_receive(const char *dat, int len);
 bool ti_iot_client_init(const char* mqtt_fqdn,
                             const char* product_id,
                             const char* device_id);
+
+/**
+ * @brief 逆初始化 ti_iot_client
+ */
+void ti_iot_client_deinit(void);
 
 /**
   * @brief 获取 mqtt_client_id
@@ -71,6 +76,6 @@ const char* ti_iot_mqtt_username(void);
  * @param len  上报的数据长度
  * @return TI_OK for success, other for fail.
  */
-int ti_iot_mqtt_client_publish(const char *topic, const char *data, int len);
+int ti_iot_mqtt_client_publish(const char *topic, const char *data, size_t len);
 
 #include <_ti_cfg_suffix.h>

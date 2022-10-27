@@ -2,27 +2,23 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mqtt_client.h>
-#include <ti_iot_api.h>
 
 static esp_mqtt_client_handle_t mqtt_client;
 static char property_topic[128];
+static my_mqtt_client_on_recv_cb s_my_mqtt_client_on_recv_cb;
 
-/**
- * @brief mqtt客户端向云端推送数据的接口
- * @note  ticos sdk会调用此接口，完成数据的上传。需要用户实现此函数
- * @param[in] topic 上报信息的topic
- * @param[in] data 上报的数据内容
- * @param[in] len  上报的数据长度
- * @return TI_OK for success, other for fail.
- */
-int ti_iot_mqtt_client_publish(const char *topic, const char *data, int len) {
-    return esp_mqtt_client_publish(mqtt_client, topic, data, len, 1, 0);
+bool my_mqtt_client_publish(const char* topic, const char* data, size_t len) {
+    return ESP_OK == esp_mqtt_client_publish(mqtt_client, topic, data, len, 1, 0);
+}
+
+void my_mqtt_client_set_on_recv_cb(my_mqtt_client_on_recv_cb cb) {
+    s_my_mqtt_client_on_recv_cb = cb;
 }
 
 /**
  * @brief 平台相关mqtt事件回调接口
- * @note  当使用mqtt client连接云端成功后，会产生MQTT_EVENT_CONNECTED事件，此时用户需要订阅属性相关的topic
- * 当client从云端接收到数据后，会产生MQTT_EVENT_DATA事件，此时用户需要回调ti_iot_property_receive将数据传给sdk进行处理
+ * @note  当使用mqtt client连接云端成功后，会产生MQTT_EVENT_CONNECTED事件；
+ *        当client从云端接收到数据后，会产生MQTT_EVENT_DATA事件
  */
 #if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(5, 0, 0)
 static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event) {
@@ -62,7 +58,9 @@ static void mqtt_event_handler(void *args, esp_event_base_t base, int32_t id, vo
             break;
         case MQTT_EVENT_DATA:
             printf("MQTT event MQTT_EVENT_DATA");
-            ti_iot_property_receive(event->data, event->data_len);
+            if (s_my_mqtt_client_on_recv_cb) {
+                s_my_mqtt_client_on_recv_cb(event->data, event->data_len);
+            }
             break;
         case MQTT_EVENT_BEFORE_CONNECT:
             printf("MQTT event MQTT_EVENT_BEFORE_CONNECT");
@@ -76,23 +74,12 @@ static void mqtt_event_handler(void *args, esp_event_base_t base, int32_t id, vo
 #endif
 }
 
-/**
- * @brief 启动ti iot cloud服务
- * @note  该函数启动mqtt client与云端的连接, 需要用户根据平台实现
- * @param[in] mqtt_fqdn
- * @param[in] product_id
- * @param[in] device_id
- * @return NDOA_OK if success, else fail
- */
-int my_mqtt_start(const char* mqtt_fqdn,
-                    const char* product_id,
-                    const char* device_id) {
-    ti_iot_client_init(mqtt_fqdn, product_id, device_id);
+int my_mqtt_client_start(const char* mqtt_fqdn,
+                         const char* mqtt_client_id,
+                         const char* mqtt_username,
+                         const char* device_id) {
     snprintf(property_topic, sizeof(property_topic),
             "devices/%s/twin/patch/desired", device_id);
-
-    const char* mqtt_client_id = ti_iot_mqtt_client_id();
-    const char* mqtt_username  = ti_iot_mqtt_username();
 
     char hub_uri[128] = {};
     snprintf(hub_uri, sizeof(hub_uri), "mqtt://%s", mqtt_fqdn);
@@ -139,12 +126,7 @@ int my_mqtt_start(const char* mqtt_fqdn,
     return 0;
 }
 
-/**
- * @brief 停止ti iot cloud服务
- * @note  该函数停止mqtt client与云端的连接, 需要用户根据平台实现
- * @return NDOA_OK if success, else fail
- */
-int my_mqtt_stop(void)
+int my_mqtt_client_stop(void)
 {
     esp_mqtt_client_stop(mqtt_client);
     mqtt_client = NULL;

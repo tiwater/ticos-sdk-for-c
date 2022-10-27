@@ -169,7 +169,7 @@ ti_span ti_iot_telemetry_msg_pack_by_name(const char *prop, ti_span payload)
     return __ti_iot_telemetry_msg_pack(i, payload);
 }
 
-void ti_iot_command_receive(const char *dat, int len)
+void ti_iot_command_receive(const char *dat, size_t len)
 {
     ti_json_reader json_parse;
     ti_result ret = ti_json_reader_init(&json_parse, ti_span_create((uint8_t *)dat, len), NULL);
@@ -298,7 +298,7 @@ static int ti_iot_property_free(cJSON *property)
     return 0;
 }
 
-void ti_iot_property_receive(const char *dat, int len)
+void ti_iot_property_receive(const char *dat, size_t len)
 {
     cJSON *properties = cJSON_Parse(dat);
     if (!properties)
@@ -384,6 +384,10 @@ bool ti_iot_client_init(const char* mqtt_fqdn, const char* product_id, const cha
         return false;
     }
     return true;
+}
+
+void ti_iot_client_deinit(void) {
+    // TODO
 }
 
 const char* ti_iot_mqtt_client_id(void)
