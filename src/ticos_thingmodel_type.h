@@ -5,6 +5,7 @@ extern "C"
 {
 #endif
 
+#include <stdbool.h>
 #include <time.h>
 
 typedef enum {

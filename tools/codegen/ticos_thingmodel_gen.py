@@ -13,8 +13,8 @@ TYPE = '@type'
 SCHEMA = 'schema'
 
 def type_to_iot_val_enum(t):
-    ''' 根据实际数据类型返回对应的TICOS_IOT_VAL_TYPE '''
-    return 'TICOS_IOT_VAL_TYPE_' + t.upper()
+    ''' 根据实际数据类型返回对应的TICOS_VAL_TYPE '''
+    return 'TICOS_VAL_TYPE_' + t.upper()
 
 def type_to_iot_val_type(t):
     ''' 根据实际数据类型返回对应的c语言类型 '''
@@ -35,10 +35,10 @@ def type_to_iot_val_type(t):
     return t
 
 def gen_func_name_getter(_key, _id):
-    return ' ti_iot_' + _key + '_' + _id + '_send'
+    return ' ticos_' + _key + '_' + _id + '_send'
 
 def gen_func_name_setter(_key, _id):
-    return 'ti_iot_' + _key + '_' + _id + '_recv'
+    return 'ticos_' + _key + '_' + _id + '_recv'
 
 def gen_func_head_getter(_key, _id, _type):
     return '\n' + _type + gen_func_name_getter(_key, _id) + '(void)'
@@ -102,7 +102,7 @@ def gen_enum(item):
     ''' 根据物模型json文件返回对应的物模型枚举列表 '''
     _k = item[TYPE].upper()
     _i = item[NAME]
-    return '\n    TICOS_IOT_' + _k + '_' + _i + ','
+    return '\n    TICOS_' + _k + '_' + _i + ','
 
 def gen_public_vars(item):
     _k = item[TYPE]
@@ -162,7 +162,7 @@ def gen_iot(date, tmpl_dir, json_file):
                     TELEMETRY_TABS = tele_tabs,
                     PROPERTY_TABS = prop_tabs,
                     COMMAND_TABS = cmmd_tabs))
-    with open('ti_thingmodel.c', 'w', encoding='utf-8') as f:
+    with open('ticos_thingmodel.c', 'w', encoding='utf-8') as f:
         f.writelines(dot_c_lines)
 
     dot_h_lines = []
@@ -175,8 +175,16 @@ def gen_iot(date, tmpl_dir, json_file):
                     PROPERTY_ENUM = prop_enum,
                     COMMAND_ENUM = cmmd_enum))
 
-    with open('ti_thingmodel.h', 'w', encoding='utf-8') as f:
+    with open('ticos_thingmodel.h', 'w', encoding='utf-8') as f:
         f.writelines(dot_h_lines)
+
+    wrapper_c_lines = []
+    with open(tmpl_dir + 'mqtt_wrapper_c', 'r', encoding='utf-8') as f:
+        tmpl = Template(f.read())
+        wrapper_c_lines.append(tmpl.substitute())
+
+    with open('ticos_mqtt_wrapper.c', 'w', encoding='utf-8') as f:
+        f.writelines(wrapper_c_lines)
 
 def generate(json_file=''):
     datetime_mark = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -188,7 +196,7 @@ def generate(json_file=''):
     gen_iot(datetime_mark, tmpl_dir, json_file)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='noda_hal_gen')
+    parser = argparse.ArgumentParser(description='ticos_thingmodel_gen')
     parser.add_argument('--json', type=str, default='', help='iot json file')
     args = parser.parse_args()
     generate(args.json)

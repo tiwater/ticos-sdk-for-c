@@ -1,9 +1,5 @@
-#include <stdio.h>
+#include <ticos_api.h>
 #include <mqtt_client.h>
-#include "ticos_api.h"
-
-#define IOT_CONFIG_DEVICE_ID              "TEST002"
-#define IOT_CONFIG_PRODUCT_ID             "BOB45WX7H4"
 
 static esp_mqtt_client_handle_t mqtt_client;
 
@@ -35,24 +31,6 @@ int ticos_hal_mqtt_subscribe(const char *topic, int qos)
 }
 
 /**
- * @brief 获取设备ID的接口
- * @note  ticos sdk会调用此接口，获取设备ID。用户可以定义IOT_CONFIG_DEVICE_ID宏, 或者改写此函数将设备ID从其它地方输入
- */
-const char *ticos_get_device_id(void)
-{
-    return IOT_CONFIG_DEVICE_ID;
-}
-
-/**
- * @brief 获取产品ID的接口
- * @note  ticos sdk会调用此接口，获取产品ID。用户可以定义IOT_CONFIG_PRODUCT_ID宏, 或者改写此函数将产品ID从其它地方输入
- */
-const char *ticos_get_product_id(void)
-{
-    return IOT_CONFIG_PRODUCT_ID;
-}
-
-/**
  * @brief 平台相关mqtt事件回调接口
  * @note  当使用mqtt client连接云端成功后，会产生MQTT_EVENT_CONNECTED事件，
  * 此时用户需要调用ticos_mqtt_subscribe()订阅和云端通信相关的topic
@@ -78,8 +56,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
   return ESP_OK;
 }
 
-
- /**
+/**
  * @brief 启动平台相关的mqtt服务
  * @note  用户需要根据平台实现此函数，提供一个mqtt的客户端。ticos sdk会调用此接口连接到云端
  */
@@ -120,11 +97,12 @@ int ticos_hal_mqtt_start(const char *url, int port, const char *client_id, const
   }
 }
 
- /**
+/**
  * @brief 停止平台相关的mqtt服务
  * @note  该函数停止mqtt客户端与云端的连接, 需要用户根据平台实现。ticos sdk停止时会调用此接口
  */
 void ticos_hal_mqtt_stop()
 {
   esp_mqtt_client_stop(mqtt_client);
+  mqtt_client = NULL;
 }

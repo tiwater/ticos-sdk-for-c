@@ -21,12 +21,12 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
   - 将本 [Ticos SDK](https://github.com/tiwater/ticos-sdk-for-c-arduino) 克隆至你工程开发环境，确保编译时包含本 SDK 的所有代码。
 
 ## 主要接口说明
-  * API 接口: src/ti_iot_api.h
+  * API 接口: src/ticos_api.h
 
-  - MCU在网络顺畅的情况下，调用提供 ti_iot_cloud_start() 启动云服务；
-  - 连接成功后，物模型属性发生改变时，用户可主动调用 ti_iot_property_report() 上报属性到云端；
-  - 云端下发数据时，需要调用 ti_iot_property_receive() 进行解析；
-  - 用户可主动调用 ti_iot_cloud_stop() 结束云端的连接。
+  - MCU在网络顺畅的情况下，调用提供 ticos_cloud_start() 启动云服务；
+  - 连接成功后，物模型属性发生改变时，用户可主动调用 ticos_property_report() 上报属性到云端；
+  - 云端下发数据时，需要调用 ticos_property_receive() 进行解析；
+  - 用户可主动调用 ticos_cloud_stop() 结束云端的连接。
 
 ## SDK 集成
 
@@ -39,16 +39,15 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
    - 要求: 已安装 python3 运行环境；
    - 将服务端下载的物模型文件(例: thing_model.json)放到 tools/codegen 目录下；
    - 在 tools/codegen 目录下运行: python ./ticos_thingmodel_gen.py --json thing_model.json；
-   - 成功后会在当前目录下产生 ti_thingmodel.c 和 ti_thingmodel.h 文件, 将生成的文件移入用户工程中的源文件目录；
-   - 在 ti_thingmodel.c 中填入完成用户的业务逻辑。_send 后缀的函数为设备端向云端发送物模型对应属性/遥测时回调的接口，函数应返回该属性/遥测的值，通常是从物理设备获取到对应的值后返回，由 SDK 将该值上传至云端；_recv 后缀的函数为设备端接收到云下发的属性/命令时调用的接口，函数的参数即为接收到的值，用户根据业务需求对该值进行处理；
+   - 成功后会在当前目录下产生 ticos_thingmodel.c 和 ticos_thingmodel.h 等文件, 将生成的文件移入用户工程中的源文件目录；
+   - 在 ticos_thingmodel.c 中填入完成用户的业务逻辑。_send 后缀的函数为设备端向云端发送物模型对应属性/遥测时回调的接口，函数应返回该属性/遥测的值，通常是从物理设备获取到对应的值后返回，由 SDK 将该值上传至云端；_recv 后缀的函数为设备端接收到云下发的属性/命令时调用的接口，函数的参数即为接收到的值，用户根据业务需求对该值进行处理；
 
-3. 提供对应硬件平台的 MQTT client 实现，使 SDK 可接入云端服务器，可参考 examples/Ticos_Iot_Hub_ESP32/ti_iot_hal.cpp 相应的接口实现:
+3. 提供对应硬件平台的 MQTT client 实现，使 SDK 可接入云端服务器，可参考 examples/Ticos_Iot_Hub_ESP32/ticos_mqtt_wrapper.cpp 相应的接口实现:
 
-   - 提供 ti_iot_cloud_start() 函数，能启动平台相关的 MQTT client 客户端连接到 Ticos Cloud；
-   - 提供 ti_iot_mqtt_client_publish() 函数，将数据上报到云端；
-   - 提供 ti_iot_get_device_id() 函数，获取设备 deviceID；
+   - 提供 ticos_cloud_start() 函数，能启动平台相关的 MQTT client 客户端连接到 Ticos Cloud；
+   - 提供 ticos_mqtt_client_publish() 函数，将数据上报到云端；
    - MQTT 连接成功后，订阅属性相关的 topic: "devices/{$deviceID}/twin/patch/desired"；
-   - 提供函数 ti_iot_property_receive()，在 MQTT 接收到数据后进行数据的处理；
+   - 提供函数 ticos_property_receive()，在 MQTT 接收到数据后进行数据的处理；
    - 根据河图中的产品定义信息，为 MQTT 连接提供 MQTT 服务器地址(`IOT_CONFIG_IOTHUB_FQDN`)、产品 ID (`IOT_CONFIG_PRODUCT_ID`)、设备 ID (`IOT_CONFIG_DEVICE_ID`) 这几组值。
 
 执行以上步骤后，即完成了对 SDK 的集成工作，可以尝试编译运行你的项目，应可直接接入 Ticos Cloud 进行操作。
