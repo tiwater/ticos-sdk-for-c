@@ -1,19 +1,24 @@
 /*************************************************************************
-  * @file ti_thingmodel.c 物模型代码文件
-  * @generate date: ${GEN_DATE}
+  * @file ticos_thingmodel.c 物模型代码文件
+  * @date ${GEN_DATE}
+  * @note 请在下面各个telemetry, property和command函数中写入相关的业务逻辑代码
+  *       ticos_telemetry_xxx 填写要上报的telemetry的值
+  *       ticos_property_xxx_send 填写要上报的property的值
+  *       ticos_property_xxx_recv 处理云端下发的property值
+  *       ticos_command_xxx 处理云端下发的命令
   ************************************************************************/
 
-#include "ti_thingmodel.h"
+#include "ticos_thingmodel.h"
 ${FUNC_DEFS}
-const ti_iot_telemetry_info_t ti_iot_telemetry_tab[] = {${TELEMETRY_TABS}
+const ticos_telemetry_info_t ticos_telemetry_tab[] = {${TELEMETRY_TABS}
 };
 
-const ti_iot_property_info_t ti_iot_property_tab[] = {${PROPERTY_TABS}
+const ticos_property_info_t ticos_property_tab[] = {${PROPERTY_TABS}
 };
 
-const ti_iot_command_info_t ti_iot_command_tab[] = {${COMMAND_TABS}
+const ticos_command_info_t ticos_command_tab[] = {${COMMAND_TABS}
 };
 
-const int ti_iot_telemetry_cnt = TICOS_IOT_TELEMETRY_MAX;
-const int ti_iot_property_cnt = TICOS_IOT_PROPERTY_MAX;
-const int ti_iot_command_cnt = TICOS_IOT_COMMAND_MAX;
+const int ticos_telemetry_cnt = TICOS_TELEMETRY_MAX;
+const int ticos_property_cnt = TICOS_PROPERTY_MAX;
+const int ticos_command_cnt = TICOS_COMMAND_MAX;
