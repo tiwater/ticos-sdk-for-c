@@ -12,9 +12,10 @@ extern "C"
  * @note  此接口需要用户实现，提供一个mqtt客户端服务，并启动连接到ticos cloud.
  * @param product_id 产品 ID
  * @param device_id 设备 ID
+ * @param device_secret 设备密钥
  * @return 0 for success, other is error
  */
-int ticos_cloud_start(const char* product_id, const char* device_id);
+int ticos_cloud_start(const char* product_id, const char* device_id, const char *device_secret);
 
 /**
  * @brief 停止ticos iot 云服务.

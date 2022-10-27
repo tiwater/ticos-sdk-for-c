@@ -60,7 +60,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
  * @brief 启动平台相关的mqtt服务
  * @note  用户需要根据平台实现此函数，提供一个mqtt的客户端。ticos sdk会调用此接口连接到云端
  */
-int ticos_hal_mqtt_start(const char *url, int port, const char *client_id, const char *user_name)
+int ticos_hal_mqtt_start(const char *url, int port, const char *client_id, const char *user_name, const char *passwd)
 {
   esp_mqtt_client_config_t mqtt_config;
   memset(&mqtt_config, 0, sizeof(mqtt_config));
@@ -68,6 +68,7 @@ int ticos_hal_mqtt_start(const char *url, int port, const char *client_id, const
   mqtt_config.port = port;
   mqtt_config.client_id = client_id;
   mqtt_config.username = user_name;
+  mqtt_config.password = passwd;
 
   mqtt_config.keepalive = 30;
   mqtt_config.disable_clean_session = 0;
