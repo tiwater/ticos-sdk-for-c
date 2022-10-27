@@ -178,6 +178,14 @@ def gen_iot(date, tmpl_dir, json_file):
     with open('ticos_thingmodel.h', 'w', encoding='utf-8') as f:
         f.writelines(dot_h_lines)
 
+    wrapper_c_lines = []
+    with open(tmpl_dir + 'mqtt_wrapper_c', 'r', encoding='utf-8') as f:
+        tmpl = Template(f.read())
+        wrapper_c_lines.append(tmpl.substitute())
+
+    with open('ticos_mqtt_wrapper.c', 'w', encoding='utf-8') as f:
+        f.writelines(wrapper_c_lines)
+
 def generate(json_file=''):
     datetime_mark = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     py_dir = os.path.dirname(os.path.abspath(__file__))

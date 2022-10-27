@@ -1,6 +1,5 @@
-#include <stdio.h>
+#include <ticos_api.h>
 #include <mqtt_client.h>
-#include "ticos_api.h"
 
 static esp_mqtt_client_handle_t mqtt_client;
 
@@ -57,8 +56,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
   return ESP_OK;
 }
 
-
- /**
+/**
  * @brief 启动平台相关的mqtt服务
  * @note  用户需要根据平台实现此函数，提供一个mqtt的客户端。ticos sdk会调用此接口连接到云端
  */
@@ -99,11 +97,12 @@ int ticos_hal_mqtt_start(const char *url, int port, const char *client_id, const
   }
 }
 
- /**
+/**
  * @brief 停止平台相关的mqtt服务
  * @note  该函数停止mqtt客户端与云端的连接, 需要用户根据平台实现。ticos sdk停止时会调用此接口
  */
 void ticos_hal_mqtt_stop()
 {
   esp_mqtt_client_stop(mqtt_client);
+  mqtt_client = NULL;
 }
