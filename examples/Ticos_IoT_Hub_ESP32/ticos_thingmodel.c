@@ -9,6 +9,7 @@
   ************************************************************************/
 
 #include "ticos_thingmodel.h"
+#include "user_app.h"
 
 int ticos_telemetry_pressure()
 {
@@ -32,7 +33,7 @@ const char* ticos_telemetry_warn_info()
 
 int ticos_property_switch_send()
 {
-    return 12;
+    return get_switch_state();
 }
 
 int ticos_property_switch_recv(int switch_)
@@ -42,11 +43,12 @@ int ticos_property_switch_recv(int switch_)
 
 int ticos_property_light_send()
 {
-    return 1;
+    return get_led_light();
 }
 
 int ticos_property_light_recv(int light)
 {
+    set_led_light(light);
     return 0;
 }
 

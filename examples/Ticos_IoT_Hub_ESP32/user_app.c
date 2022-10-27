@@ -1,6 +1,6 @@
 #include "driver/gpio.h"
 #include "user_app.h"
-#include <ti_iot_api.h>
+#include "ticos_api.h"
 
 #define KEY_GPIO        16
 #define LED_GPIO        7
@@ -50,7 +50,7 @@ void key_scan()
           key_process = 0;
           switch_state = 0;
           // 上报按键状态
-          ti_iot_property_report();
+          ticos_property_report();
         }
     }
 }
@@ -83,7 +83,7 @@ static void user_key_cb(int key, void *user_data)
         led_light = 1;
     }
     led_ctl(led_light);
-    ti_iot_property_report();
+    ticos_property_report();
 }
 
 void user_init()
