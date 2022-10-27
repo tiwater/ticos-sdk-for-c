@@ -1,4 +1,4 @@
-#include "ti_iot_api.h"
+#include "ticos_api.h"
 #include "user_app.h"
 #include "WiFi.h"
 #include "time.h"
@@ -47,7 +47,7 @@ void setup()
   // 同步网络时间
   initializeTime();
   // 建立和 Ticos Cloud 的连接
-  ti_iot_cloud_start();
+  ticos_cloud_start();
 }
 
 void loop()
