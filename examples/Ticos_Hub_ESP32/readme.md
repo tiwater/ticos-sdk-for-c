@@ -1,4 +1,4 @@
-## Ticos Iot Hub Arduino ESP32 示例简介
+## Ticos Hub Arduino ESP32 示例简介
 
 本例演示如何编译并运行一个基于 ESP32 硬件平台和 Arduino 框架的 Ticos SDK IoT Hub 的示例程序。
 本示例可通过开发板上的按键或云端/小程序控制开发板上的 LED 亮灭。
@@ -26,16 +26,16 @@
 3. 打开示例：
 
     - 从 Arduino IDE 中打开菜单 `文件`, `示例`, `Ticos SDK for C`。
-    - 点击 `Ticos_Iot_Hub_ESP32`，打开示例工程。
+    - 点击 `Ticos_Hub_ESP32`，打开示例工程。
 
 4. 配置示例：
 
-    在文件 `ti_iot_hal.c` 中配置你的 Ticos IoT Hub 以及设备信息：
-    - 设置 `IOT_CONFIG_IOTHUB_FQDN` 为你的 Ticos IoT Hub 域名地址；
+    在文件 `ti_iot_hal.c` 中配置你的 Ticos Hub 以及设备信息：
+    - 设置 `IOT_CONFIG_IOTHUB_FQDN` 为你的 Ticos Hub 域名地址；
     - 设置 `IOT_CONFIG_PRODUCT_ID` 为你的产品 ID；
     - 设置 `IOT_CONFIG_DEVICE_ID` 为你测试的设备 ID；
   
-    在 `Ticos_Iot_Hub_ESP32.ino` 中输入你的 Wi-Fi 信息：
+    在 `Ticos_Hub_ESP32.ino` 中输入你的 Wi-Fi 信息：
     - 设置 `IOT_CONFIG_WIFI_SSID` 为你的 Wi-Fi 名称；
     - 设置 `IOT_CONFIG_WIFI_PASSWORD` 为你的 Wi-Fi 密码；
   
@@ -69,7 +69,7 @@
         BSS    : 26528 )         - zeroed variables      (global, static) in RAM/HEAP
         Sketch uses 392272 bytes (37%) of program storage space. Maximum is 1044464 bytes.
         Global variables use 30040 bytes (36%) of dynamic memory, leaving 51880 bytes for local variables. Maximum is 81920 bytes.
-        /home/user/.arduino15/packages/esp8266/tools/python3/3.7.2-post1/python3 /home/user/.arduino15/packages/esp8266/hardware/esp8266/2.7.1/tools/upload.py --chip esp8266 --port /dev/ttyUSB0 --baud 230400 --before default_reset --after hard_reset write_flash 0x0 /tmp/arduino_build_826987/ticos_iot_hub_telemetry.ino.bin
+        /home/user/.arduino15/packages/esp8266/tools/python3/3.7.2-post1/python3 /home/user/.arduino15/packages/esp8266/hardware/esp8266/2.7.1/tools/upload.py --chip esp8266 --port /dev/ttyUSB0 --baud 230400 --before default_reset --after hard_reset write_flash 0x0 /tmp/arduino_build_826987/ticos_hub_telemetry.ino.bin
         esptool.py v2.8
         Serial port /dev/ttyUSB0
         Connecting....

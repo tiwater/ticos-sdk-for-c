@@ -42,7 +42,7 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
    - 成功后会在当前目录下产生 ticos_thingmodel.c 和 ticos_thingmodel.h 等文件, 将生成的文件移入用户工程中的源文件目录；
    - 在 ticos_thingmodel.c 中填入完成用户的业务逻辑。_send 后缀的函数为设备端向云端发送物模型对应属性/遥测时回调的接口，函数应返回该属性/遥测的值，通常是从物理设备获取到对应的值后返回，由 SDK 将该值上传至云端；_recv 后缀的函数为设备端接收到云下发的属性/命令时调用的接口，函数的参数即为接收到的值，用户根据业务需求对该值进行处理；
 
-3. 提供对应硬件平台的 MQTT client 实现，使 SDK 可接入云端服务器，可参考 examples/Ticos_Iot_Hub_ESP32/ticos_mqtt_wrapper.cpp 相应的接口实现:
+3. 提供对应硬件平台的 MQTT client 实现，使 SDK 可接入云端服务器，可参考 examples/Ticos_Hub_ESP32/ticos_mqtt_wrapper.cpp 相应的接口实现:
 
    - 提供 ticos_cloud_start() 函数，能启动平台相关的 MQTT client 客户端连接到 Ticos Cloud；
    - 提供 ticos_mqtt_client_publish() 函数，将数据上报到云端；
@@ -53,7 +53,7 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
 执行以上步骤后，即完成了对 SDK 的集成工作，可以尝试编译运行你的项目，应可直接接入 Ticos Cloud 进行操作。
 
 ## 示例
-   * 基于 ESP32 系列的工程示例: [Ticos IoT Hub ESPRESSIF ESP-32](examples/Ticos_IoT_Hub_ESP32/readme.md)。
+   * 基于 ESP32 系列的工程示例: [Ticos Hub ESPRESSIF ESP-32](examples/Ticos_Hub_ESP32/readme.md)。
 
 ### License
 
