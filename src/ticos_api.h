@@ -8,7 +8,7 @@ extern "C"
 {
 #endif
 /**
- * @brief 启动ticos iot 云服务.
+ * @brief 启动 ticos 云服务.
  * @note  此接口需要用户实现，提供一个mqtt客户端服务，并启动连接到ticos cloud.
  * @param product_id 产品 ID
  * @param device_id 设备 ID
@@ -18,7 +18,7 @@ extern "C"
 int ticos_cloud_start(const char* product_id, const char* device_id, const char *device_secret);
 
 /**
- * @brief 停止ticos iot 云服务.
+ * @brief 停止 ticos 云服务.
  * @note  此接口需要用户实现，停止mqtt客户端与ticos cloud的连接.
  * @return void
  */
