@@ -8,6 +8,7 @@
 #define PASSWORD    "WIFI_PSWD"
 #define PRODUCT_ID  "HITXM3K4IE"
 #define DEVICE_ID   "SLC1"
+#define DEVICE_SECRET   "7rjQAIYU7DPULJo8YlppEg=="
 
 #define NTP_SERVERS "pool.ntp.org", "time.nist.gov"
 #define UNIX_TIME_NOV_13_2017 1510592825
@@ -48,7 +49,7 @@ void setup()
   // 同步网络时间
   initializeTime();
   // 建立和 Ticos Cloud 的连接
-  ticos_cloud_start(PRODUCT_ID, DEVICE_ID);
+  ticos_cloud_start(PRODUCT_ID, DEVICE_ID, DEVICE_SECRET);
 }
 
 void loop()
