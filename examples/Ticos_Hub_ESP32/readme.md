@@ -30,14 +30,14 @@
 
 4. 配置示例：
 
-    在文件 `ti_iot_hal.c` 中配置你的 Ticos Hub 以及设备信息：
-    - 设置 `IOT_CONFIG_IOTHUB_FQDN` 为你的 Ticos Hub 域名地址；
-    - 设置 `IOT_CONFIG_PRODUCT_ID` 为你的产品 ID；
-    - 设置 `IOT_CONFIG_DEVICE_ID` 为你测试的设备 ID；
+    在文件 `Ticos_Hub_ESP32.ino` 中配置你的设备信息：
+    - 设置 `PRODUCT_ID` 为你的产品 ID；
+    - 设置 `DEVICE_ID` 为你测试的设备 ID；
+    - 设置 `DEVICE_SECRET` 为你的设备密钥；
   
     在 `Ticos_Hub_ESP32.ino` 中输入你的 Wi-Fi 信息：
-    - 设置 `IOT_CONFIG_WIFI_SSID` 为你的 Wi-Fi 名称；
-    - 设置 `IOT_CONFIG_WIFI_PASSWORD` 为你的 Wi-Fi 密码；
+    - 设置 `SSID` 为你的 Wi-Fi 名称；
+    - 设置 `PASSWORD` 为你的 Wi-Fi 密码；
   
     在 `user_app.c` 中根据你的外设所连接到的 GPIO 端口进行配置：
     - 设置 `KEY_GPIO` 为你按键 GPIO 端口；
