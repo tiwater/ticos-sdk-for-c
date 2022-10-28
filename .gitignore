@@ -55,5 +55,6 @@ sdkrepo/
 
 # Backup files
 *.bak
+*.swp
 
 .DS_Store

@@ -110,13 +110,16 @@ def gen_public_vars(item):
     _t = type_to_iot_val_type(item[SCHEMA])
     return  _t + ' ' + _k + '_' + _i + ';'
 
-def gen_iot(date, tmpl_dir, json_file):
+def gen_iot(date, tmpl_dir, json_file, json_data, to='.'):
     ''' 根据物模型json文件返回对应的物模型接口文件 '''
     import json
 
     raw = None
-    with open(json_file, 'r', encoding='utf-8') as f:
-        raw = json.load(f)
+    if json_file:
+        with open(json_file, 'r', encoding='utf-8') as f:
+            raw = json.load(f)
+    elif json_data:
+        raw = json.loads(json_data)
 
     if not raw:
         raise Exception('物模型文件异常')
@@ -162,7 +165,7 @@ def gen_iot(date, tmpl_dir, json_file):
                     TELEMETRY_TABS = tele_tabs,
                     PROPERTY_TABS = prop_tabs,
                     COMMAND_TABS = cmmd_tabs))
-    with open('ticos_thingmodel.c', 'w', encoding='utf-8') as f:
+    with open(to + '/ticos_thingmodel.c', 'w', encoding='utf-8') as f:
         f.writelines(dot_c_lines)
 
     dot_h_lines = []
@@ -175,7 +178,7 @@ def gen_iot(date, tmpl_dir, json_file):
                     PROPERTY_ENUM = prop_enum,
                     COMMAND_ENUM = cmmd_enum))
 
-    with open('ticos_thingmodel.h', 'w', encoding='utf-8') as f:
+    with open(to + '/ticos_thingmodel.h', 'w', encoding='utf-8') as f:
         f.writelines(dot_h_lines)
 
     wrapper_c_lines = []
@@ -183,20 +186,22 @@ def gen_iot(date, tmpl_dir, json_file):
         tmpl = Template(f.read())
         wrapper_c_lines.append(tmpl.substitute())
 
-    with open('ticos_mqtt_wrapper.c', 'w', encoding='utf-8') as f:
+    with open(to + '/ticos_mqtt_wrapper.c', 'w', encoding='utf-8') as f:
         f.writelines(wrapper_c_lines)
 
-def generate(json_file=''):
+def generate(json_file='', json_data='', to='.'):
     datetime_mark = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     py_dir = os.path.dirname(os.path.abspath(__file__))
     tmpl_dir = py_dir + '/templates/'
 
-    if not json_file:
+    if not (json_file or json_data):
         raise Exception('请指定物模型json文件')
-    gen_iot(datetime_mark, tmpl_dir, json_file)
+    gen_iot(datetime_mark, tmpl_dir, json_file, json_data, to)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='ticos_thingmodel_gen')
-    parser.add_argument('--json', type=str, default='', help='iot json file')
+    parser.add_argument('--json_file', type=str, help='iot json file')
+    parser.add_argument('--json_data', type=str, help='iot json data')
+    parser.add_argument('--to', type=str, default='.', help='target directory')
     args = parser.parse_args()
-    generate(args.json)
+    generate(args.json_file, args.json_data, args.to)

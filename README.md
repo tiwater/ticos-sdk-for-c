@@ -38,7 +38,7 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
 
    - 要求: 已安装 python3 运行环境；
    - 将服务端下载的物模型文件(例: thing_model.json)放到 tools/codegen 目录下；
-   - 在 tools/codegen 目录下运行: python ./ticos_thingmodel_gen.py --json thing_model.json；
+   - 在 tools/codegen 目录下运行: python ./ticos_thingmodel_gen.py --json_file thing_model.json；
    - 成功后会在当前目录下产生 ticos_thingmodel.c 和 ticos_thingmodel.h 等文件, 将生成的文件移入用户工程中的源文件目录；
    - 在 ticos_thingmodel.c 中填入完成用户的业务逻辑。_send 后缀的函数为设备端向云端发送物模型对应属性/遥测时回调的接口，函数应返回该属性/遥测的值，通常是从物理设备获取到对应的值后返回，由 SDK 将该值上传至云端；_recv 后缀的函数为设备端接收到云下发的属性/命令时调用的接口，函数的参数即为接收到的值，用户根据业务需求对该值进行处理；
 
