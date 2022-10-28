@@ -24,8 +24,10 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
   * API 接口: src/ticos_api.h
 
   - MCU在网络顺畅的情况下，调用提供 ticos_cloud_start() 启动云服务；
+  - 连接成功后，用户需要调用 ticos_mqtt_subscribe() 函数订阅sdk相关topic用于接收云端消息；
   - 连接成功后，物模型属性发生改变时，用户可主动调用 ticos_property_report() 上报属性到云端；
-  - 云端下发数据时，需要调用 ticos_property_receive() 进行解析；
+  - 连接成功后，用户可主动调用 ticos_telemetry_report() 上报遥测到云端；
+  - 云端下发数据时，需要调用 ticos_msg_recv() 进行解析；
   - 用户可主动调用 ticos_cloud_stop() 结束云端的连接。
 
 ## SDK 集成
@@ -44,11 +46,12 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
 
 3. 提供对应硬件平台的 MQTT client 实现，使 SDK 可接入云端服务器，可参考 examples/Ticos_Hub_ESP32/ticos_mqtt_wrapper.cpp 相应的接口实现:
 
-   - 提供 ticos_cloud_start() 函数，能启动平台相关的 MQTT client 客户端连接到 Ticos Cloud；
-   - 提供 ticos_mqtt_client_publish() 函数，将数据上报到云端；
-   - MQTT 连接成功后，订阅属性相关的 topic: "devices/{$deviceID}/twin/patch/desired"；
-   - 提供函数 ticos_property_receive()，在 MQTT 接收到数据后进行数据的处理；
-   - 根据河图中的产品定义信息，为 MQTT 连接提供 MQTT 服务器地址(`IOT_CONFIG_IOTHUB_FQDN`)、产品 ID (`IOT_CONFIG_PRODUCT_ID`)、设备 ID (`IOT_CONFIG_DEVICE_ID`) 这几组值。
+   - 提供 ticos_hal_mqtt_start() 函数，能启动平台相关的 MQTT client 客户端连接到 Ticos Cloud；
+   - 提供 ticos_hal_mqtt_publish() 函数，将数据上报到云端；
+   - 提供 ticos_hal_mqtt_subscribe() 函数，订阅mqtt相关的主题
+   - 提供 ticos_hal_mqtt_stop() 函数，停止平台相关的 MQTT client 服务
+   - MQTT在接收到数据后，需要调用sdk中的 ticos_msg_recv() 函数进行数据的处理；
+   - 根据河图中的产品定义信息，为 MQTT 连接提供产品 ID、设备 ID、设备密钥这三组值，在调用 ticos_cloud_start() 时传入此三元组信息。
 
 执行以上步骤后，即完成了对 SDK 的集成工作，可以尝试编译运行你的项目，应可直接接入 Ticos Cloud 进行操作。
 
