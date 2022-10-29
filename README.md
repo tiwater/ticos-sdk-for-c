@@ -18,7 +18,8 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
 
 ### 平台原生开发环境
 
-  - 将本 [Ticos SDK](https://github.com/tiwater/ticos-sdk-for-c) 克隆至你工程开发环境，确保编译时包含本 SDK 的所有代码。
+  - 将本 [Ticos SDK](https://github.com/tiwater/ticos-sdk-for-c) 克隆至你的工程开发环境，确保编译时包含本 SDK 的所有代码。
+  - 或者从 [河图](https://console.ticos.cn) `-> 产品 -> 硬件开发 -> SDK 下载`项中进行下载, 将下载的 zip 包中的文件移至你的工程开发环境。
 
 ## 主要接口说明
   * API 接口: src/ticos_api.h
@@ -36,13 +37,15 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
 
 1. 在[河图](https://console.ticos.cn)中创建硬件产品，并根据产品需求定义出物模型；
    
-2. 通过脚本将物模型文件转换为C代码，添加相应的数据处理：
+2. 为物模型添加相应的业务处理逻辑：
 
-   - 要求: 已安装 python3 运行环境；
-   - 将服务端下载的物模型文件(例: thing_model.json)放到 tools/codegen 目录下；
-   - 在 tools/codegen 目录下运行: python ./ticos_thingmodel_gen.py --json_file thing_model.json；
-   - 成功后会在当前目录下产生 ticos_thingmodel.c 和 ticos_thingmodel.h 等文件, 将生成的文件移入用户工程中的源文件目录；
-   - 在 ticos_thingmodel.c 中填入完成用户的业务逻辑。_send 后缀的函数为设备端向云端发送物模型对应属性/遥测时回调的接口，函数应返回该属性/遥测的值，通常是从物理设备获取到对应的值后返回，由 SDK 将该值上传至云端；_recv 后缀的函数为设备端接收到云下发的属性/命令时调用的接口，函数的参数即为接收到的值，用户根据业务需求对该值进行处理；
+   - 从 [河图](https://console.ticos.cn) `-> 产品 -> 硬件开发 -> SDK 下载`项中进行下载, 将下载的 zip 包解压缩后，将其中的文件移入用户工程中的源文件目录；
+   - 或者也可按如下步骤手动操作，从而可以对物模型代码的生成过程中的步骤根据需要进行调整：
+     - 要求: 已安装 python3 运行环境；
+     - 将从服务端下载的物模型文件(例: thing_model.json)放到 tools/codegen 目录下；
+     - 在 tools/codegen 目录下运行: python ./ticos_thingmodel_gen.py --json_file thing_model.json；
+     - 成功后会在当前目录下产生 ticos_thingmodel.c 和 ticos_thingmodel.h 等文件, 将生成的文件移入用户工程中的源文件目录，或者与用户已经存在的代码进行合并；
+   - 在 ticos_thingmodel.c 中填入用户的业务逻辑。_send 后缀的函数为设备端向云端发送物模型对应属性/遥测时回调的接口，函数应返回该属性/遥测的值，通常是从物理设备获取到对应的值后返回，由 SDK 将该值上传至云端；_recv 后缀的函数为设备端接收到云下发的属性/命令时调用的接口，函数的参数即为接收到的值，用户根据业务需求对该值进行处理；
 
 3. 提供对应硬件平台的 MQTT client 实现，使 SDK 可接入云端服务器，可参考 examples/Ticos_Hub_ESP32/ticos_mqtt_wrapper.cpp 相应的接口实现:
 
