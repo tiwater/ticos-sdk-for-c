@@ -44,9 +44,9 @@ void ticos_command_receive(const char *dat, int len);
 void ticos_property_receive(const char *dat, int len);
 void ticos_msg_recv(const char *topic, const char *dat, int len)
 {
-    if (!strcmp(topic, ticos_command_request_topic)) {
+    if (!strncmp(topic, ticos_command_request_topic, strlen(ticos_command_request_topic))) {
         ticos_command_receive(dat, len);
-    } else if (!strcmp(topic, ticos_property_desired_topic)) {
+    } else if (!strncmp(topic, ticos_property_desired_topic, strlen(ticos_property_desired_topic))) {
         ticos_property_receive(dat, len);
     }
 }
