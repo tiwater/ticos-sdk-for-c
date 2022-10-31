@@ -19,8 +19,8 @@ extern const int ticos_telemetry_cnt;
 extern const int ticos_property_cnt;
 extern const int ticos_command_cnt;
 
-extern char *ticos_property_report_topic;
-extern char *ticos_telemery_topic;
+extern char ticos_property_report_topic[];
+extern char ticos_telemery_topic[];
 int ticos_hal_mqtt_publish(const char *topic, const char *data, int len, int qos, int retain);
 
 int ticos_telemetry_report(void)
