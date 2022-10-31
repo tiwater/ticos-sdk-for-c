@@ -1,13 +1,14 @@
 #include <ticos_api.h>
 #include <WiFi.h>
 #include <time.h>
+#include <stdio.h>
 
 #include "user_app.h"
 
-#define SSID        "WIFI_SSID"
-#define PASSWORD    "WIFI_PSWD"
-#define PRODUCT_ID  "HITXM3K4IE"
-#define DEVICE_ID   "SLC1"
+#define SSID        "Tiwater"
+#define PASSWORD    "Ti210223"
+#define PRODUCT_ID  "BOB45WX7H4"
+#define DEVICE_ID   "TEST002"
 #define DEVICE_SECRET   "7rjQAIYU7DPULJo8YlppEg=="
 
 #define NTP_SERVERS "pool.ntp.org", "time.nist.gov"
@@ -21,23 +22,29 @@
 
 static void connectToWiFi()
 {
+  printf("wifi connect start\r\n");
   WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, PASSWORD);
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
+    printf("*\n");
   }
+  printf("wifi connect ok\n");
 }
 
 static void initializeTime()
 {
+  printf("sntp time start\r\n");
   configTime(GMT_OFFSET_SECS, GMT_OFFSET_SECS_DST, NTP_SERVERS);
   time_t now = time(NULL);
   while (now < UNIX_TIME_NOV_13_2017)
   {
     delay(500);
     now = time(nullptr);
+    printf("T--\n");
   }
+  printf("sntp end\r\n");
 }
 
 void setup()

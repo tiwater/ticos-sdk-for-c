@@ -41,11 +41,11 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
 {
   switch (event->event_id) {
     case MQTT_EVENT_CONNECTED:
-      printf("MQTT event MQTT_EVENT_CONNECTED");
+      printf("MQTT event MQTT_EVENT_CONNECTED\n");
       ticos_mqtt_subscribe();
       break;
     case MQTT_EVENT_DATA:
-      printf("MQTT event MQTT_EVENT_DATA");
+      printf("MQTT event MQTT_EVENT_DATA: [topic]:%s, [data]%s\r\n", event->topic, event->data);
       ticos_msg_recv(event->topic, event->data, event->data_len);
       break;
     default:
@@ -80,7 +80,7 @@ int ticos_hal_mqtt_start(const char *url, int port, const char *client_id, const
 
   if (mqtt_client == NULL)
   {
-    printf("Failed creating mqtt client");
+    printf("Failed creating mqtt client\n");
     return 1;
   }
 
@@ -88,12 +88,12 @@ int ticos_hal_mqtt_start(const char *url, int port, const char *client_id, const
 
   if (start_result != ESP_OK)
   {
-    printf("Could not start mqtt client; error code:");
+    printf("Could not start mqtt client; error code:\n");
     return 1;
   }
   else
   {
-    printf("MQTT client started");
+    printf("MQTT client started\n");
     return 0;
   }
 }
