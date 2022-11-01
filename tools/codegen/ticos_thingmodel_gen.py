@@ -18,21 +18,27 @@ def type_to_iot_val_enum(t):
 
 def type_to_iot_val_type(t):
     ''' 根据实际数据类型返回对应的c语言类型 '''
-    if t == 'boolean':
-        return 'bool'
-    elif t == 'integer':
-        return 'int'
-    elif t == 'float':
-        return 'float'
-    elif t == 'string':
-        return 'const char*'
-    elif t == 'enum':
-        return 'int'
-    elif t == 'timestamp':
-        return 'time_t'
-    elif t == 'duration':
-        return 'time_t'
-    return t
+    if type(t) == type('str'):
+        if t == 'boolean':
+            return 'bool'
+        elif t == 'integer':
+            return 'int'
+        elif t == 'float':
+            return 'float'
+        elif t == 'string':
+            return 'const char*'
+        elif t == 'enum':
+            return 'int'
+        elif t == 'timestamp':
+            return 'time_t'
+        elif t == 'duration':
+            return 'time_t'
+        return t
+    elif type(t) == type({}):
+        t = t[TYPE]
+        if t == 'Enum':
+            return 'int'
+        return t
 
 def gen_func_name_getter(_key, _id):
     return ' ticos_' + _key + '_' + _id + '_send'
@@ -87,6 +93,8 @@ def gen_table(item, need_getter, need_setter):
     _k = item[TYPE]
     _i = item[NAME]
     _t = item[SCHEMA]
+    if type(_t) == type({}):
+        _t = _t[TYPE]
     _e = type_to_iot_val_enum(_t)
     getter = gen_func_name_getter(_k, _i)
     setter = gen_func_name_setter(_k, _i)
@@ -147,11 +155,11 @@ def gen_iot(date, tmpl_dir, json_file, json_data, to='.'):
             func_defs += gen_func_defs(item, True, True)
             prop_tabs += gen_table(item, True, True)
             prop_enum += gen_enum(item)
-        elif _type == CMMD:
-            func_decs += gen_func_decs(item, False, True)
-            func_defs += gen_func_defs(item, False, True)
-            cmmd_tabs += gen_table(item, False, True)
-            cmmd_enum += gen_enum(item)
+        #elif _type == CMMD:
+        #    func_decs += gen_func_decs(item, False, True)
+        #    func_defs += gen_func_defs(item, False, True)
+        #    cmmd_tabs += gen_table(item, False, True)
+        #    cmmd_enum += gen_enum(item)
     tele_enum += gen_enum({ TYPE:TELE, NAME:'MAX'}) + '\n'
     prop_enum += gen_enum({ TYPE:PROP, NAME:'MAX'}) + '\n'
     cmmd_enum += gen_enum({ TYPE:CMMD, NAME:'MAX'}) + '\n'
