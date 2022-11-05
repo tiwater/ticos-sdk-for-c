@@ -20,6 +20,7 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
 
   1. 脚本安装
      - 执行下载的模板 zip 包目录下的 install.sh 即可安装 Ticos-SDK 代码包
+     - 安装脚本会将 Ticos-SDK 安装到指定目录下，建议创建环境变量 TICOS_SDK_PATH=${HOME}/.ticos/packages/ticos-sdk-for-c 并在你的工程开发环境引入此环境变量
   2. 手动安装
      - 将 [Ticos SDK](https://github.com/tiwater/ticos-sdk-for-c) 克隆至你的工程开发环境，确保编译时包含本 SDK 的所有代码。
   3. 代码移植
