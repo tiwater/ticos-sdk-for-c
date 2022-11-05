@@ -1,6 +1,7 @@
 /*************************************************************************
-  * @file ticos_thingmodel.c 物模型代码文件
-  * @date ${GEN_DATE}
+  * @file ticos_thingmodel.c
+  * @brief 物模型代码文件
+  * @date ${DATE_TIME}
   * @note 请在下面各个telemetry, property和command函数中写入相关的业务逻辑代码
   *       ticos_telemetry_xxx 填写要上报的telemetry的值
   *       ticos_property_xxx_send 填写要上报的property的值

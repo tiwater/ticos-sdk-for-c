@@ -12,33 +12,29 @@ NAME = 'name'
 TYPE = '@type'
 SCHEMA = 'schema'
 
-def type_to_iot_val_enum(t):
-    ''' 根据实际数据类型返回对应的TICOS_VAL_TYPE '''
-    return 'TICOS_VAL_TYPE_' + t.upper()
+''' IOT数据类型 到 c语言类型 的字典 '''
+iot_type_map = {
+    "boolean":  "bool",
+    "integer":  "int",
+    "float"  :  "float",
+    "double" :  "float", # TODO 需要后期支持
+    "string" :  "const char*",
+    "Enum"   :  "int",   # TODO 是否可以映射short类型?
+    "timestamp":"time_t",
+    "duration" :"time_t"
+}
 
-def type_to_iot_val_type(t):
-    ''' 根据实际数据类型返回对应的c语言类型 '''
-    if type(t) == type('str'):
-        if t == 'boolean':
-            return 'bool'
-        elif t == 'integer':
-            return 'int'
-        elif t == 'float':
-            return 'float'
-        elif t == 'string':
-            return 'const char*'
-        elif t == 'enum':
-            return 'int'
-        elif t == 'timestamp':
-            return 'time_t'
-        elif t == 'duration':
-            return 'time_t'
-        return t
-    elif type(t) == type({}):
+def schema_to_c_type(t):
+    ''' 根据iot_type_map字典返回 c语言类型 '''
+    if type(t) == type({}):
         t = t[TYPE]
-        if t == 'Enum':
-            return 'int'
-        return t
+    return iot_type_map[t]
+
+def gen_iot_val_type(t):
+    ''' 根据实际数据类型返回对应的TICOS_VAL_TYPE '''
+    if type(t) == type({}):
+        t = t[TYPE]
+    return 'TICOS_VAL_TYPE_' + t.upper()
 
 def gen_func_name_getter(_key, _id):
     return ' ticos_' + _key + '_' + _id + '_send'
@@ -67,7 +63,7 @@ def gen_func_decs(item, need_getter, need_setter):
     decs = ''
     _k = item[TYPE]
     _i = item[NAME]
-    _t = type_to_iot_val_type(item[SCHEMA])
+    _t = schema_to_c_type(item[SCHEMA])
     if need_getter:
         decs += gen_func_head_getter(_k, _i, _t) + ';'
     if need_setter:
@@ -79,7 +75,7 @@ def gen_func_defs(item, need_getter, need_setter):
     defs = ''
     _k = item[TYPE]
     _i = item[NAME]
-    _t = type_to_iot_val_type(item[SCHEMA])
+    _t = schema_to_c_type(item[SCHEMA])
     if need_getter:
         head = gen_func_head_getter(_k, _i, _t)
         defs += head + gen_func_body_getter(_k, _i, _t)
@@ -93,9 +89,7 @@ def gen_table(item, need_getter, need_setter):
     _k = item[TYPE]
     _i = item[NAME]
     _t = item[SCHEMA]
-    if type(_t) == type({}):
-        _t = _t[TYPE]
-    _e = type_to_iot_val_enum(_t)
+    _e = gen_iot_val_type(_t)
     getter = gen_func_name_getter(_k, _i)
     setter = gen_func_name_setter(_k, _i)
     if need_getter:
@@ -115,22 +109,22 @@ def gen_enum(item):
 def gen_public_vars(item):
     _k = item[TYPE]
     _i = item[NAME]
-    _t = type_to_iot_val_type(item[SCHEMA])
+    _t = schema_to_c_type(item[SCHEMA])
     return  _t + ' ' + _k + '_' + _i + ';'
 
-def gen_iot(date, tmpl_dir, json_file, json_data, to='.'):
+def gen_iot(date_time, tmpl_dir, thingmodel, to='.'):
     ''' 根据物模型json文件返回对应的物模型接口文件 '''
     import json
 
     raw = None
-    if json_file:
-        with open(json_file, 'r', encoding='utf-8') as f:
+    if thingmodel.endswith('.json'):
+        with open(thingmodel, 'r') as f:
             raw = json.load(f)
-    elif json_data:
-        raw = json.loads(json_data)
+    else:
+        raw = json.loads(thingmodel)
 
     if not raw:
-        raise Exception('物模型文件异常')
+        raise Exception('物模型解析异常')
 
     func_decs = ''
     tele_enum = ''
@@ -168,7 +162,7 @@ def gen_iot(date, tmpl_dir, json_file, json_data, to='.'):
     with open(tmpl_dir + 'iot_c', 'r', encoding='utf-8') as f:
         tmpl = Template(f.read())
         dot_c_lines.append(tmpl.substitute(
-                    GEN_DATE = date,
+                    DATE_TIME = date_time,
                     FUNC_DEFS = func_defs,
                     TELEMETRY_TABS = tele_tabs,
                     PROPERTY_TABS = prop_tabs,
@@ -180,7 +174,7 @@ def gen_iot(date, tmpl_dir, json_file, json_data, to='.'):
     with open(tmpl_dir + 'iot_h', 'r', encoding='utf-8') as f:
         tmpl = Template(f.read())
         dot_h_lines.append(tmpl.substitute(
-                    GEN_DATE = date,
+                    DATE_TIME = date_time,
                     FUNC_DECS = func_decs,
                     TELEMETRY_ENUM = tele_enum,
                     PROPERTY_ENUM = prop_enum,
@@ -189,27 +183,18 @@ def gen_iot(date, tmpl_dir, json_file, json_data, to='.'):
     with open(to + '/ticos_thingmodel.h', 'w', encoding='utf-8') as f:
         f.writelines(dot_h_lines)
 
-    wrapper_c_lines = []
-    with open(tmpl_dir + 'mqtt_wrapper_c', 'r', encoding='utf-8') as f:
-        tmpl = Template(f.read())
-        wrapper_c_lines.append(tmpl.substitute())
-
-    with open(to + '/ticos_mqtt_wrapper.c', 'w', encoding='utf-8') as f:
-        f.writelines(wrapper_c_lines)
-
-def generate(json_file='', json_data='', to='.'):
-    datetime_mark = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+def generate(thingmodel='', to='.'):
+    date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     py_dir = os.path.dirname(os.path.abspath(__file__))
     tmpl_dir = py_dir + '/templates/'
 
-    if not (json_file or json_data):
-        raise Exception('请指定物模型json文件')
-    gen_iot(datetime_mark, tmpl_dir, json_file, json_data, to)
+    if not thingmodel:
+        raise Exception('请指定物模型json')
+    gen_iot(date_time, tmpl_dir, thingmodel, to)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='ticos_thingmodel_gen')
-    parser.add_argument('--json_file', type=str, help='iot json file')
-    parser.add_argument('--json_data', type=str, help='iot json data')
+    parser.add_argument('--thingmodel', type=str, default='', help='json file|data of thing model')
     parser.add_argument('--to', type=str, default='.', help='target directory')
     args = parser.parse_args()
-    generate(args.json_file, args.json_data, args.to)
+    generate(args.thingmodel, args.to)

@@ -18,8 +18,12 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
 
 ### 平台原生开发环境
 
-  - 将本 [Ticos SDK](https://github.com/tiwater/ticos-sdk-for-c) 克隆至你的工程开发环境，确保编译时包含本 SDK 的所有代码。
-  - 或者从 [河图](https://console.ticos.cn) `-> 产品 -> 硬件开发 -> SDK 下载`项中进行下载, 将下载的 zip 包中的文件移至你的工程开发环境。
+  1. 脚本安装
+     - 执行下载的模板 zip 包目录下的 install.sh 即可安装 Ticos-SDK 代码包
+  2. 手动安装
+     - 将 [Ticos SDK](https://github.com/tiwater/ticos-sdk-for-c) 克隆至你的工程开发环境，确保编译时包含本 SDK 的所有代码。
+  3. 代码移植
+     - 将下载的 zip 包中的代码文件移至你的工程开发环境
 
 ## 主要接口说明
   * API 接口: src/ticos_api.h
