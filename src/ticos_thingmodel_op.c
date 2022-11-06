@@ -25,34 +25,34 @@ int ticos_hal_mqtt_publish(const char *topic, const char *data, int len, int qos
 
 int ticos_telemetry_report(void)
 {
-    cJSON *telemetrys = cJSON_CreateObject();
+    cJSON *telemetries = cJSON_CreateObject();
 
     for (int i = 0; i < ticos_telemetry_cnt; i++) {
         void *func = ticos_telemetry_tab[i].func;
         switch (ticos_telemetry_tab[i].type) {
         case TICOS_VAL_TYPE_BOOLEAN:
-            cJSON_AddBoolToObject(telemetrys, ticos_telemetry_tab[i].id, ((_ticos_send_bool_t)func)());
+            cJSON_AddBoolToObject(telemetries, ticos_telemetry_tab[i].id, ((_ticos_send_bool_t)func)());
             break;
         case TICOS_VAL_TYPE_INTEGER:
-            cJSON_AddNumberToObject(telemetrys, ticos_telemetry_tab[i].id, ((_ticos_send_int_t)func)());
+            cJSON_AddNumberToObject(telemetries, ticos_telemetry_tab[i].id, ((_ticos_send_int_t)func)());
             break;
         case TICOS_VAL_TYPE_FLOAT:
-            cJSON_AddNumberToObject(telemetrys, ticos_telemetry_tab[i].id, ((_ticos_send_float_t)func)());
+            cJSON_AddNumberToObject(telemetries, ticos_telemetry_tab[i].id, ((_ticos_send_float_t)func)());
             break;
         case TICOS_VAL_TYPE_STRING:
-            cJSON_AddStringToObject(telemetrys, ticos_telemetry_tab[i].id, ((_ticos_send_string_t)func)());
+            cJSON_AddStringToObject(telemetries, ticos_telemetry_tab[i].id, ((_ticos_send_string_t)func)());
             break;
         default:
-            cJSON_AddNullToObject(telemetrys, ticos_telemetry_tab[i].id);
+            cJSON_AddNullToObject(telemetries, ticos_telemetry_tab[i].id);
             break;
         }
     }
 
-    char *telemetrys_str = cJSON_PrintUnformatted(telemetrys);
+    char *telemetries_str = cJSON_PrintUnformatted(telemetries);
 
-    int ret = ticos_hal_mqtt_publish(ticos_telemery_topic, telemetrys_str, strlen(telemetrys_str), 1, 0);
-    cJSON_free(telemetrys_str);
-    cJSON_Delete(telemetrys);
+    int ret = ticos_hal_mqtt_publish(ticos_telemery_topic, telemetries_str, strlen(telemetries_str), 1, 0);
+    cJSON_free(telemetries_str);
+    cJSON_Delete(telemetries);
     return ret;
 }
 
