@@ -40,11 +40,27 @@ void ticos_cloud_stop();
 int ticos_property_report(void);
 
 /**
+ * @brief  上报单个属性值到云端
+ * @note   此接口会上报用户在ti_thingmodel.h里面定义的属性值到云端
+ * @param index 该值定义在ticos_property_t中, 不能超过TICOS_PROPERTY_MAX，否则上传失败
+ * @return 0 for success, other is error
+ */
+int ticos_property_report_by_index(int index);
+
+/**
  * @brief  上报遥测到云端
  * @note   此接口会上报用户在ti_thingmodel.c里面定义的遥测到云端
  * @return 0 代表成功，其他值代表错误
  */
 int ticos_telemetry_report(void);
+
+/**
+ * @brief  上报单个遥测值到云端
+ * @note   此接口会上报用户在ti_thingmodel.h里面定义的遥测值到云端
+ * @param index 该值定义在ticos_telemetry_t中, 不能超过TICOS_TELEMETRY_MAX，否则上传失败
+ * @return 0 for success, other is error
+ */
+int ticos_telemetry_report_by_index(int index);
 
 /**
  * @brief  订阅ticos cloud需要处理的topic
