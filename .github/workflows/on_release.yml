@@ -7,6 +7,11 @@ on:
 jobs:
   updateServerless:
     runs-on: ubuntu-latest
+    env:
+      SERVERLESS_PLATFORM_VENDOR: tencent
+      TENCENT_SECRET_ID: ${{ github.ref_name == 'develop'  && secrets.DEV_TENCENT_SECRET_ID || secrets.PROD_TENCENT_SECRET_ID }}
+      TENCENT_SECRET_KEY: ${{ github.ref_name == 'develop' && secrets.DEV_TENCENT_SECRET_KEY || secrets.PROD_TENCENT_SECRET_KEY }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3

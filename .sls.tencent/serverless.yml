@@ -1,5 +1,5 @@
 component: scf
-name: tisvc-sdk
+name: tisvc-sdk-for-c
 stage: prod
 
 inputs:
@@ -34,15 +34,4 @@ inputs:
               serviceTimeout: 10
               function:
                 isIntegratedResponse: false
-                functionQualifier: $LATEST
-            - path: /framework
-              method: POST
-              apiDesc: tisvc framework api
-              enableCORS: true
-              responseType: JSON
-              isBase64Encoded: false
-              isBase64Trigger: false
-              serviceTimeout: 10
-              function:
-                isIntegratedResponse: false
-                functionQualifier: $LATEST
+                functionQualifier: $LATEST            
