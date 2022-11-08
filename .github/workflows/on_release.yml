@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: '3.10' 
       - name: Prepare service file
-        run: cp -r scripts/codegen/  .sls.tencent
+        run: cp -r scripts/codegen/.  .sls.tencent
       - name: Deploy to serverless environment
         run: npx serverless@^2.x.x deploy --target .sls.tencent
       
