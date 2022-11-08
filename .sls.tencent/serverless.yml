@@ -1,0 +1,48 @@
+component: scf
+name: tisvc-sdk
+stage: prod
+
+inputs:
+  src:
+    src: ./
+    exclude:
+      - '.DS_Store'
+  handler: index.main_handler
+  name: ${name}
+  runtime: Python3.6
+  namespace: ${stage}
+  region: ap-shanghai
+  memorySize: 256
+  timeout: 15
+  events: 
+    - apigw: 
+        parameters:
+          serviceName: api_ticos_cn
+          serviceId: service-18kchrnn
+          protocols: 
+            - http
+            - https
+          environment: release
+          endpoints: 
+            - path: /sdk
+              method: POST
+              apiDesc: tisvc sdk api
+              enableCORS: true
+              responseType: JSON
+              isBase64Encoded: false
+              isBase64Trigger: false
+              serviceTimeout: 10
+              function:
+                isIntegratedResponse: false
+                functionQualifier: $LATEST
+            - path: /framework
+              method: POST
+              apiDesc: tisvc framework api
+              enableCORS: true
+              responseType: JSON
+              isBase64Encoded: false
+              isBase64Trigger: false
+              serviceTimeout: 10
+              function:
+                isIntegratedResponse: false
+                functionQualifier: $LATEST
