@@ -1,4 +1,4 @@
-name: on_ticos_framework_publish
+name: on_ticos_sdk_release
 run-name: ${{ github.actor }} is publishing the codegen path 🚀
 on:
   release:
