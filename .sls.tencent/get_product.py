@@ -11,9 +11,10 @@ url = "https://api.ticos.cn/products"
 
 
 def get_product(productId='', token=''):
+    logger.info(token)
     params = {"productId": productId}
     res = requests.get(url=url+'/'+productId+'/deviceModel', params=params, headers={
-                       'Authorization': 'Bearer '+ token})
+                       'Authorization': token})
 
     resjson = json.loads(res.text)
     logger.info(resjson)
