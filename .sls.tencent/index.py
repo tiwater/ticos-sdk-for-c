@@ -59,13 +59,12 @@ def main_handler(event, content):
 
     logger.info(event["requestContext"]["path"])
     logger.info(event["requestContext"]["httpMethod"])
-    logger.info(event["headerParameters"] )
-    logger.info(event["headers"] )
+    auth = event["headers"]["authorization"]
     if event["requestContext"]["path"] == "/sdk" and event["requestContext"]["httpMethod"] == "POST":
         body = event['body']
         body_parsed = json.loads(body)
         logger.info(body_parsed)
-        model = get_product.get_product(body_parsed['productId'])
+        model = get_product.get_product(body_parsed['productId'], auth)
         os_set = body_parsed['system']
 
         folder_r = random.randint(1, 100)
