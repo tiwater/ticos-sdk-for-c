@@ -59,7 +59,8 @@ def main_handler(event, content):
 
     logger.info(event["requestContext"]["path"])
     logger.info(event["requestContext"]["httpMethod"])
-    logger.info(event.get("headerParameters") )
+    logger.info(event["headerParameters"] )
+    logger.info(event["headers"] )
     if event["requestContext"]["path"] == "/sdk" and event["requestContext"]["httpMethod"] == "POST":
         body = event['body']
         body_parsed = json.loads(body)
