@@ -1,5 +1,13 @@
 // Copyright (c) Tiwater Technology Ltd. All rights reserved.
 // SPDX-License-Identifier: MIT
+/**
+ * @file ticos_api.h
+ * @brief Ticos API 平台接口定义
+ *
+ * Ticos 云平台 SDK 平台接口定义，用户应提供这些接口针对指定硬件平台的实现。
+ *
+ * @date 13 Nov 2022
+ */
 
 #pragma once
 
@@ -13,7 +21,7 @@ extern "C"
  * @param product_id 产品 ID
  * @param device_id 设备 ID
  * @param device_secret 设备密钥
- * @return 0 for success, other is error
+ * @return 0 代表成功，其他值代表错误
  */
 int ticos_cloud_start(const char* product_id, const char* device_id, const char *device_secret);
 
@@ -27,21 +35,21 @@ void ticos_cloud_stop();
 /**
  * @brief  上报物模型属性到云端
  * @note   此接口会上报用户在ti_thingmodel.c里面定义的属性值到云端
- * @return 0 for success, other is error
+ * @return 0 代表成功，其他值代表错误
  */
 int ticos_property_report(void);
 
 /**
  * @brief  上报遥测到云端
  * @note   此接口会上报用户在ti_thingmodel.c里面定义的遥测到云端
- * @return 0 for success, other is error
+ * @return 0 代表成功，其他值代表错误
  */
 int ticos_telemetry_report(void);
 
 /**
  * @brief  订阅ticos cloud需要处理的topic
  * @note   此接口需要在mqtt客户端连接上的时候调用，监听云端下发的消息
- * @return 0 for success, other is error
+ * @return 0 代表成功，其他值代表错误
  */
 int ticos_mqtt_subscribe(void);
 
