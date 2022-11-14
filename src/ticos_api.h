@@ -79,6 +79,29 @@ int ticos_mqtt_subscribe(void);
  */
 void ticos_msg_recv(const char *topic, const char *dat, int len);
 
+typedef enum {
+    TICOS_EVENT_CONNECT,
+    TICOS_EVENT_DISCONNECT,
+} ticos_evt_t;
+
+typedef void (*ticos_event_cb_t)(void *user_data, ticos_evt_t event);
+
+/**
+ * @brief  设置事件处理函数
+ * @note   当有cloud相关的事件时, 会回调用户设置的事件函数
+ * @param evt_cb 用户事件回调函数
+ * @param user_data 用户数据
+ * @return void
+ */
+void set_ticos_event_cb(ticos_event_cb_t evt_cb, void *user_data);
+
+/**
+ * @brief  云端事件通知函数
+ * @note   当cloud产生相关的事件时, 会调用此函数
+ * @param evt 相关事件
+ * @return void
+ */
+void ticos_event_notify(ticos_evt_t evt);
 
 #ifdef __cplusplus
 }

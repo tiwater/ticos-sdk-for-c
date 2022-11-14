@@ -42,7 +42,11 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event)
   switch (event->event_id) {
     case MQTT_EVENT_CONNECTED:
       printf("MQTT event MQTT_EVENT_CONNECTED\n");
+      ticos_event_notify(TICOS_EVENT_CONNECT);
       ticos_mqtt_subscribe();
+      break;
+    case MQTT_EVENT_DISCONNECTED:
+      ticos_event_notify(TICOS_EVENT_DISCONNECT);
       break;
     case MQTT_EVENT_DATA:
       printf("MQTT event MQTT_EVENT_DATA: [topic]:%s, [data]%s\r\n", event->topic, event->data);

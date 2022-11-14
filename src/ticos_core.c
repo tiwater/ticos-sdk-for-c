@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "ticos_api.h"
+
 int ticos_hal_mqtt_start(const char *url, int port, const char *client_id, const char *user_name, const char *passwd);
 void ticos_hal_mqtt_stop();
 int ticos_hal_mqtt_publish(const char *topic, const char *data, int len, int qos, int retain);
@@ -49,4 +50,18 @@ void ticos_msg_recv(const char *topic, const char *dat, int len)
     } else if (!strncmp(topic, ticos_property_desired_topic, strlen(ticos_property_desired_topic))) {
         ticos_property_receive(dat, len);
     }
+}
+
+static ticos_event_cb_t m_ticos_evt_cb = NULL;
+static void *m_ticos_user_data = NULL;
+void set_ticos_event_cb(ticos_event_cb_t evt_cb, void *user_data)
+{
+    m_ticos_evt_cb = evt_cb;
+    m_ticos_user_data = user_data;
+}
+
+void ticos_event_notify(ticos_evt_t evt)
+{
+    if (m_ticos_evt_cb)
+        m_ticos_evt_cb(m_ticos_user_data, evt);
 }
