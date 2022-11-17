@@ -24,7 +24,7 @@ int ticos_cloud_start(const char* product_id, const char* device_id, const char 
     sprintf(ticos_property_report_topic, "devices/%s/twin/reported", device_id);
     sprintf(ticos_telemery_topic, "devices/%s/telemetry", device_id);
 
-    return ticos_hal_mqtt_start("mqtt://hub.ticos.cn", 1883, ticos_client_id, ticos_device_id, ticos_device_secret);
+    return ticos_hal_mqtt_start("hub.ticos.cn", 1883, ticos_client_id, ticos_device_id, ticos_device_secret);
 }
 
 void ticos_cloud_stop()
