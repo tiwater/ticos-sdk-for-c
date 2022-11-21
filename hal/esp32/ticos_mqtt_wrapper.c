@@ -1,7 +1,7 @@
 #include <ticos_api.h>
 #include <mqtt_client.h>
 
-static esp_mqtt_client_handle_t mqtt_client;
+static esp_mqtt_client_handle_t mqtt_client = NULL;
 
 /**
  * @brief mqtt客户端向云端推送数据的接口
@@ -15,6 +15,8 @@ static esp_mqtt_client_handle_t mqtt_client;
  */
 int ticos_hal_mqtt_publish(const char *topic, const char *data, int len, int qos, int retain)
 {
+    if (!mqtt_client)
+      return -1;
     return esp_mqtt_client_publish(mqtt_client, topic, data, len, qos, retain);
 }
 
@@ -27,6 +29,8 @@ int ticos_hal_mqtt_publish(const char *topic, const char *data, int len, int qos
  */
 int ticos_hal_mqtt_subscribe(const char *topic, int qos)
 {
+    if (!mqtt_client)
+      return -1;
     return esp_mqtt_client_subscribe(mqtt_client, topic, qos);
 }
 
@@ -108,6 +112,8 @@ int ticos_hal_mqtt_start(const char *url, int port, const char *client_id, const
  */
 void ticos_hal_mqtt_stop()
 {
+  if (!mqtt_client)
+    return;
   esp_mqtt_client_stop(mqtt_client);
   mqtt_client = NULL;
 }
