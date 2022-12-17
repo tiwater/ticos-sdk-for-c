@@ -22,6 +22,6 @@ jobs:
       - name: Prepare service file
         run: cp -r scripts/codegen/.  .sls.tencent
       - name: Deploy to serverless environment
-        run: npx serverless@^2.x.x deploy --target .sls.tencent
+        run: npx serverless-cloud-framework deploy --target .sls.tencent
       
       
