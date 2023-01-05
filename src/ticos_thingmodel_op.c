@@ -165,3 +165,66 @@ int ticos_property_report(void)
     return ret;
 }
 
+int ticos_property_report_by_index(int index)
+{
+    if (index >= ticos_property_cnt)
+        return -1;
+
+    int i = index;
+    cJSON *propretys = cJSON_CreateObject();
+    void *func = ticos_property_tab[i].send_func;
+    switch (ticos_property_tab[i].type) {
+    case TICOS_VAL_TYPE_BOOLEAN:
+        cJSON_AddBoolToObject(propretys, ticos_property_tab[i].id, ((_ticos_send_bool_t)func)());
+        break;
+    case TICOS_VAL_TYPE_INTEGER:
+        cJSON_AddNumberToObject(propretys, ticos_property_tab[i].id, ((_ticos_send_int_t)func)());
+        break;
+    case TICOS_VAL_TYPE_FLOAT:
+        cJSON_AddNumberToObject(propretys, ticos_property_tab[i].id, ((_ticos_send_float_t)func)());
+        break;
+    case TICOS_VAL_TYPE_STRING:
+        cJSON_AddStringToObject(propretys, ticos_property_tab[i].id, ((_ticos_send_string_t)func)());
+        break;
+    default:
+        cJSON_AddNullToObject(propretys, ticos_property_tab[i].id);
+        break;
+    }
+    char *propertys_str = cJSON_PrintUnformatted(propretys);
+    int ret = ticos_hal_mqtt_publish(ticos_property_report_topic, propertys_str, strlen(propertys_str), 1, 0);
+    cJSON_free(propertys_str);
+    cJSON_Delete(propretys);
+    return ret;
+}
+
+int ticos_telemetry_report_by_index(int index)
+{
+    if (index >= ticos_telemetry_cnt)
+        return -1;
+
+    int i = index;
+    cJSON *telemetries = cJSON_CreateObject();
+    void *func = ticos_telemetry_tab[i].func;
+    switch (ticos_telemetry_tab[i].type) {
+    case TICOS_VAL_TYPE_BOOLEAN:
+        cJSON_AddBoolToObject(telemetries, ticos_telemetry_tab[i].id, ((_ticos_send_bool_t)func)());
+        break;
+    case TICOS_VAL_TYPE_INTEGER:
+        cJSON_AddNumberToObject(telemetries, ticos_telemetry_tab[i].id, ((_ticos_send_int_t)func)());
+        break;
+    case TICOS_VAL_TYPE_FLOAT:
+        cJSON_AddNumberToObject(telemetries, ticos_telemetry_tab[i].id, ((_ticos_send_float_t)func)());
+        break;
+    case TICOS_VAL_TYPE_STRING:
+        cJSON_AddStringToObject(telemetries, ticos_telemetry_tab[i].id, ((_ticos_send_string_t)func)());
+        break;
+    default:
+        cJSON_AddNullToObject(telemetries, ticos_telemetry_tab[i].id);
+        break;
+    }
+    char *telemetries_str = cJSON_PrintUnformatted(telemetries);
+    int ret = ticos_hal_mqtt_publish(ticos_telemery_topic, telemetries_str, strlen(telemetries_str), 1, 0);
+    cJSON_free(telemetries_str);
+    cJSON_Delete(telemetries);
+    return ret;
+}
