@@ -1,0 +1,24 @@
+# West manifest for Memfault Example Application
+
+manifest:
+  self:
+    path: qemu-app
+
+  remotes:
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
+    - name: memfault
+      url-base: https://github.com/memfault
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject-rtos
+      revision: zephyr-v3.2.0
+      import: true
+
+    - name: memfault-firmware-sdk
+      path: modules/lib/memfault-firmware-sdk
+      remote: memfault
+      # Note: normally this would be pinned to a specific SDK tag instead of
+      # master
+      revision: master
