@@ -207,9 +207,20 @@ void memfault_esp_port_wifi_autojoin(void) {
 }
 
 #endif  // CONFIG_MEMFAULT_APP_WIFI_AUTOJOIN
+static uint32_t get_cpu_usage(void){
+  uint32_t ulTotalTime, ulidleTime;
+  uint32_t ulStatsAsPercentage = 0;
+  portALT_GET_RUN_TIME_COUNTER_VALUE(ulTotalTime);
+  ulidleTime = xTaskGetIdleRunTimeCounter();
+  ulTotalTime /= 100UL;
+  if(ulTotalTime > 0UL){
+    ulStatsAsPercentage = ulidleTime / ulTotalTime;
+  }
+  return 100 - ulStatsAsPercentage;
+}
 
 static void update_system_matrics(void) {
-  unsigned cpu_usage = 45;
+  unsigned cpu_usage = get_cpu_usage();
   unsigned heap_size = esp_get_free_heap_size();
   memfault_metrics_heartbeat_add(MEMFAULT_METRICS_KEY(DeviceActDuration), 1);
   memfault_metrics_heartbeat_set_unsigned(MEMFAULT_METRICS_KEY(CpuUtilization), cpu_usage);
