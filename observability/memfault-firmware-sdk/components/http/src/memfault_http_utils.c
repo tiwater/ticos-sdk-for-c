@@ -66,7 +66,7 @@ static bool prv_write_user_agent_hdr(MfltHttpClientSendCb write_callback, void *
 }
 
 static bool prv_write_project_key_hdr(MfltHttpClientSendCb write_callback, void *ctx) {
-  #define PROJECT_KEY_HDR_BEGIN "Memfault-Project-Key:"
+  #define PROJECT_KEY_HDR_BEGIN "Ticos-Project-Key:"
   const size_t project_key_begin_len = MEMFAULT_STATIC_STRLEN(PROJECT_KEY_HDR_BEGIN);
   if (!write_callback(PROJECT_KEY_HDR_BEGIN, project_key_begin_len, ctx)) {
     return false;
