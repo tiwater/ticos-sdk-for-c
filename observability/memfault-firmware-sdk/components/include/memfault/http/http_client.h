@@ -19,7 +19,7 @@
 
 #define MEMFAULT_HTTP_CHUNKS_API_PREFIX "/"
 #define MEMFAULT_HTTP_CHUNKS_API_SUBPATH "chunks"
-#define MEMFAULT_HTTP_PROJECT_KEY_HEADER "Memfault-Project-Key"
+#define MEMFAULT_HTTP_PROJECT_KEY_HEADER "Ticos-Project-Key"
 
 #ifdef __cplusplus
 extern "C" {

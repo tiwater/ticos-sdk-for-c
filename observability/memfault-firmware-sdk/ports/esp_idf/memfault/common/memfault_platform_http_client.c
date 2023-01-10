@@ -37,7 +37,8 @@ MEMFAULT_STATIC_ASSERT(sizeof(CONFIG_MEMFAULT_PROJECT_KEY) > 1,
 static char _buff[1024];
 sMfltHttpClientConfig g_mflt_http_client_config = {
   .api_key = CONFIG_MEMFAULT_PROJECT_KEY,
-  .chunks_api = { .host = "api.ticos.cn", .port = 80 },
+  // .chunks_api = { .host = "api.ticos.cn", .port = 80 },
+  .chunks_api = { .host = "api.dev.ticos.cc", .port = 80 },
   .disable_tls = true,
 };
 
