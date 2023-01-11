@@ -1,0 +1,22 @@
+pkg.name: ports/mynewt
+pkg.description: Ticos integration package (https://ticos.com/)
+pkg.author: "Ticos Inc <hello@ticos.com>"
+pkg.homepage: "https://github.com/ticos/ticos-firmware-sdk/"
+pkg.keywords:
+pkg.type: sdk
+pkg.deps:
+    - "@apache-mynewt-core/kernel/os"
+    - "@apache-mynewt-core/sys/shell"
+    - "@apache-mynewt-core/sys/flash_map"
+    - "@apache-mynewt-core/hw/hal"
+    - "@apache-mynewt-core/mgmt/imgmgr"
+    - "@mcuboot/boot/bootutil"
+
+pkg.ign_dirs:
+pkg.include_dirs:
+    - "../../components/include"
+    - "../../components/log/include"
+    - "../include"
+pkg.src_dirs:
+    - "src"
+    - "../../components/"

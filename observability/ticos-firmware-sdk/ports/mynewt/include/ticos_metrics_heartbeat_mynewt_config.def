@@ -1,0 +1,5 @@
+//! @file
+
+# if __has_include("ticos_metrics_heartbeat_config.def")
+#   include "ticos_metrics_heartbeat_config.def"
+# endif

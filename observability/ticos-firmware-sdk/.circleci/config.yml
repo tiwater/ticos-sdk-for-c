@@ -1,0 +1,68 @@
+# Python CircleCI 2.1 configuration file
+#
+# Check for more details:
+#
+# - https://circleci.com/docs/2.0/configuration-reference/#section=reference
+# - https://discuss.circleci.com/t/circleci-2-1-config-overview/26057
+#
+# Validate this via:
+#
+# - brew install circleci
+# - circleci config validate
+#
+version: 2.1
+
+executors:
+  ticos-ci:
+    docker:
+      - image: ticos/ticos-firmware-sdk-ci:0.0.1
+    working_directory: ~/repo
+
+commands:
+  virtualenv_activate:
+    steps:
+      - run:
+          name: Set environment variables and source virtualenv
+          command: |
+            if [ -f /circleci/.bashrc_circleci ]; then
+              cat /circleci/.bashrc_circleci >> $BASH_ENV
+            fi
+
+  pip_install:
+    steps:
+      - restore_cache:
+          name: Restore Python Package Cache
+          keys:
+            - v3-pip-dependencies-{{ checksum "requirements.txt" }}
+            - v3-pip-dependencies-
+      - run: pip install -r requirements.txt
+      - save_cache:
+          paths:
+            - ~/venv
+          key: v3-pip-dependencies-{{ checksum "requirements.txt" }}
+
+  prepare:
+    steps:
+      - checkout
+      - virtualenv_activate
+      - pip_install
+
+jobs:
+  # TODO: also build demo apps in public CI (not just in our private CI)
+  fw-sdk-test:
+    executor: ticos-ci
+    steps:
+      - prepare
+      # run the tests with the sanitizer enabled first
+      - run: inv -e test --coverage
+      # now clean, and re-run with the sanitizer disabled- it adds extra
+      # branches that cannot be hit in a normal run, impacting coverage statistics
+      - run: git clean -dxff
+      - run: TICOS_DISABLE_ASAN=1 inv -e test --coverage
+      - run: curl -s https://codecov.io/bash | bash -s -- -t ${CODECOV_TOKEN} -n ${CIRCLE_BUILD_NUM} -Z || echo 'Codecov upload failed'
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - fw-sdk-test

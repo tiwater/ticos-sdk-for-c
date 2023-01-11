@@ -1,0 +1,5 @@
+//! @file
+
+# if __has_include("ticos_trace_reason_user_config.def")
+#   include "ticos_trace_reason_user_config.def"
+# endif

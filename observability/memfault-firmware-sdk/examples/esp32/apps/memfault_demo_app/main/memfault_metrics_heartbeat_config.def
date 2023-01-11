@@ -1,6 +1,0 @@
-// File for holding custom error traces:
-//   https://mflt.io/embedded-metrics
-MEMFAULT_METRICS_KEY_DEFINE(PosterTaskNumSchedules, kMemfaultMetricType_Unsigned)
-MEMFAULT_METRICS_KEY_DEFINE(CpuUtilization, kMemfaultMetricType_Unsigned)
-MEMFAULT_METRICS_KEY_DEFINE(HeapAllocation, kMemfaultMetricType_Unsigned)
-MEMFAULT_METRICS_KEY_DEFINE(DeviceActDuration, kMemfaultMetricType_Unsigned)

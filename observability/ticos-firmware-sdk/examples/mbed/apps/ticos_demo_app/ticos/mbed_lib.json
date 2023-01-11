@@ -1,0 +1,9 @@
+{
+    "name": "ticos",
+    "config": {
+        "project_api_key": {
+            "help": "Project Key to use for uploading coredump",
+            "value": "\"<YOUR PROJECT KEY HERE>\""
+        }
+    }
+}

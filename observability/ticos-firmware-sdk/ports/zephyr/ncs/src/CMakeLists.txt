@@ -1,0 +1,5 @@
+# Controls where root certificates are stored
+zephyr_library_sources_ifdef(CONFIG_TICOS_ROOT_CERT_STORAGE_NRF9160_MODEM ticos_nrf91_root_cert_storage.c)
+zephyr_library_sources_ifdef(CONFIG_TICOS_REBOOT_REASON_GET_CUSTOM nrfx_pmu_reboot_tracking.c)
+zephyr_library_sources_ifdef(CONFIG_TICOS_FOTA ticos_fota.c)
+zephyr_library_sources_ifdef(CONFIG_TICOS_NRF_SHELL ticos_nrf_cli.c)

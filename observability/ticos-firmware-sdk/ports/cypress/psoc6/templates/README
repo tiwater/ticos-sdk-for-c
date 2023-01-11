@@ -1,0 +1,16 @@
+# templates
+
+This folder contains default configuration files for ports using Modus Toolbox.
+
+If you would like to tune the configuration simply exclude the entire directory or select files
+in your projects .cyignore file
+
+```
+$(SEARCH_ticos-firmware-sdk)/ports/cypress/psoc6/templates/ticos_metrics_heartbeat_config.def
+```
+
+or
+
+```
+$(SEARCH_ticos-firmware-sdk)/ports/cypress/psoc6/templates
+```

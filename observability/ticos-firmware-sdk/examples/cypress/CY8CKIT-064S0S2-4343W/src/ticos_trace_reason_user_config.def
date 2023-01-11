@@ -1,0 +1,4 @@
+//! Define custom error reasons that can be filtered & searched
+//! on in the Ticos UI.
+
+TICOS_TRACE_REASON_DEFINE(critical_error)

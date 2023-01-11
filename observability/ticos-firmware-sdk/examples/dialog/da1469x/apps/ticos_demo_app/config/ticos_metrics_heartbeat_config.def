@@ -1,0 +1,1 @@
+TICOS_METRICS_KEY_DEFINE(MainTaskWakeups, kTicosMetricType_Unsigned)

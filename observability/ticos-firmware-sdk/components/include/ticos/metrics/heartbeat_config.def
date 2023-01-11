@@ -1,0 +1,9 @@
+//! The Ticos SDK tracks a few select heartbeat metrics by default to compute
+//! default health statistics for the fleet. All other metrics are provided by the user
+//! of the sdk via the TICOS_METRICS_USER_HEARTBEAT_DEFS_FILE file
+
+// The time since the last heartbeat was collected in ms
+TICOS_METRICS_KEY_DEFINE(TicosSdkMetric_IntervalMs, kTicosMetricType_Timer)
+// The number of reboots that have taken place since the last heartbeat was collected
+TICOS_METRICS_KEY_DEFINE(TicosSdkMetric_UnexpectedRebootCount, kTicosMetricType_Unsigned)
+TICOS_METRICS_KEY_DEFINE_WITH_RANGE(TicosSdkMetric_UnexpectedRebootDidOccur, kTicosMetricType_Unsigned, 0, 1)

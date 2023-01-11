@@ -1,0 +1,12 @@
+#include "sdkconfig.h"
+
+#if CONFIG_TICOS_HEARTBEAT_TRACK_HEAP_USAGE
+TICOS_METRICS_KEY_DEFINE(Heap_FreeSize, kTicosMetricType_Unsigned)
+TICOS_METRICS_KEY_DEFINE(Heap_MinFreeSize, kTicosMetricType_Unsigned)
+#endif
+
+#if CONFIG_TICOS_HEARTBEAT_TRACK_MAIN_STACK_HWM
+TICOS_METRICS_KEY_DEFINE(MainTask_StackHighWaterMarkWords, kTicosMetricType_Unsigned)
+#endif
+
+#include "ticos_metrics_heartbeat_config.def"
