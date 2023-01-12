@@ -1,0 +1,50 @@
+menu "Ticos"
+
+    config TICOS_PROJECT_KEY
+        string "Ticos Project key"
+        default ""
+        help
+          API Key needed to communicate to Ticos. Obtain key at https://ticos.io/project-key
+
+    config TICOS_EVENT_STORAGE_RAM_SIZE
+        int "The amount of RAM storage to reserve for Ticos Events"
+        default 512
+
+    config TICOS_LOG_STORAGE_RAM_SIZE
+        int "The amount of RAM storage to allocate for log storage"
+        default 1024
+        help
+            Logs stored in this buffer will be captured as part of a Ticos Coredump
+
+    config TICOS_CLI_ENABLED
+        bool "Enables the Ticos CLI"
+        default y
+        help
+            By default, Ticos will register CLI commands for pushing data,
+            dumping state of the SDK, and performing device updates.
+
+    config TICOS_COREDUMP_USE_OTA_SLOT
+        bool "Enables the use of an OTA slot for coredump storage"
+        default n
+        help
+            By default, Ticos will attempt to use a coredump partition
+            defined in a partitions*.csv file. If the device has already
+            been shipped and the partition table cannot be modified, an
+            OTA slot can be used instead.
+
+    config TICOS_AUTOMATIC_INIT
+        bool "Automatically initialize the SDK when the system is booted"
+        default y
+        help
+            By default, Ticos will automatically initialize the SDK
+            when the system is booted. This can be disabled if the user
+            wants to initialize the SDK manually.
+
+    config TICOS_HTTP_CLIENT_TIMEOUT_MS
+        int "The HTTP client timeout in milliseconds"
+        default 5000
+        help
+            The Ticos HTTP client timeout in milliseconds. This is the
+            maximum amount of time the HTTP client will wait for a response from
+            the server.
+endmenu

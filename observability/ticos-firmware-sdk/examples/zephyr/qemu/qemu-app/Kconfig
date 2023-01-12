@@ -1,0 +1,20 @@
+# Application Kconfig file
+#
+# This is loaded when building this directory with west.
+menu "Ticos Example Application Configuration"
+
+config ZEPHYR_TICOS_EXAMPLE_THREAD_TOGGLE
+    bool "Example thread create + abort toggling every 10 seconds"
+    default n
+    help
+      Enables creating and aborting an example thread every 10 seconds in the
+      example app
+
+config ZEPHYR_TICOS_EXAMPLE_MEMORY_METRICS
+    bool "Use metrics to monitor memory usage in the example app"
+    default y
+    depends on TICOS
+
+endmenu
+
+source "Kconfig.zephyr"

@@ -1,4 +1,0 @@
-sample:
-  description: Memfault SDK example integration built on top of the Zephyr FS
-    shell sample app, with the nRF Connect SDK
-  name: Memfault Demo App

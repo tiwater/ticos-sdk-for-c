@@ -1,1 +1,0 @@
-MEMFAULT_METRICS_KEY_DEFINE(MainTaskWakeups, kMemfaultMetricType_Unsigned)

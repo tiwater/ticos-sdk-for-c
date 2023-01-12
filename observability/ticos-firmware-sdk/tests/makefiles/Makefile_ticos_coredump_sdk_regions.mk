@@ -1,0 +1,10 @@
+SRC_FILES = \
+  $(Tcs_COMPONENTS_DIR)/panics/src/ticos_coredump_sdk_regions.c
+
+TEST_SRC_FILES = \
+  $(Tcs_TEST_SRC_DIR)/test_ticos_coredump_sdk_regions.cpp
+
+CPPUTEST_CPPFLAGS += -DTICOS_COREDUMP_COLLECT_LOG_REGIONS=1
+CPPUTEST_CPPFLAGS += -DTICOS_COREDUMP_COLLECT_HEAP_STATS=1
+
+include $(CPPUTEST_MAKFILE_INFRA)

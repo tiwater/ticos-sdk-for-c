@@ -1,0 +1,15 @@
+#if CONFIG_TICOS_USER_CONFIG_ENABLE
+
+#if CONFIG_TICOS_USER_CONFIG_SILENT_FAIL
+
+# if __has_include("ticos_trace_reason_user_config.def")
+#   include "ticos_trace_reason_user_config.def"
+# endif
+
+#else
+
+#include "ticos_trace_reason_user_config.def"
+
+#endif /* CONFIG_TICOS_USER_CONFIG_SILENT_FAIL */
+
+#endif

@@ -1,0 +1,5 @@
+// This is where project specific trace reasons should be defined
+// using the TICOS_TRACE_REASON_DEFINE macro
+//
+// For example:
+// TICOS_TRACE_REASON_DEFINE(your_custom_error_reason)

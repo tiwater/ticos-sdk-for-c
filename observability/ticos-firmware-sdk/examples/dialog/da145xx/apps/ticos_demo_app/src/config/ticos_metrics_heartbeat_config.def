@@ -1,0 +1,7 @@
+//! Define custom system metrics to track. For example,
+// TICOS_METRICS_KEY_DEFINE(main_task_stack_hwm, kTicosMetricType_Unsigned)
+// TICOS_METRICS_KEY_DEFINE(ble_min_rssi, kTicosMetricType_Signed)
+// TICOS_METRICS_KEY_DEFINE(mcu_sleep_time_ms, kTicosMetricType_Timer)
+
+//! @file ticos_metrics_heartbeat_config.def
+TICOS_METRICS_KEY_DEFINE(MainTaskWakeups, kTicosMetricType_Unsigned)

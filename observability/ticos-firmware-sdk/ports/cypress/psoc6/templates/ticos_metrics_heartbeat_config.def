@@ -1,0 +1,25 @@
+#if TICOS_PORT_MEMORY_TRACKING_ENABLED
+
+TICOS_METRICS_KEY_DEFINE(Heap_TotalSize, kTicosMetricType_Unsigned)
+TICOS_METRICS_KEY_DEFINE(Heap_MinBytesFree, kTicosMetricType_Unsigned)
+TICOS_METRICS_KEY_DEFINE(Heap_BytesFree, kTicosMetricType_Unsigned)
+
+#endif
+
+#if TICOS_PORT_WIFI_TRACKING_ENABLED
+
+TICOS_METRICS_KEY_DEFINE(Wifi_ConnectingTime, kTicosMetricType_Timer)
+TICOS_METRICS_KEY_DEFINE(Wifi_ConnectedTime, kTicosMetricType_Timer)
+TICOS_METRICS_KEY_DEFINE(Wifi_ConnectCount, kTicosMetricType_Unsigned)
+TICOS_METRICS_KEY_DEFINE(Wifi_ReconnectCount, kTicosMetricType_Unsigned)
+
+TICOS_METRICS_KEY_DEFINE(Wifi_ConnectFailureCount, kTicosMetricType_Unsigned)
+TICOS_METRICS_KEY_DEFINE(Wifi_DisconnectCount, kTicosMetricType_Unsigned)
+
+TICOS_METRICS_KEY_DEFINE(Wifi_SignalStrength, kTicosMetricType_Signed)
+TICOS_METRICS_KEY_DEFINE(Wifi_Channel, kTicosMetricType_Unsigned)
+
+TICOS_METRICS_KEY_DEFINE(Wifi_TxBytes, kTicosMetricType_Unsigned)
+TICOS_METRICS_KEY_DEFINE(Wifi_RxBytes, kTicosMetricType_Unsigned)
+
+#endif

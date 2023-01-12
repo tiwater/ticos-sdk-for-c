@@ -1,0 +1,6 @@
+// File for holding custom error traces:
+//   https://ticos.io/embedded-metrics
+TICOS_METRICS_KEY_DEFINE(PosterTaskNumSchedules, kTicosMetricType_Unsigned)
+TICOS_METRICS_KEY_DEFINE(CpuUtilization, kTicosMetricType_Unsigned)
+TICOS_METRICS_KEY_DEFINE(HeapAllocation, kTicosMetricType_Unsigned)
+TICOS_METRICS_KEY_DEFINE(DeviceActDuration, kTicosMetricType_Unsigned)

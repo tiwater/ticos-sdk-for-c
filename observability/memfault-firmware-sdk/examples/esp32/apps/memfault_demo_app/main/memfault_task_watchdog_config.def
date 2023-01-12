@@ -1,3 +1,0 @@
-//! @file
-
-MEMFAULT_TASK_WATCHDOG_CHANNEL_DEFINE(example_task)

@@ -1,0 +1,46 @@
+config TICOS_NRF_CONNECT_SDK
+        bool "nRF Connect SDK extensions"
+        default y if SOC_SERIES_NRF52X || ((SOC_SERIES_NRF91X || SOC_SERIES_NRF53X) && TRUSTED_EXECUTION_NONSECURE)
+        select TICOS_REBOOT_REASON_GET_CUSTOM
+
+if TICOS_NRF_CONNECT_SDK
+
+config TICOS_FOTA
+        bool "Enable Ticos FOTA Library"
+        default n
+        depends on TICOS_HTTP_ENABLE
+        depends on FOTA_DOWNLOAD
+        depends on DOWNLOAD_CLIENT
+        help
+          Adds support for using Ticoss Release Management infrastructure
+          to retrieve binaries to install (https://ticos.io/release-mgmt). If an update
+          is available, the binary will be downloaded and installed using the FOTA Download
+          Client provided in the nRF Connect SDK.
+
+          See https://ticos.io/nrf-fota-setup for more details
+
+config TICOS_NRF_SHELL
+        bool "Enable Ticos NRF Shell"
+        default y if TICOS_SHELL
+        depends on SHELL
+        help
+          CLI Utilities for interfacing with the nRF Connect SDK
+
+if TICOS_FOTA
+
+config TICOS_FOTA_CLI_CMD
+        bool "Enable CLI command for triggering OTA updates"
+        default y
+        depends on TICOS_NRF_SHELL
+
+config TICOS_FOTA_DOWNLOAD_CALLBACK_CUSTOM
+        bool "Add custom handler for receiving OTA events"
+        default n
+        help
+          By default, the Ticos SDK implements a stub for FOTA callback
+          events. An end user can provide their own implementation by enabling
+          this option and implementing ticos_fota_download_callback()
+
+endif # TICOS_FOTA
+
+endif # TICOS_NRF_CONNECT_SDK

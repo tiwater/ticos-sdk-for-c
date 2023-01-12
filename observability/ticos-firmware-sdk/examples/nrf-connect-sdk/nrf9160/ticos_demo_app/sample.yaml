@@ -1,0 +1,4 @@
+sample:
+  description: Ticos SDK example integration built on top of Hello
+    World Sample App with the nRF Connect SDK
+  name: Ticos Demo App

@@ -1,0 +1,24 @@
+# West manifest for Ticos Example Application
+
+manifest:
+  self:
+    path: qemu-app
+
+  remotes:
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
+    - name: ticos
+      url-base: https://github.com/ticos
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject-rtos
+      revision: zephyr-v3.2.0
+      import: true
+
+    - name: ticos-firmware-sdk
+      path: modules/lib/ticos-firmware-sdk
+      remote: ticos
+      # Note: normally this would be pinned to a specific SDK tag instead of
+      # master
+      revision: master

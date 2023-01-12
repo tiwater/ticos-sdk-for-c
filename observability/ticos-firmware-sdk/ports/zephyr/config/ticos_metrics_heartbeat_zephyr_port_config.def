@@ -1,0 +1,42 @@
+//! @file
+
+#include "version.h"
+#include "ticos/ports/zephyr/version.h"
+
+#if CONFIG_TICOS_METRICS_DEFAULT_SET_ENABLE
+
+#if CONFIG_THREAD_STACK_INFO && TICOS_ZEPHYR_VERSION_GT(2, 1)
+TICOS_METRICS_KEY_DEFINE(TimerTaskFreeStack, kTicosMetricType_Unsigned)
+#endif
+
+#if CONFIG_THREAD_RUNTIME_STATS
+TICOS_METRICS_KEY_DEFINE(TimerTaskCpuUsage, kTicosMetricType_Unsigned)
+TICOS_METRICS_KEY_DEFINE(AllTasksCpuUsage, kTicosMetricType_Unsigned)
+#endif
+
+#if CONFIG_SYS_HEAP_RUNTIME_STATS
+TICOS_METRICS_KEY_DEFINE(Heap_BytesFree, kTicosMetricType_Unsigned)
+#endif
+
+#endif
+
+#if CONFIG_TICOS_METRICS_EXTRA_DEFS_FILE
+#include "ticos_metrics_heartbeat_extra.def"
+#endif
+
+// Pull in the user's heartbeat defs
+#if CONFIG_TICOS_USER_CONFIG_ENABLE
+
+#if CONFIG_TICOS_USER_CONFIG_SILENT_FAIL
+
+# if __has_include("ticos_metrics_heartbeat_config.def")
+#   include "ticos_metrics_heartbeat_config.def"
+# endif
+
+#else
+
+#include "ticos_metrics_heartbeat_config.def"
+
+#endif /* CONFIG_TICOS_USER_CONFIG_SILENT_FAIL */
+
+#endif
