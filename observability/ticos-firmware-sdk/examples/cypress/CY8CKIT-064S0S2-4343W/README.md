@@ -123,7 +123,7 @@ publishes to the same MQTT topic as the Pinnacle 100 example):
 ## Ticos port
 
 Port stores coredumps, which include stack, data & bss sections, in flash memory
-between `__MfltCoredumpsStart` and `__MfltCoredumpsEnd` symbols. Demo
+between `__TcsCoredumpsStart` and `__TcsCoredumpsEnd` symbols. Demo
 implementation provides a 512-byte aligned 128kB region at the end of CM4 flash
 memory region, just behind the CM4 application signature.
 

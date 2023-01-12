@@ -59,14 +59,14 @@ static eTicosPlatformLogLevel prv_map_zephyr_level_to_ticos(uint32_t zephyr_leve
        :              /* LOG_LEVEL_DBG */kTicosPlatformLogLevel_Debug;
 }
 
-typedef struct MfltLogProcessCtx {
+typedef struct TcsLogProcessCtx {
   eTicosPlatformLogLevel ticos_level;
 
 #if CONFIG_LOG_MODE_IMMEDIATE
   int write_idx;
 #endif
 
-} sMfltLogProcessCtx;
+} sTcsLogProcessCtx;
 
 // LOG2 was added in Zephyr 2.6:
 // https://github.com/zephyrproject-rtos/zephyr/commit/f1bb20f6b43b8b241e45f3f132f0e7bbfc65401b
@@ -91,7 +91,7 @@ static void prv_log_process(const struct log_backend *const backend,
 
   // This only needs to stay in scope for this function since log_output_msg_process()
   // calls prv_log_out() directly which is the only place we access the context
-  sMfltLogProcessCtx log_process_ctx = {
+  sTcsLogProcessCtx log_process_ctx = {
     .ticos_level = prv_map_zephyr_level_to_ticos(zephyr_level),
   };
 
@@ -134,7 +134,7 @@ static int prv_log_out(uint8_t *data, size_t length, void *ctx) {
     return (int) length;
   }
 
-  sMfltLogProcessCtx *tcs_ctx = (sMfltLogProcessCtx*)ctx;
+  sTcsLogProcessCtx *tcs_ctx = (sTcsLogProcessCtx*)ctx;
   size_t save_length = length;
 
 #if CONFIG_LOG_MODE_IMMEDIATE

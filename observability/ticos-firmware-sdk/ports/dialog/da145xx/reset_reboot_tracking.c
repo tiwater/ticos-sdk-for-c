@@ -33,22 +33,22 @@ static uint32_t s_reset_reason_reg;
 void reset_indication(uint16_t reset_status) {
   s_reset_reason_reg = reset_status;
 
-  s_reset_reason = kMfltRebootReason_PowerOnReset;
+  s_reset_reason = kTcsRebootReason_PowerOnReset;
 
   if (reset_status & HWRESET_STAT) {
-    s_reset_reason =  kMfltRebootReason_PinReset;
+    s_reset_reason =  kTcsRebootReason_PinReset;
   } else if (reset_status & SWRESET_STAT) {
-    s_reset_reason =  kMfltRebootReason_SoftwareReset;
+    s_reset_reason =  kTcsRebootReason_SoftwareReset;
   } else if (reset_status & WDOGRESET_STAT) {
-    s_reset_reason =  kMfltRebootReason_HardwareWatchdog;
+    s_reset_reason =  kTcsRebootReason_HardwareWatchdog;
   }
 }
 #else /* DA14585/6 */
 void reset_indication(uint16_t por_time) {
   if (por_time) {
-    s_reset_reason = kMfltRebootReason_PowerOnReset;
+    s_reset_reason = kTcsRebootReason_PowerOnReset;
   } else {
-    s_reset_reason = kMfltRebootReason_DeepSleep;
+    s_reset_reason = kTcsRebootReason_DeepSleep;
   }
   // Does not exist on DA14585/6 platform
   s_reset_reason_reg = 0;

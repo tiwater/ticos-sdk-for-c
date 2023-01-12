@@ -40,7 +40,7 @@ typedef TICOS_PACKED_STRUCT {
   uint32_t MMFAR;
   uint32_t BFAR;
   uint32_t AFSR;
-} sMfltFaultRegs;
+} sTcsFaultRegs;
 
 #endif /* TICOS_COLLECT_FAULT_REGS */
 
@@ -49,34 +49,34 @@ typedef TICOS_PACKED_STRUCT {
   uint32_t ACTLR;
   uint32_t rsvd;
   uint32_t SYST_CSR;
-} sMfltControlRegs;
+} sTcsControlRegs;
 
 typedef TICOS_PACKED_STRUCT {
   uint32_t ICSR;
   uint32_t VTOR;
-} sMfltIntControlRegs;
+} sTcsIntControlRegs;
 
 typedef TICOS_PACKED_STRUCT {
   uint32_t SHPR1;
   uint32_t SHPR2;
   uint32_t SHPR3;
-} sMfltSysHandlerPriorityRegs;
+} sTcsSysHandlerPriorityRegs;
 
 typedef TICOS_PACKED_STRUCT {
   uint32_t DEMCR;
-} sMfltDebugExcMonCtrlReg;
+} sTcsDebugExcMonCtrlReg;
 
 typedef TICOS_PACKED_STRUCT {
   // representation for NVIC ISER, ISPR, and IABR ...
   // A single bit encodes whether or not the interrupt is enabled, pending, active, respectively.
   uint32_t IxxR[(TICOS_NVIC_INTERRUPTS_TO_COLLECT + 31) / 32];
-} sMfltNvicIserIsprIabr;
+} sTcsNvicIserIsprIabr;
 
 typedef TICOS_PACKED_STRUCT {
   // 8 bits are used to encode the priority so 4 interrupts are covered by each register
   // NB: unimplemented priority levels read back as 0
   uint32_t IPR[TICOS_NVIC_INTERRUPTS_TO_COLLECT / 4];
-} sMfltNvicIpr;
+} sTcsNvicIpr;
 
 #if TICOS_COLLECT_MPU_STATE
 // Number of regions (RNR) is implementation defined so the caller
@@ -92,53 +92,53 @@ typedef TICOS_PACKED_STRUCT {
     uint32_t RBAR; // 0xE000ED9C, Indexed by RNR
     uint32_t RASR; // 0xE000EDA0, Indexed by RNR
   } pair[TICOS_MPU_REGIONS_TO_COLLECT];
-} sMfltMpuRegs;
+} sTcsMpuRegs;
 #endif /* TICOS_COLLECT_MPU_STATE */
 
 
 #if !TICOS_COLLECT_FAULT_REGS
-#define FAULT_REG_REGION_TYPE  kMfltCoredumpRegionType_CachedMemory
+#define FAULT_REG_REGION_TYPE  kTcsCoredumpRegionType_CachedMemory
 #define FAULT_REG_REGION_START (0)
 #define FAULT_REG_REGION_SIZE  (0)
 #elif TICOS_CACHE_FAULT_REGS
-#define FAULT_REG_REGION_TYPE  kMfltCoredumpRegionType_CachedMemory
+#define FAULT_REG_REGION_TYPE  kTcsCoredumpRegionType_CachedMemory
 #define FAULT_REG_REGION_START ((void*)&s_cached_fault_regs)
 #define FAULT_REG_REGION_SIZE  (sizeof(s_cached_fault_regs))
 
-// Raw buffer for a sMfltCachedBlock.
-static uint32_t s_cached_fault_regs[TICOS_CACHE_BLOCK_SIZE_WORDS(sizeof(sMfltFaultRegs))];
+// Raw buffer for a sTcsCachedBlock.
+static uint32_t s_cached_fault_regs[TICOS_CACHE_BLOCK_SIZE_WORDS(sizeof(sTcsFaultRegs))];
 
 // This fault register harvester function allows us to get unadulterated copies
 // of the ARM fault registers before they are modified (cleared) by an OS. We send
 // this information in place of whatever may be in the HW register by the
 // time we get to them.
 void ticos_coredump_cache_fault_regs(void) {
-  sMfltCachedBlock *fault_regs = (sMfltCachedBlock *)&s_cached_fault_regs[0];
+  sTcsCachedBlock *fault_regs = (sTcsCachedBlock *)&s_cached_fault_regs[0];
   fault_regs->cached_address = 0xE000ED24; // SCB->SHCSR
 
   const volatile uint32_t * const hwreg =
       (uint32_t *)fault_regs->cached_address;
-  sMfltFaultRegs * const scb = (sMfltFaultRegs *) fault_regs->blk;
+  sTcsFaultRegs * const scb = (sTcsFaultRegs *) fault_regs->blk;
 
-  scb->SHCSR = hwreg[offsetof(sMfltFaultRegs, SHCSR) / sizeof(*hwreg)];
-  scb->CFSR  = hwreg[offsetof(sMfltFaultRegs, CFSR)  / sizeof(*hwreg)];
-  scb->HFSR  = hwreg[offsetof(sMfltFaultRegs, HFSR)  / sizeof(*hwreg)];
-  scb->DFSR  = hwreg[offsetof(sMfltFaultRegs, DFSR)  / sizeof(*hwreg)];
-  scb->MMFAR = hwreg[offsetof(sMfltFaultRegs, MMFAR) / sizeof(*hwreg)];
-  scb->BFAR  = hwreg[offsetof(sMfltFaultRegs, BFAR)  / sizeof(*hwreg)];
-  scb->AFSR  = hwreg[offsetof(sMfltFaultRegs, AFSR)  / sizeof(*hwreg)];
-  fault_regs->blk_size = sizeof(sMfltFaultRegs);
+  scb->SHCSR = hwreg[offsetof(sTcsFaultRegs, SHCSR) / sizeof(*hwreg)];
+  scb->CFSR  = hwreg[offsetof(sTcsFaultRegs, CFSR)  / sizeof(*hwreg)];
+  scb->HFSR  = hwreg[offsetof(sTcsFaultRegs, HFSR)  / sizeof(*hwreg)];
+  scb->DFSR  = hwreg[offsetof(sTcsFaultRegs, DFSR)  / sizeof(*hwreg)];
+  scb->MMFAR = hwreg[offsetof(sTcsFaultRegs, MMFAR) / sizeof(*hwreg)];
+  scb->BFAR  = hwreg[offsetof(sTcsFaultRegs, BFAR)  / sizeof(*hwreg)];
+  scb->AFSR  = hwreg[offsetof(sTcsFaultRegs, AFSR)  / sizeof(*hwreg)];
+  fault_regs->blk_size = sizeof(sTcsFaultRegs);
   fault_regs->valid_cache = true;
 }
 #else
-#define FAULT_REG_REGION_TYPE  kMfltCoredumpRegionType_MemoryWordAccessOnly
+#define FAULT_REG_REGION_TYPE  kTcsCoredumpRegionType_MemoryWordAccessOnly
 #define FAULT_REG_REGION_START 0xE000ED24 // Start at SHCSR
-#define FAULT_REG_REGION_SIZE  (sizeof(sMfltFaultRegs))
+#define FAULT_REG_REGION_SIZE  (sizeof(sTcsFaultRegs))
 #endif
 
-const sMfltCoredumpRegion *ticos_coredump_get_arch_regions(size_t *num_regions) {
+const sTcsCoredumpRegion *ticos_coredump_get_arch_regions(size_t *num_regions) {
 #if TICOS_COLLECT_MPU_STATE
-  static sMfltMpuRegs s_tcs_mpu_regs;
+  static sTcsMpuRegs s_tcs_mpu_regs;
 
   // We need to unroll the MPU registers from hardware into the representation
   // that is parsed by the Ticos cloud. Be sure this algorithm matches the
@@ -162,7 +162,7 @@ const sMfltCoredumpRegion *ticos_coredump_get_arch_regions(size_t *num_regions) 
   }
 #endif /* TICOS_COLLECT_MPU_STATE */
 
-  static const sMfltCoredumpRegion s_coredump_regions[] = {
+  static const sTcsCoredumpRegion s_coredump_regions[] = {
     {
       .type = FAULT_REG_REGION_TYPE,
       .region_start = (void *)FAULT_REG_REGION_START,
@@ -170,50 +170,50 @@ const sMfltCoredumpRegion *ticos_coredump_get_arch_regions(size_t *num_regions) 
     },
 #if TICOS_COLLECT_INTERRUPT_STATE
     {
-      .type = kMfltCoredumpRegionType_MemoryWordAccessOnly,
+      .type = kTcsCoredumpRegionType_MemoryWordAccessOnly,
       .region_start = (void *)0xE000ED18,
-      .region_size = sizeof(sMfltSysHandlerPriorityRegs)
+      .region_size = sizeof(sTcsSysHandlerPriorityRegs)
     },
     {
-      .type = kMfltCoredumpRegionType_MemoryWordAccessOnly,
+      .type = kTcsCoredumpRegionType_MemoryWordAccessOnly,
       .region_start = (void *)0xE000E004,
-      .region_size = sizeof(sMfltControlRegs)
+      .region_size = sizeof(sTcsControlRegs)
     },
     {
-      .type = kMfltCoredumpRegionType_MemoryWordAccessOnly,
+      .type = kTcsCoredumpRegionType_MemoryWordAccessOnly,
       .region_start = (void *)0xE000ED04,
-      .region_size = sizeof(sMfltIntControlRegs)
+      .region_size = sizeof(sTcsIntControlRegs)
     },
     {
-      .type = kMfltCoredumpRegionType_MemoryWordAccessOnly,
+      .type = kTcsCoredumpRegionType_MemoryWordAccessOnly,
       .region_start = (void *)0xE000EDFC,
-      .region_size = sizeof(sMfltDebugExcMonCtrlReg)
+      .region_size = sizeof(sTcsDebugExcMonCtrlReg)
     },
     {
-      .type = kMfltCoredumpRegionType_MemoryWordAccessOnly,
+      .type = kTcsCoredumpRegionType_MemoryWordAccessOnly,
       .region_start = (void *)0xE000E100,
-      .region_size = sizeof(sMfltNvicIserIsprIabr)
+      .region_size = sizeof(sTcsNvicIserIsprIabr)
     },
     {
-      .type = kMfltCoredumpRegionType_MemoryWordAccessOnly,
+      .type = kTcsCoredumpRegionType_MemoryWordAccessOnly,
       .region_start = (void *)0xE000E200,
-      .region_size = sizeof(sMfltNvicIserIsprIabr)
+      .region_size = sizeof(sTcsNvicIserIsprIabr)
     },
     {
-      .type = kMfltCoredumpRegionType_MemoryWordAccessOnly,
+      .type = kTcsCoredumpRegionType_MemoryWordAccessOnly,
       .region_start = (void *)0xE000E300,
-      .region_size = sizeof(sMfltNvicIserIsprIabr)
+      .region_size = sizeof(sTcsNvicIserIsprIabr)
     },
     {
-      .type = kMfltCoredumpRegionType_MemoryWordAccessOnly,
+      .type = kTcsCoredumpRegionType_MemoryWordAccessOnly,
       .region_start = (void *)0xE000E400,
-      .region_size = sizeof(sMfltNvicIpr)
+      .region_size = sizeof(sTcsNvicIpr)
     },
 #endif /* TICOS_COLLECT_INTERRUPT_STATE */
 
 #if TICOS_COLLECT_MPU_STATE
     {
-      .type = kMfltCoredumpRegionType_ArmV6orV7MpuUnrolled,
+      .type = kTcsCoredumpRegionType_ArmV6orV7MpuUnrolled,
       .region_start = (void *) &s_tcs_mpu_regs, // Cannot point at the hardware, needs processing
       .region_size = sizeof(s_tcs_mpu_regs)
     },

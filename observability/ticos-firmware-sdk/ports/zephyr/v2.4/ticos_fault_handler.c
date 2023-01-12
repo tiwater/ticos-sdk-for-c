@@ -54,7 +54,7 @@ void __wrap_z_fatal_error(unsigned int reason, const z_arch_esf_t *esf) {
   const uint32_t exc_return = extra_info->exc_return;
   const bool msp_was_active = (exc_return & (1 << 2)) == 0;
 
-  sMfltRegState reg = {
+  sTcsRegState reg = {
     .exception_frame = (void *)(msp_was_active ? extra_info->msp : callee_regs->psp),
     .r4 = callee_regs->v1,
     .r5 = callee_regs->v2,
@@ -67,7 +67,7 @@ void __wrap_z_fatal_error(unsigned int reason, const z_arch_esf_t *esf) {
     .exc_return = exc_return,
   };
 
-  ticos_fault_handler(&reg, kMfltRebootReason_HardFault);
+  ticos_fault_handler(&reg, kTcsRebootReason_HardFault);
 }
 
 TICOS_WEAK

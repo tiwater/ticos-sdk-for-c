@@ -137,7 +137,7 @@ static int prv_trigger_heartbeat(const struct shell *shell, size_t argc, char **
 }
 
 static int prv_test_reboot(const struct shell *shell, size_t argc, char **argv) {
-  ticos_reboot_tracking_mark_reset_imminent(kMfltRebootReason_UserReset, NULL);
+  ticos_reboot_tracking_mark_reset_imminent(kTcsRebootReason_UserReset, NULL);
   ticos_platform_reboot();
   return 0;  // should be unreachable
 }

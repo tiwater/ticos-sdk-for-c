@@ -80,7 +80,7 @@ static uint8_t s_event_storage[CONFIG_TICOS_EVENT_STORAGE_SIZE];
 TICOS_WEAK
 void ticos_reboot_reason_get(sResetBootupInfo *info) {
   *info = (sResetBootupInfo) {
-    .reset_reason = kMfltRebootReason_Unknown,
+    .reset_reason = kTcsRebootReason_Unknown,
   };
 }
 #endif

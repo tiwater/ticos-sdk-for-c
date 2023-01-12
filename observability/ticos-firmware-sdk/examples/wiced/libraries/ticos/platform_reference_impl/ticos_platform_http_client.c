@@ -34,7 +34,7 @@
 // API expects colon+space in fieldname :/
 #define TICOS_HTTP_PROJECT_KEY_HEADER_WICED TICOS_HTTP_PROJECT_KEY_HEADER ": "
 
-typedef struct MfltHttpClient {
+typedef struct TcsHttpClient {
   http_client_t client;
   http_client_configuration_info_t config;
   bool is_dns_lookup_done;
@@ -46,9 +46,9 @@ typedef struct MfltHttpClient {
   TicosHttpClientResponseCallback callback;
 
   void *callback_ctx;
-} sMfltHttpClient;
+} sTcsHttpClient;
 
-int ticos_platform_http_response_get_status(const sMfltHttpResponse *response, uint32_t *status_out) {
+int ticos_platform_http_response_get_status(const sTcsHttpResponse *response, uint32_t *status_out) {
   TICOS_ASSERT(response);
   http_response_t *wiced_response = (http_response_t *)response;
   http_status_line_t status_line = {0};
@@ -62,16 +62,16 @@ int ticos_platform_http_response_get_status(const sMfltHttpResponse *response, u
   return 0;
 }
 
-static void prv_finalize_request_and_run_callback(sMfltHttpClient *client, http_response_t *response) {
+static void prv_finalize_request_and_run_callback(sTcsHttpClient *client, http_response_t *response) {
   if (!client->is_request_pending) {
     return;
   }
   if (client->callback) {
-    client->callback((const sMfltHttpResponse *) response, client->callback_ctx);
+    client->callback((const sTcsHttpResponse *) response, client->callback_ctx);
   }
 
   uint32_t http_status = 0;
-  const int rv = ticos_platform_http_response_get_status((const sMfltHttpResponse *)response,
+  const int rv = ticos_platform_http_response_get_status((const sTcsHttpResponse *)response,
                                                             &http_status);
   if (rv != 0) {
     TICOS_LOG_ERROR("Request failed. No HTTP status: %d", rv);
@@ -84,7 +84,7 @@ static void prv_finalize_request_and_run_callback(sMfltHttpClient *client, http_
   client->is_request_pending = false;
 }
 
-static void prv_handle_data_received(sMfltHttpClient *client, http_response_t *response) {
+static void prv_handle_data_received(sTcsHttpClient *client, http_response_t *response) {
   if (response->request != &client->request) {
     TICOS_LOG_DEBUG("Recv data for different req");
     return;
@@ -103,8 +103,8 @@ static void prv_handle_data_received(sMfltHttpClient *client, http_response_t *r
 }
 
 static void prv_http_event_handler(http_client_t *wiced_client, http_event_t event, http_response_t *response) {
-  TICOS_STATIC_ASSERT(offsetof(sMfltHttpClient, client) == 0, "Expecting first member to be http_client_t client");
-  sMfltHttpClient *client = (sMfltHttpClient *)wiced_client;
+  TICOS_STATIC_ASSERT(offsetof(sTcsHttpClient, client) == 0, "Expecting first member to be http_client_t client");
+  sTcsHttpClient *client = (sTcsHttpClient *)wiced_client;
 
   switch (event) {
     case HTTP_CONNECTED:
@@ -125,12 +125,12 @@ static void prv_http_event_handler(http_client_t *wiced_client, http_event_t eve
   }
 }
 
-sMfltHttpClient *ticos_platform_http_client_create(void) {
+sTcsHttpClient *ticos_platform_http_client_create(void) {
   if (wiced_network_is_up(WICED_STA_INTERFACE) == WICED_FALSE) {
     // If the network is not up (WiFi is not joined) http_client_init() will trip an assert... :/ Race prone?
     goto error;
   }
-  sMfltHttpClient *client = malloc(sizeof(sMfltHttpClient));
+  sTcsHttpClient *client = malloc(sizeof(sTcsHttpClient));
   if (!client) {
     goto error;
   }
@@ -163,7 +163,7 @@ error:
   return NULL;
 }
 
-static bool prv_do_dns_lookup(sMfltHttpClient *client) {
+static bool prv_do_dns_lookup(sTcsHttpClient *client) {
   if (client->is_dns_lookup_done) {
     return true;
   }
@@ -178,7 +178,7 @@ static bool prv_do_dns_lookup(sMfltHttpClient *client) {
 }
 
 static wiced_result_t prv_send_chunk_in_http_request(
-    sMfltHttpClient *client, const char *url,
+    sTcsHttpClient *client, const char *url,
     TicosHttpClientResponseCallback callback, void *ctx) {
   uint8_t *buffer = malloc(TICOS_HTTP_POST_DATA_READ_BUFFER_SIZE);
   if (!buffer) {
@@ -279,7 +279,7 @@ typedef enum {
 } eTicosPlatformHttpPost;
 
 int ticos_platform_http_client_post_data(
-    sMfltHttpClient *client, TicosHttpClientResponseCallback callback, void *ctx) {
+    sTcsHttpClient *client, TicosHttpClientResponseCallback callback, void *ctx) {
   if (client->is_request_pending) {
     TICOS_LOG_ERROR("Data post request already pending!");
     return kTicosPlatformHttpPost_AlreadyPending;
@@ -287,7 +287,7 @@ int ticos_platform_http_client_post_data(
 
   // Early exit if there is no new data to send
   if (!ticos_packetizer_data_available()) {
-    return kMfltPostDataStatus_NoDataFound;
+    return kTcsPostDataStatus_NoDataFound;
   }
 
   if (!prv_do_dns_lookup(client)) {
@@ -326,7 +326,7 @@ int ticos_platform_http_client_post_data(
 }
 
 int ticos_platform_http_client_wait_until_requests_completed(
-    sMfltHttpClient *client, uint32_t timeout_ms) {
+    sTcsHttpClient *client, uint32_t timeout_ms) {
   uint32_t waited_ms = 0;
   while (client->is_request_pending) {
     // Could also be implemented using a semaphore
@@ -339,7 +339,7 @@ int ticos_platform_http_client_wait_until_requests_completed(
   return 0;
 }
 
-int ticos_platform_http_client_destroy(sMfltHttpClient *client) {
+int ticos_platform_http_client_destroy(sTcsHttpClient *client) {
   http_client_deinit((http_client_t *)client);
   free(client);
   return 0;

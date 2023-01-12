@@ -26,7 +26,7 @@
 #endif
 
 void ticos_reboot_reason_get(sResetBootupInfo *info) {
-  eTicosRebootReason reboot_reason = kMfltRebootReason_Unknown;
+  eTicosRebootReason reboot_reason = kTcsRebootReason_Unknown;
   int esp_reset_cause = (int)esp_reset_reason();
 
   TICOS_LOG_INFO("ESP Reset Cause 0x%" PRIx32, esp_reset_cause);
@@ -34,19 +34,19 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
 
   switch (esp_reset_cause) {
     case ESP_RST_POWERON:
-      reboot_reason = kMfltRebootReason_PowerOnReset;
+      reboot_reason = kTcsRebootReason_PowerOnReset;
       TICOS_PRINT_RESET_INFO(" Power On Reset");
       break;
     case ESP_RST_SW:
-      reboot_reason = kMfltRebootReason_SoftwareReset;
+      reboot_reason = kTcsRebootReason_SoftwareReset;
       TICOS_PRINT_RESET_INFO(" Software Reset");
       break;
     case ESP_RST_INT_WDT:
-      reboot_reason = kMfltRebootReason_HardwareWatchdog;
+      reboot_reason = kTcsRebootReason_HardwareWatchdog;
       TICOS_PRINT_RESET_INFO(" INT Watchdog");
       break;
     case ESP_RST_TASK_WDT:
-      reboot_reason = kMfltRebootReason_HardwareWatchdog;
+      reboot_reason = kTcsRebootReason_HardwareWatchdog;
       TICOS_PRINT_RESET_INFO(" Task Watchdog");
       break;
     case ESP_RST_WDT:
@@ -55,20 +55,20 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
       TICOS_PRINT_RESET_INFO(" Hardware Watchdog");
       break;
     case ESP_RST_DEEPSLEEP:
-      reboot_reason = kMfltRebootReason_DeepSleep;
+      reboot_reason = kTcsRebootReason_DeepSleep;
       TICOS_PRINT_RESET_INFO(" Deep Sleep");
       break;
     case ESP_RST_BROWNOUT:
-      reboot_reason = kMfltRebootReason_BrownOutReset;
+      reboot_reason = kTcsRebootReason_BrownOutReset;
       TICOS_PRINT_RESET_INFO(" Brown Out");
       break;
     case ESP_RST_PANIC:
-      reboot_reason = kMfltRebootReason_HardFault;
+      reboot_reason = kTcsRebootReason_HardFault;
       TICOS_PRINT_RESET_INFO(" Software Panic");
       break;
     default:
       TICOS_PRINT_RESET_INFO(" Unknown");
-      reboot_reason = kMfltRebootReason_UnknownError;
+      reboot_reason = kTcsRebootReason_UnknownError;
       break;
   }
 

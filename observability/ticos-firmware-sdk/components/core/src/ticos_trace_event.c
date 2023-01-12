@@ -30,7 +30,7 @@
 #define TRACE_EVENT_OPT_FIELD_LOG_MASK (1 << 1)
 
 typedef struct {
-  eMfltTraceReasonUser reason;
+  eTcsTraceReasonUser reason;
   void *pc_addr;
   void *return_addr;
   //! A bitmask which tracks the optional fields have been captured.
@@ -188,7 +188,7 @@ static int prv_capture_trace_event_info(sTicosTraceEventInfo *info) {
   return prv_trace_event_capture(info);
 }
 
-int ticos_trace_event_capture(eMfltTraceReasonUser reason, void *pc_addr,
+int ticos_trace_event_capture(eTcsTraceReasonUser reason, void *pc_addr,
                                  void *lr_addr) {
   sTicosTraceEventInfo event_info = {
     .reason = reason,
@@ -198,7 +198,7 @@ int ticos_trace_event_capture(eMfltTraceReasonUser reason, void *pc_addr,
   return prv_capture_trace_event_info(&event_info);
 }
 
-int ticos_trace_event_with_status_capture(eMfltTraceReasonUser reason, void *pc_addr,
+int ticos_trace_event_with_status_capture(eTcsTraceReasonUser reason, void *pc_addr,
                                              void *lr_addr, int32_t status) {
   sTicosTraceEventInfo event_info = {
     .reason = reason,
@@ -213,7 +213,7 @@ int ticos_trace_event_with_status_capture(eMfltTraceReasonUser reason, void *pc_
 #if !TICOS_COMPACT_LOG_ENABLE
 
 int ticos_trace_event_with_log_capture(
-    eMfltTraceReasonUser reason, void *pc_addr, void *lr_addr, const char *fmt, ...) {
+    eTcsTraceReasonUser reason, void *pc_addr, void *lr_addr, const char *fmt, ...) {
 
 #if !TICOS_TRACE_EVENT_WITH_LOG_FROM_ISR_ENABLED
   // If a log capture takes place while in an ISR we just record a normal trace event
@@ -251,7 +251,7 @@ static void prv_fill_compact_log_cb(void *ctx, uint32_t offset, const void *buf,
 }
 
 int ticos_trace_event_with_compact_log_capture(
-    eMfltTraceReasonUser reason, void *lr_addr,
+    eTcsTraceReasonUser reason, void *lr_addr,
     uint32_t log_id, uint32_t compressed_fmt, ...) {
 
 #if !TICOS_TRACE_EVENT_WITH_LOG_FROM_ISR_ENABLED
@@ -288,7 +288,7 @@ int ticos_trace_event_with_compact_log_capture(
 
 size_t ticos_trace_event_compute_worst_case_storage_size(void) {
   sTicosTraceEventInfo event_info = {
-    .reason =  kMfltTraceReasonUser_NumReasons,
+    .reason =  kTcsTraceReasonUser_NumReasons,
     .pc_addr = (void *)(uintptr_t)UINT32_MAX,
     .return_addr = (void *)(uintptr_t)UINT32_MAX,
     .opt_fields = TRACE_EVENT_OPT_FIELD_STATUS_MASK,

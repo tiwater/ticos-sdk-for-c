@@ -1,12 +1,12 @@
 /*
- * Defines __MfltCoredumpRamStart and __MfltCoredumpRamEnd that point to beginning and end of the SRAM region.
+ * Defines __TcsCoredumpRamStart and __TcsCoredumpRamEnd that point to beginning and end of the SRAM region.
  */
 
 SECTIONS
 {
   .tcs_coredump_symbols :
   {
-    __MfltCoredumpRamStart = ORIGIN(SRAM);
-    __MfltCoredumpRamEnd = ORIGIN(SRAM) + LENGTH(SRAM);
+    __TcsCoredumpRamStart = ORIGIN(SRAM);
+    __TcsCoredumpRamEnd = ORIGIN(SRAM) + LENGTH(SRAM);
   }
 }

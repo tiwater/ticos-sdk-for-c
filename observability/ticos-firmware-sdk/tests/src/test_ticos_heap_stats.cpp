@@ -32,15 +32,15 @@ TEST_GROUP(TicosHeapStats) {
   }
 };
 
-static bool prv_heap_stat_equality(const sMfltHeapStatEntry *expected,
-                                   const sMfltHeapStatEntry *actual) {
+static bool prv_heap_stat_equality(const sTcsHeapStatEntry *expected,
+                                   const sTcsHeapStatEntry *actual) {
   bool match = (expected->lr == actual->lr) &&    //
                (expected->ptr == actual->ptr) &&  //
                (expected->info.size == actual->info.size) && //
                (expected->info.in_use == actual->info.in_use);
   if (!match) {
     fprintf(stderr,
-            "sMfltHeapStatEntry:\n"
+            "sTcsHeapStatEntry:\n"
             " lr: %p : %p\n"
             " ptr: %p : %p\n"
             " size: %u : %u\n"
@@ -55,7 +55,7 @@ static bool prv_heap_stat_equality(const sMfltHeapStatEntry *expected,
 TEST(TicosHeapStats, Test_Basic) {
   void *lr;
   TICOS_GET_LR(lr);
-  const sMfltHeapStatEntry expected_heap_stats[] = {
+  const sTcsHeapStatEntry expected_heap_stats[] = {
     {
       .lr = lr,
       .ptr = (void *)0x12345679,
@@ -85,7 +85,7 @@ TEST(TicosHeapStats, Test_Basic) {
 TEST(TicosHeapStats, Test_Free) {
   void *lr;
   TICOS_GET_LR(lr);
-  const sMfltHeapStatEntry
+  const sTcsHeapStatEntry
     expected_heap_stats[TICOS_ARRAY_SIZE(g_ticos_heap_stats_pool)] = {
       {
         .lr = lr,
@@ -139,7 +139,7 @@ TEST(TicosHeapStats, Test_Free) {
   // work over the list, confirming that everything matches expected
   size_t list_count = 0;
   for (size_t i = 0; i < TICOS_ARRAY_SIZE(g_ticos_heap_stats_pool); i++) {
-    sMfltHeapStatEntry *pthis = &g_ticos_heap_stats_pool[i];
+    sTcsHeapStatEntry *pthis = &g_ticos_heap_stats_pool[i];
     if (pthis->info.size != 0) {
       list_count++;
       bool match = prv_heap_stat_equality(&expected_heap_stats[i], pthis);
@@ -156,7 +156,7 @@ TEST(TicosHeapStats, Test_Free) {
 TEST(TicosHeapStats, Test_MaxEntriesRollover) {
   void *lr;
   TICOS_GET_LR(lr);
-  const sMfltHeapStatEntry
+  const sTcsHeapStatEntry
     expected_heap_stats[TICOS_ARRAY_SIZE(g_ticos_heap_stats_pool)] = {
       {
         .lr = lr,
@@ -198,8 +198,8 @@ TEST(TicosHeapStats, Test_MaxEntriesRollover) {
   // work over the list, FIFO, confirming that everything matches expected
   size_t list_count = 0;
   for (size_t i = 0; i < TICOS_ARRAY_SIZE(g_ticos_heap_stats_pool); i++) {
-    sMfltHeapStatEntry *pthis = &g_ticos_heap_stats_pool[i];
-    sMfltHeapStatEntry expected = {
+    sTcsHeapStatEntry *pthis = &g_ticos_heap_stats_pool[i];
+    sTcsHeapStatEntry expected = {
       .lr = lr,
       .ptr = (void *)(0x12345679 + i),
       .info =
@@ -223,7 +223,7 @@ TEST(TicosHeapStats, Test_MaxEntriesRollover) {
 TEST(TicosHeapStats, Test_AddressReuse) {
   void *lr;
   TICOS_GET_LR(lr);
-  const sMfltHeapStatEntry expected_heap_stats[] = {
+  const sTcsHeapStatEntry expected_heap_stats[] = {
     {
       .lr = lr,
       .ptr = (void *)0x12345679,
@@ -255,7 +255,7 @@ TEST(TicosHeapStats, Test_AddressReuse) {
 
   size_t list_count = 0;
   for (size_t i = 0; i < TICOS_ARRAY_SIZE(g_ticos_heap_stats_pool); i++) {
-    sMfltHeapStatEntry *pthis = &g_ticos_heap_stats_pool[i];
+    sTcsHeapStatEntry *pthis = &g_ticos_heap_stats_pool[i];
     if (pthis->info.size != 0) {
       list_count++;
       bool match = prv_heap_stat_equality(&expected_heap_stats[i], pthis);
@@ -272,7 +272,7 @@ TEST(TicosHeapStats, Test_AddressReuse) {
 TEST(TicosHeapStats, Test_Reuse) {
   void *lr;
   TICOS_GET_LR(lr);
-  const sMfltHeapStatEntry expected_heap_stats = {
+  const sTcsHeapStatEntry expected_heap_stats = {
     .lr = lr,
     .ptr = (void *)0x12345679,
     .info = {
@@ -281,7 +281,7 @@ TEST(TicosHeapStats, Test_Reuse) {
     },
   };
 
-  const sMfltHeapStatEntry middle_entry = {
+  const sTcsHeapStatEntry middle_entry = {
     .lr = lr,
     .ptr = (void *)0x87654321,
     .info = {
@@ -290,7 +290,7 @@ TEST(TicosHeapStats, Test_Reuse) {
     },
   };
 
-  const sMfltHeapStatEntry final_entry = {
+  const sTcsHeapStatEntry final_entry = {
     .lr = lr,
     .ptr = (void *)0x111111111,
     .info = {
@@ -318,7 +318,7 @@ TEST(TicosHeapStats, Test_Reuse) {
                          &g_ticos_heap_stats_pool[g_ticos_heap_stats.stats_pool_head]);
 
   // Check next recent is end of heap stats pool
-  sMfltHeapStatEntry *entry = &g_ticos_heap_stats_pool[g_ticos_heap_stats.stats_pool_head];
+  sTcsHeapStatEntry *entry = &g_ticos_heap_stats_pool[g_ticos_heap_stats.stats_pool_head];
   prv_heap_stat_equality(&g_ticos_heap_stats_pool[TICOS_HEAP_STATS_MAX_COUNT - 1],
                          &g_ticos_heap_stats_pool[entry->info.next_entry_index]);
 
@@ -335,8 +335,8 @@ TEST(TicosHeapStats, Test_Reuse) {
       continue;
     }
 
-    sMfltHeapStatEntry *pthis = &g_ticos_heap_stats_pool[i];
-    sMfltHeapStatEntry expected = {
+    sTcsHeapStatEntry *pthis = &g_ticos_heap_stats_pool[i];
+    sTcsHeapStatEntry expected = {
       .lr = lr,
       .ptr = (void *)(0x12345679 + i),
       .info =
@@ -365,7 +365,7 @@ TEST(TicosHeapStats, Test_FreeMostRecent) {
   void *lr;
   TICOS_GET_LR(lr);
 
-  const sMfltHeapStatEntry expected_heap_stats = {
+  const sTcsHeapStatEntry expected_heap_stats = {
     .lr = lr,
     .ptr = (void *)0x12345679,
     .info = {

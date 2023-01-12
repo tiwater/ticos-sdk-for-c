@@ -108,10 +108,10 @@ As a sanity check, let's request the device info from the debug console, enter
 
 ```
 tcs> get_device_info
-MFLT: [INFO] S/N: 1E00230001234567890ABCDE
-MFLT: [INFO] SW type: mbed-main
-MFLT: [INFO] SW version: 1.0.0
-MFLT: [INFO] HW version: mbed-proto
+Tcs: [INFO] S/N: 1E00230001234567890ABCDE
+Tcs: [INFO] SW type: mbed-main
+Tcs: [INFO] SW version: 1.0.0
+Tcs: [INFO] HW version: mbed-proto
 tcs>
 ```
 
@@ -138,10 +138,10 @@ When the system comes back up, you'll see the startup banner. You can then use
 the `get_core` command to check if a coredump was stored:
 
 ```
-MFLT: [INFO] Ticos Mbed OS 5 demo app started...
+Tcs: [INFO] Ticos Mbed OS 5 demo app started...
 
 tcs> get_core
-MFLT: [INFO] Has coredump with size: 21632
+Tcs: [INFO] Has coredump with size: 21632
 ```
 
 This confirms that a coredump of 21632 bytes (the entire space allocated for the

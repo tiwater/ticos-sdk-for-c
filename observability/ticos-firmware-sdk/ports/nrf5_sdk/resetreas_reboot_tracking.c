@@ -86,28 +86,28 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
   TICOS_PRINT_RESET_INFO("Reset Causes: ");
 
   // Assume "no bits set" implies POR.
-  eTicosRebootReason reset_reason = kMfltRebootReason_PowerOnReset;
+  eTicosRebootReason reset_reason = kTcsRebootReason_PowerOnReset;
 
   // These appear to be common. Also, the assumption is
   // that only one bit per actual reset event can be set.
   if (reset_reason_reg & NRF_POWER_RESETREAS_RESETPIN_MASK) {
     TICOS_PRINT_RESET_INFO(" Pin Reset");
-    reset_reason = kMfltRebootReason_PinReset;
+    reset_reason = kTcsRebootReason_PinReset;
   } else if (reset_reason_reg & NRF_POWER_RESETREAS_DOG_MASK) {
     TICOS_PRINT_RESET_INFO(" Watchdog");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_reason_reg & NRF_POWER_RESETREAS_SREQ_MASK) {
     TICOS_PRINT_RESET_INFO(" Software");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_reason_reg & NRF_POWER_RESETREAS_LOCKUP_MASK) {
     TICOS_PRINT_RESET_INFO(" Lockup");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_reason_reg & NRF_POWER_RESETREAS_OFF_MASK) {
     TICOS_PRINT_RESET_INFO(" GPIO Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
   } else if (reset_reason_reg & NRF_POWER_RESETREAS_DIF_MASK) {
     TICOS_PRINT_RESET_INFO(" Debug Interface Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
   }
 
   // The following are decided based on some #define logic provided by Nordic
@@ -117,21 +117,21 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
 #if defined(POWER_RESETREAS_LPCOMP_Msk)
   else if (reset_reason_reg & NRF_POWER_RESETREAS_LPCOMP_MASK) {
     TICOS_PRINT_RESET_INFO(" LPCOMP Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
   }
 #endif
 
 #if defined(POWER_RESETREAS_NFC_Msk)
   else if (reset_reason_reg & NRF_POWER_RESETREAS_NFC_MASK) {
     TICOS_PRINT_RESET_INFO(" NFC Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
   }
 #endif
 
 #if defined(POWER_RESETREAS_VBUS_Msk)
   else if (reset_reason_reg & NRF_POWER_RESETREAS_VBUS_MASK) {
     TICOS_PRINT_RESET_INFO(" VBUS Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
   }
 #endif
 

@@ -26,11 +26,11 @@
 TICOS_STATIC_ASSERT(TICOS_HEAP_STATS_MAX_COUNT < TICOS_HEAP_STATS_LIST_END,
                        "Number of entries in heap stats exceeds limits");
 
-sMfltHeapStats g_ticos_heap_stats = {
+sTcsHeapStats g_ticos_heap_stats = {
   .version = TICOS_HEAP_STATS_VERSION,
   .stats_pool_head = TICOS_HEAP_STATS_LIST_END,
 };
-sMfltHeapStatEntry g_ticos_heap_stats_pool[TICOS_HEAP_STATS_MAX_COUNT];
+sTcsHeapStatEntry g_ticos_heap_stats_pool[TICOS_HEAP_STATS_MAX_COUNT];
 
 static void prv_heap_stats_lock(void) {
 #if TICOS_COREDUMP_HEAP_STATS_LOCK_ENABLE
@@ -46,7 +46,7 @@ static void prv_heap_stats_unlock(void) {
 
 void ticos_heap_stats_reset(void) {
   prv_heap_stats_lock();
-  g_ticos_heap_stats = (sMfltHeapStats){
+  g_ticos_heap_stats = (sTcsHeapStats){
     .version = TICOS_HEAP_STATS_VERSION,
     .stats_pool_head = TICOS_HEAP_STATS_LIST_END,
   };
@@ -69,7 +69,7 @@ static uint16_t prv_get_previous_entry(uint16_t search_entry_index) {
   uint16_t index = TICOS_HEAP_STATS_LIST_END;
 
   for (uint16_t i = 0; i < TICOS_ARRAY_SIZE(g_ticos_heap_stats_pool); i++) {
-    sMfltHeapStatEntry *entry = &g_ticos_heap_stats_pool[i];
+    sTcsHeapStatEntry *entry = &g_ticos_heap_stats_pool[i];
     if (entry->info.in_use && entry->info.next_entry_index == search_entry_index) {
       index = i;
       break;
@@ -84,7 +84,7 @@ static uint16_t prv_get_previous_entry(uint16_t search_entry_index) {
 //! First searches for unused entries
 //! If none are found then traverses list to oldest (last) entry
 static uint16_t prv_get_new_entry_index(void) {
-  sMfltHeapStatEntry *entry;
+  sTcsHeapStatEntry *entry;
 
   for (uint16_t i = 0; i < TICOS_ARRAY_SIZE(g_ticos_heap_stats_pool); i++) {
     entry = &g_ticos_heap_stats_pool[i];
@@ -108,8 +108,8 @@ void ticos_heap_stats_malloc(const void *lr, const void *ptr, size_t size) {
       g_ticos_heap_stats.max_in_use_block_count = g_ticos_heap_stats.in_use_block_count;
     }
     uint16_t new_entry_index = prv_get_new_entry_index();
-    sMfltHeapStatEntry *new_entry = &g_ticos_heap_stats_pool[new_entry_index];
-    *new_entry = (sMfltHeapStatEntry){
+    sTcsHeapStatEntry *new_entry = &g_ticos_heap_stats_pool[new_entry_index];
+    *new_entry = (sTcsHeapStatEntry){
       .lr = lr,
       .ptr = ptr,
       .info =
@@ -143,7 +143,7 @@ void ticos_heap_stats_free(const void *ptr) {
 
     // if the pointer exists in the tracked stats, mark it as freed
     for (uint16_t i = 0; i < TICOS_ARRAY_SIZE(g_ticos_heap_stats_pool); i++) {
-      sMfltHeapStatEntry *entry = &g_ticos_heap_stats_pool[i];
+      sTcsHeapStatEntry *entry = &g_ticos_heap_stats_pool[i];
       if ((entry->ptr == ptr) && entry->info.in_use) {
         entry->info.in_use = 0;
 

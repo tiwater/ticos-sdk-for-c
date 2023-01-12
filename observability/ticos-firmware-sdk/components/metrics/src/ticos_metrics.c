@@ -114,9 +114,9 @@ typedef struct TicosMetricValueInfo {
 
 // Generate a mapping of key index to key value position in s_ticos_heartbeat_values.
 // First produce a sparse enum for the key values that are stored in s_ticos_heartbeat_values.
-typedef enum MfltMetricKeyToValueIndex {
+typedef enum TcsMetricKeyToValueIndex {
   #define TICOS_METRICS_KEY_DEFINE(key_name, value_type) \
-    kMfltMetricKeyToValueIndex_##key_name,
+    kTcsMetricKeyToValueIndex_##key_name,
   #define TICOS_METRICS_STRING_KEY_DEFINE(key_name, max_length)
 
   #include "ticos/metrics/heartbeat_config.def"
@@ -124,12 +124,12 @@ typedef enum MfltMetricKeyToValueIndex {
 
   #undef TICOS_METRICS_KEY_DEFINE
   #undef TICOS_METRICS_STRING_KEY_DEFINE
-  kMfltMetricKeyToValueIndex_Count
-} eMfltMetricKeyToValueIndex;
+  kTcsMetricKeyToValueIndex_Count
+} eTcsMetricKeyToValueIndex;
 // Now generate a table mapping the canonical key ID to the index in s_ticos_heartbeat_values
-static const eMfltMetricKeyToValueIndex s_ticos_heartbeat_key_to_valueindex[] = {
+static const eTcsMetricKeyToValueIndex s_ticos_heartbeat_key_to_valueindex[] = {
   #define TICOS_METRICS_KEY_DEFINE(key_name, value_type) \
-    kMfltMetricKeyToValueIndex_##key_name,
+    kTcsMetricKeyToValueIndex_##key_name,
   #define TICOS_METRICS_STRING_KEY_DEFINE(key_name, max_length) \
     0,  // 0 for the placeholder so it's safe to index with
 
@@ -142,24 +142,24 @@ static const eMfltMetricKeyToValueIndex s_ticos_heartbeat_key_to_valueindex[] = 
 TICOS_STATIC_ASSERT(TICOS_ARRAY_SIZE(s_ticos_heartbeat_keys) == TICOS_ARRAY_SIZE(s_ticos_heartbeat_key_to_valueindex),
                        "Mismatch between s_ticos_heartbeat_keys and s_ticos_heartbeat_key_to_valueindex");
 // And a similar approach for the strings
-typedef enum MfltMetricStringKeyToIndex {
+typedef enum TcsMetricStringKeyToIndex {
   #define TICOS_METRICS_KEY_DEFINE(key_name, value_type)
   #define TICOS_METRICS_STRING_KEY_DEFINE(key_name, max_length) \
-    kMfltMetricStringKeyToIndex_##key_name,
+    kTcsMetricStringKeyToIndex_##key_name,
 
   #include "ticos/metrics/heartbeat_config.def"
   #include TICOS_METRICS_USER_HEARTBEAT_DEFS_FILE
 
   #undef TICOS_METRICS_KEY_DEFINE
   #undef TICOS_METRICS_STRING_KEY_DEFINE
-  kMfltMetricStringKeyToIndex_Count
-} eMfltMetricStringKeyToIndex;
+  kTcsMetricStringKeyToIndex_Count
+} eTcsMetricStringKeyToIndex;
 // Now generate a table mapping the canonical key ID to the index in s_ticos_heartbeat_values
-static const eMfltMetricStringKeyToIndex s_ticos_heartbeat_string_key_to_index[] = {
+static const eTcsMetricStringKeyToIndex s_ticos_heartbeat_string_key_to_index[] = {
   #define TICOS_METRICS_KEY_DEFINE(key_name, value_type) \
-    (eMfltMetricStringKeyToIndex)0,  // 0 for the placeholder so it's safe to index with
+    (eTcsMetricStringKeyToIndex)0,  // 0 for the placeholder so it's safe to index with
   #define TICOS_METRICS_STRING_KEY_DEFINE(key_name, max_length) \
-    kMfltMetricStringKeyToIndex_##key_name,
+    kTcsMetricStringKeyToIndex_##key_name,
 
   #include "ticos/metrics/heartbeat_config.def"
   #include TICOS_METRICS_USER_HEARTBEAT_DEFS_FILE
@@ -213,24 +213,24 @@ TICOS_METRICS_STATE_HELPER_kTicosMetricType_Unsigned(_)
 TICOS_METRICS_STATE_HELPER_kTicosMetricType_Signed(_)
 
 // We need a key-index table of pointers to timer metadata for fast lookups.
-// The enum eMfltMetricsTimerIndex will create a subset of indexes for use
+// The enum eTcsMetricsTimerIndex will create a subset of indexes for use
 // in the s_ticos_heartbeat_timer_values_metadata[] table. The
 // s_metric_timer_metadata_mapping[] table provides the mapping from the
 // exhaustive list of keys to valid timer indexes or -1 if not a timer.
 #define TICOS_METRICS_KEY_DEFINE(_name, _type) \
    TICOS_METRICS_STATE_HELPER_##_type(_name)
 
-// String metrics are not present in eMfltMetricsTimerIndex
+// String metrics are not present in eTcsMetricsTimerIndex
 #define TICOS_METRICS_STRING_KEY_DEFINE(key_name, max_length)
 
 #undef TICOS_METRICS_STATE_HELPER_kTicosMetricType_Timer
 #define TICOS_METRICS_STATE_HELPER_kTicosMetricType_Timer(key_name) \
-  kMfltMetricsTimerIndex_##key_name,
+  kTcsMetricsTimerIndex_##key_name,
 
-typedef enum MfltTimerIndex {
+typedef enum TcsTimerIndex {
    #include "ticos/metrics/heartbeat_config.def"
    #include TICOS_METRICS_USER_HEARTBEAT_DEFS_FILE
-} eMfltMetricsTimerIndex;
+} eTcsMetricsTimerIndex;
 
 #undef TICOS_METRICS_STATE_HELPER_kTicosMetricType_Unsigned
 #undef TICOS_METRICS_STATE_HELPER_kTicosMetricType_Signed
@@ -265,7 +265,7 @@ TICOS_WEAK
 void ticos_metrics_heartbeat_collect_sdk_data(void) { }
 
 // Returns NULL if not a timer type or out of bounds index.
-static sTicosMetricValueMetadata *prv_find_timer_metadatap(eMfltMetricsIndex metric_index) {
+static sTicosMetricValueMetadata *prv_find_timer_metadatap(eTcsMetricsIndex metric_index) {
   if (metric_index >= TICOS_ARRAY_SIZE(s_metric_timer_metadata_mapping)) {
     TICOS_LOG_ERROR("Metric index %u exceeds expected array bounds %d\n",
                        metric_index, (int)TICOS_ARRAY_SIZE(s_metric_timer_metadata_mapping));
@@ -289,7 +289,7 @@ static eTicosMetricType prv_find_value_for_key(TicosMetricId key,
   }
 
   // get the index for the value matching this key.
-  eMfltMetricKeyToValueIndex key_index = s_ticos_heartbeat_key_to_valueindex[idx];
+  eTcsMetricKeyToValueIndex key_index = s_ticos_heartbeat_key_to_valueindex[idx];
   // for scalar types, this will be the returned value pointer. non-scalars
   // will be handled in the switch below
   union TicosMetricValue *value_ptr = &s_ticos_heartbeat_values[key_index];
@@ -299,7 +299,7 @@ static eTicosMetricType prv_find_value_for_key(TicosMetricId key,
     case kTicosMetricType_String:
     {
       // get the string value associated with this key
-      eMfltMetricStringKeyToIndex string_key_index = s_ticos_heartbeat_string_key_to_index[idx];
+      eTcsMetricStringKeyToIndex string_key_index = s_ticos_heartbeat_string_key_to_index[idx];
       // cast to uintptr_t then the final pointer type we want to drop the
       // 'const' and prevent tripping -Wcast-qual. this is safe, because we
       // never modify *value_ptr, only value_ptr->ptr, for non-scalar types.
@@ -318,7 +318,7 @@ static eTicosMetricType prv_find_value_for_key(TicosMetricId key,
 
   *value_info_out = (sTicosMetricValueInfo){
     .valuep = value_ptr,
-    .meta_datap = prv_find_timer_metadatap((eMfltMetricsIndex)idx),
+    .meta_datap = prv_find_timer_metadatap((eTcsMetricsIndex)idx),
   };
 
   return key_type;
@@ -358,7 +358,7 @@ static int prv_find_value_info_for_type(TicosMetricId key, eTicosMetricType expe
     return TICOS_METRICS_KEY_NOT_FOUND;
   }
   if (type != expected_type) {
-    // To easily get name of metric in gdb, p/s (eMfltMetricsIndex)0
+    // To easily get name of metric in gdb, p/s (eTcsMetricsIndex)0
     TICOS_LOG_ERROR("Invalid type (%u vs %u) for key: %d", expected_type, type, key._impl);
     return TICOS_METRICS_TYPE_INCOMPATIBLE;
   }
@@ -581,7 +581,7 @@ static int prv_find_key_and_add(TicosMetricId key, int32_t amount) {
     case kTicosMetricType_String:
     case kTicosMetricType_NumTypes: // To silence -Wswitch-enum
     default:
-      // To easily get name of metric in gdb, p/s (eMfltMetricsIndex)0
+      // To easily get name of metric in gdb, p/s (eTcsMetricsIndex)0
       TICOS_LOG_ERROR("Can only add to number types (key: %d)", key._impl);
       return TICOS_METRICS_TYPE_INCOMPATIBLE;
   }

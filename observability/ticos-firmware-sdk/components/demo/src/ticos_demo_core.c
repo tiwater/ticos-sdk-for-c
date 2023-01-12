@@ -28,12 +28,12 @@ int ticos_demo_cli_cmd_system_reboot(TICOS_UNUSED int argc, TICOS_UNUSED char *a
   TICOS_GET_PC(pc);
   void *lr;
   TICOS_GET_LR(lr);
-  sMfltRebootTrackingRegInfo reg_info = {
+  sTcsRebootTrackingRegInfo reg_info = {
     .pc = (uint32_t)(uintptr_t)pc,
     .lr = (uint32_t)(uintptr_t)lr,
   };
 
-  ticos_reboot_tracking_mark_reset_imminent(kMfltRebootReason_UserReset, &reg_info);
+  ticos_reboot_tracking_mark_reset_imminent(kTcsRebootReason_UserReset, &reg_info);
   ticos_platform_reboot();
   return 0;
 }

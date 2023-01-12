@@ -19,10 +19,10 @@
 
 #if MYNEWT_VAL(TICOS_ENABLE)
 
-const sMfltCoredumpRegion *
+const sTcsCoredumpRegion *
 ticos_platform_coredump_get_regions(const sCoredumpCrashInfo *crash_info,
                                        size_t *num_regions) {
-  static sMfltCoredumpRegion s_coredump_regions[MYNEWT_VAL(TICOS_COREDUMP_MAX_AREA_COUNT)];
+  static sTcsCoredumpRegion s_coredump_regions[MYNEWT_VAL(TICOS_COREDUMP_MAX_AREA_COUNT)];
 
 #if MYNEWT_VAL(TICOS_COREDUMP_CAPTURE_MINIMAL)
   const size_t active_stack_size_to_collect = TICOS_PLATFORM_ACTIVE_STACK_SIZE_TO_COLLECT;
@@ -64,14 +64,14 @@ static int prv_flash_open(const struct flash_area **fa) {
 }
 
 void ticos_platform_coredump_storage_get_info(
-    sMfltCoredumpStorageInfo *info) {
+    sTcsCoredumpStorageInfo *info) {
   const struct flash_area *fa;
 
   if (prv_flash_open(&fa)) {
     assert(0);
   }
 
-  *info = (sMfltCoredumpStorageInfo){
+  *info = (sTcsCoredumpStorageInfo){
     .size = fa->fa_size,
     .sector_size = 0, // Not needed for port
   };

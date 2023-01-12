@@ -55,7 +55,7 @@ After performing the steps above, run `make` from the demo app directory:
 ```bash
 $ cd $TICOS_SDK_ROOT/examples/qp/apps/ticos_demo_app
 
-$ EMBEDDED_MFLT_SDK_ROOT=$TICOS_SDK_ROOT QPC_DIR=qpc make
+$ EMBEDDED_Tcs_SDK_ROOT=$TICOS_SDK_ROOT QPC_DIR=qpc make
 ```
 
 The target is built to:

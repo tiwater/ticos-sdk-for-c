@@ -27,11 +27,11 @@ bool ticos_http_build_url(char url_buffer[TICOS_HTTP_URL_BUFFER_SIZE], const cha
   return (rv < TICOS_HTTP_URL_BUFFER_SIZE);
 }
 
-sMfltHttpClient *ticos_http_client_create(void) {
+sTcsHttpClient *ticos_http_client_create(void) {
   return ticos_platform_http_client_create();
 }
 
-static void prv_handle_post_data_response(const sMfltHttpResponse *response, TICOS_UNUSED void *ctx) {
+static void prv_handle_post_data_response(const sTcsHttpResponse *response, TICOS_UNUSED void *ctx) {
   if (!response) {
     return;  // Request failed
   }
@@ -48,21 +48,21 @@ static void prv_handle_post_data_response(const sMfltHttpResponse *response, TIC
   }
 }
 
-int ticos_http_client_post_data(sMfltHttpClient *client) {
+int ticos_http_client_post_data(sTcsHttpClient *client) {
   if (!client) {
     return TicosInternalReturnCode_InvalidInput;
   }
   return ticos_platform_http_client_post_data(client, prv_handle_post_data_response, NULL);
 }
 
-int ticos_http_client_wait_until_requests_completed(sMfltHttpClient *client, uint32_t timeout_ms) {
+int ticos_http_client_wait_until_requests_completed(sTcsHttpClient *client, uint32_t timeout_ms) {
   if (!client) {
     return TicosInternalReturnCode_InvalidInput;
   }
   return ticos_platform_http_client_wait_until_requests_completed(client, timeout_ms);
 }
 
-int ticos_http_client_destroy(sMfltHttpClient *client) {
+int ticos_http_client_destroy(sTcsHttpClient *client) {
   if (!client) {
     return TicosInternalReturnCode_InvalidInput;
   }

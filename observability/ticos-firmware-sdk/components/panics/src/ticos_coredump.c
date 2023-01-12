@@ -24,40 +24,40 @@
 //! Version 2
 //!  - If there is not enough storage space for memory regions,
 //!    coredumps will now be truncated instead of failing completely
-//!  - Added sMfltCoredumpFooter to end of coredump. In this region
+//!  - Added sTcsCoredumpFooter to end of coredump. In this region
 //!    we track whether or not a coredump was truncated.
 #define TICOS_COREDUMP_VERSION 2
 
-typedef TICOS_PACKED_STRUCT MfltCoredumpHeader {
+typedef TICOS_PACKED_STRUCT TcsCoredumpHeader {
   uint32_t magic;
   uint32_t version;
   uint32_t total_size;
   uint8_t data[];
-} sMfltCoredumpHeader;
+} sTcsCoredumpHeader;
 
 #define TICOS_COREDUMP_FOOTER_MAGIC 0x504d5544
 
-typedef enum MfltCoredumpFooterFlags  {
-  kMfltCoredumpBlockType_SaveTruncated = 0,
-} eMfltCoredumpFooterFlags;
+typedef enum TcsCoredumpFooterFlags  {
+  kTcsCoredumpBlockType_SaveTruncated = 0,
+} eTcsCoredumpFooterFlags;
 
-typedef TICOS_PACKED_STRUCT MfltCoredumpFooter {
+typedef TICOS_PACKED_STRUCT TcsCoredumpFooter {
   uint32_t magic;
   uint32_t flags;
   // reserving for future footer additions such as a CRC over the contents saved
   uint32_t rsvd[2];
-} sMfltCoredumpFooter;
+} sTcsCoredumpFooter;
 
-typedef TICOS_PACKED_STRUCT MfltCoredumpBlock {
-  eMfltCoredumpBlockType block_type:8;
+typedef TICOS_PACKED_STRUCT TcsCoredumpBlock {
+  eTcsCoredumpBlockType block_type:8;
   uint8_t rsvd[3];
   uint32_t address;
   uint32_t length;
-} sMfltCoredumpBlock;
+} sTcsCoredumpBlock;
 
-typedef TICOS_PACKED_STRUCT MfltTraceReasonBlock {
+typedef TICOS_PACKED_STRUCT TcsTraceReasonBlock {
   uint32_t reason;
-} sMfltTraceReasonBlock;
+} sTcsTraceReasonBlock;
 
 // Using ELF machine enum values which is a half word:
 //  https://refspecs.linuxfoundation.org/elf/gabi4%2B/ch4.eheader.html
@@ -72,17 +72,17 @@ typedef TICOS_PACKED_STRUCT MfltTraceReasonBlock {
 #define TICOS_MACHINE_TYPE_XTENSA_LX106 \
   ((1 << TICOS_MACHINE_TYPE_SUBTYPE_OFFSET) | TICOS_MACHINE_TYPE_XTENSA)
 
-typedef enum MfltCoredumpMachineType  {
-  kMfltCoredumpMachineType_None = 0,
-  kMfltCoredumpMachineType_ARM = 40,
-  kMfltCoredumpMachineType_Aarch64 = 183,
-  kMfltCoredumpMachineType_Xtensa = TICOS_MACHINE_TYPE_XTENSA,
-  kMfltCoredumpMachineType_XtensaLx106 = TICOS_MACHINE_TYPE_XTENSA_LX106
-} eMfltCoredumpMachineType;
+typedef enum TcsCoredumpMachineType  {
+  kTcsCoredumpMachineType_None = 0,
+  kTcsCoredumpMachineType_ARM = 40,
+  kTcsCoredumpMachineType_Aarch64 = 183,
+  kTcsCoredumpMachineType_Xtensa = TICOS_MACHINE_TYPE_XTENSA,
+  kTcsCoredumpMachineType_XtensaLx106 = TICOS_MACHINE_TYPE_XTENSA_LX106
+} eTcsCoredumpMachineType;
 
-typedef TICOS_PACKED_STRUCT MfltMachineTypeBlock {
+typedef TICOS_PACKED_STRUCT TcsMachineTypeBlock {
   uint32_t machine_type;
-} sMfltMachineTypeBlock;
+} sTcsMachineTypeBlock;
 
 typedef struct {
   // the space available for saving a coredump
@@ -96,7 +96,7 @@ typedef struct {
   bool truncated;
   // set to true if a call to "ticos_platform_coredump_storage_write" failed
   bool write_error;
-} sMfltCoredumpWriteCtx;
+} sTcsCoredumpWriteCtx;
 
 // Checks to see if the block is a cached region and applies
 // required fixups to allow the coredump to properly record
@@ -104,10 +104,10 @@ typedef struct {
 // succeed if not a cached block or is a valid cached block.
 // Callers should ignore the region if failure is returned
 // because the block is not valid.
-static bool prv_fixup_if_cached_block(sMfltCoredumpRegion *region, uint32_t *cached_address) {
+static bool prv_fixup_if_cached_block(sTcsCoredumpRegion *region, uint32_t *cached_address) {
 
-  if (region->type ==  kMfltCoredumpRegionType_CachedMemory) {
-    const sMfltCachedBlock *cached_blk = region->region_start;
+  if (region->type ==  kTcsCoredumpRegionType_CachedMemory) {
+    const sTcsCachedBlock *cached_blk = region->region_start;
     if (!cached_blk->valid_cache) {
       // Ignore this block.
       return false;
@@ -117,7 +117,7 @@ static bool prv_fixup_if_cached_block(sMfltCoredumpRegion *region, uint32_t *cac
     *cached_address = cached_blk->cached_address;
 
     // The cached block is just regular memory.
-    region->type = kMfltCoredumpRegionType_Memory;
+    region->type = kTcsCoredumpRegionType_Memory;
 
     // Remove our header from the size and region_start
     // is where we cached the <cached_address>'s data.
@@ -129,7 +129,7 @@ static bool prv_fixup_if_cached_block(sMfltCoredumpRegion *region, uint32_t *cac
   return true;
 }
 
-static bool prv_platform_coredump_write(const void *data, size_t len, sMfltCoredumpWriteCtx *write_ctx) {
+static bool prv_platform_coredump_write(const void *data, size_t len, sTcsCoredumpWriteCtx *write_ctx) {
   // if we are just computing the size needed, don't write any data but keep
   // a count of how many bytes would be written.
   if (!write_ctx->compute_size_only &&
@@ -143,14 +143,14 @@ static bool prv_platform_coredump_write(const void *data, size_t len, sMfltCored
 }
 
 static bool prv_write_block_with_address(
-    eMfltCoredumpBlockType block_type, const void *block_payload, size_t block_payload_size,
-    uint32_t address, sMfltCoredumpWriteCtx *write_ctx, bool word_aligned_reads_only) {
+    eTcsCoredumpBlockType block_type, const void *block_payload, size_t block_payload_size,
+    uint32_t address, sTcsCoredumpWriteCtx *write_ctx, bool word_aligned_reads_only) {
   // nothing to write, ignore the request
   if (block_payload_size == 0 || (block_payload == NULL)) {
     return true;
   }
 
-  const size_t total_length = sizeof(sMfltCoredumpBlock) + block_payload_size;
+  const size_t total_length = sizeof(sTcsCoredumpBlock) + block_payload_size;
   const size_t storage_bytes_free =
       write_ctx->storage_size > write_ctx->offset ?  write_ctx->storage_size - write_ctx->offset : 0;
 
@@ -159,17 +159,17 @@ static bool prv_write_block_with_address(
     // space. Let's see if we can truncate the block to fit in the space that is left
     write_ctx->truncated = true;
 
-    if (storage_bytes_free < sizeof(sMfltCoredumpBlock)) {
+    if (storage_bytes_free < sizeof(sTcsCoredumpBlock)) {
       return false;
     }
 
-    block_payload_size = TICOS_FLOOR(storage_bytes_free - sizeof(sMfltCoredumpBlock), 4);
+    block_payload_size = TICOS_FLOOR(storage_bytes_free - sizeof(sTcsCoredumpBlock), 4);
     if (block_payload_size == 0) {
       return false;
     }
   }
 
-  const sMfltCoredumpBlock blk = {
+  const sTcsCoredumpBlock blk = {
     .block_type = block_type,
     .address = address,
     .length = block_payload_size,
@@ -198,40 +198,40 @@ static bool prv_write_block_with_address(
   return !write_ctx->truncated;
 }
 
-static bool prv_write_non_memory_block(eMfltCoredumpBlockType block_type,
+static bool prv_write_non_memory_block(eTcsCoredumpBlockType block_type,
                                        const void *block_payload, size_t block_payload_size,
-                                       sMfltCoredumpWriteCtx *ctx) {
+                                       sTcsCoredumpWriteCtx *ctx) {
   const bool word_aligned_reads_only = false;
   return prv_write_block_with_address(block_type, block_payload, block_payload_size,
                                       0, ctx, word_aligned_reads_only);
 }
 
-static eMfltCoredumpBlockType prv_region_type_to_storage_type(eMfltCoredumpRegionType type) {
+static eTcsCoredumpBlockType prv_region_type_to_storage_type(eTcsCoredumpRegionType type) {
   switch (type) {
-    case kMfltCoredumpRegionType_ArmV6orV7MpuUnrolled:
-      return kMfltCoredumpRegionType_ArmV6orV7Mpu;
-    case kMfltCoredumpRegionType_ImageIdentifier:
-    case kMfltCoredumpRegionType_Memory:
-    case kMfltCoredumpRegionType_MemoryWordAccessOnly:
-    case kMfltCoredumpRegionType_CachedMemory:
+    case kTcsCoredumpRegionType_ArmV6orV7MpuUnrolled:
+      return kTcsCoredumpRegionType_ArmV6orV7Mpu;
+    case kTcsCoredumpRegionType_ImageIdentifier:
+    case kTcsCoredumpRegionType_Memory:
+    case kTcsCoredumpRegionType_MemoryWordAccessOnly:
+    case kTcsCoredumpRegionType_CachedMemory:
     default:
-      return kMfltCoredumpBlockType_MemoryRegion;
+      return kTcsCoredumpBlockType_MemoryRegion;
   }
 }
 
-static eMfltCoredumpMachineType prv_get_machine_type(void) {
+static eTcsCoredumpMachineType prv_get_machine_type(void) {
 #if defined(TICOS_UNITTEST)
-  return kMfltCoredumpMachineType_None;
+  return kTcsCoredumpMachineType_None;
 #else
 #  if TICOS_COMPILER_ARM
-  return kMfltCoredumpMachineType_ARM;
+  return kTcsCoredumpMachineType_ARM;
 #  elif defined(__aarch64__)
-  return kMfltCoredumpMachineType_Aarch64;
+  return kTcsCoredumpMachineType_Aarch64;
 #  elif defined(__XTENSA__)
   # if defined(__XTENSA_WINDOWED_ABI__)
-    return kMfltCoredumpMachineType_Xtensa;
+    return kTcsCoredumpMachineType_Xtensa;
   # else
-    return kMfltCoredumpMachineType_XtensaLx106;
+    return kTcsCoredumpMachineType_XtensaLx106;
   # endif
 # else
 #    error "Coredumps are not supported for target architecture"
@@ -239,14 +239,14 @@ static eMfltCoredumpMachineType prv_get_machine_type(void) {
 #endif
 }
 
-static bool prv_write_device_info_blocks(sMfltCoredumpWriteCtx *ctx) {
+static bool prv_write_device_info_blocks(sTcsCoredumpWriteCtx *ctx) {
   struct TicosDeviceInfo info;
   ticos_platform_get_device_info(&info);
 
 #if TICOS_COREDUMP_INCLUDE_BUILD_ID
   sTicosBuildInfo build_info;
   if (ticos_build_info_read(&build_info)) {
-    if (!prv_write_non_memory_block(kMfltCoredumpRegionType_BuildId,
+    if (!prv_write_non_memory_block(kTcsCoredumpRegionType_BuildId,
                                     build_info.build_id, sizeof(build_info.build_id), ctx)) {
       return false;
     }
@@ -254,43 +254,43 @@ static bool prv_write_device_info_blocks(sMfltCoredumpWriteCtx *ctx) {
 #endif
 
   if (info.device_serial) {
-    if (!prv_write_non_memory_block(kMfltCoredumpRegionType_DeviceSerial,
+    if (!prv_write_non_memory_block(kTcsCoredumpRegionType_DeviceSerial,
                                     info.device_serial, strlen(info.device_serial), ctx)) {
       return false;
     }
   }
 
   if (info.software_version) {
-    if (!prv_write_non_memory_block(kMfltCoredumpRegionType_SoftwareVersion,
+    if (!prv_write_non_memory_block(kTcsCoredumpRegionType_SoftwareVersion,
                                     info.software_version, strlen(info.software_version), ctx)) {
       return false;
     }
   }
 
   if (info.software_type) {
-    if (!prv_write_non_memory_block(kMfltCoredumpRegionType_SoftwareType,
+    if (!prv_write_non_memory_block(kTcsCoredumpRegionType_SoftwareType,
                                        info.software_type, strlen(info.software_type), ctx)) {
       return false;
     }
   }
 
   if (info.hardware_version) {
-    if (!prv_write_non_memory_block(kMfltCoredumpRegionType_HardwareVersion,
+    if (!prv_write_non_memory_block(kTcsCoredumpRegionType_HardwareVersion,
                                        info.hardware_version, strlen(info.hardware_version), ctx)) {
       return false;
     }
   }
 
-  eMfltCoredumpMachineType machine_type = prv_get_machine_type();
-  const sMfltMachineTypeBlock machine_block = {
+  eTcsCoredumpMachineType machine_type = prv_get_machine_type();
+  const sTcsMachineTypeBlock machine_block = {
     .machine_type = (uint32_t)machine_type,
   };
-  return prv_write_non_memory_block(kMfltCoredumpRegionType_MachineType,
+  return prv_write_non_memory_block(kTcsCoredumpRegionType_MachineType,
                                     &machine_block, sizeof(machine_block), ctx);
 }
 
-static bool prv_write_coredump_header(size_t total_coredump_size, sMfltCoredumpWriteCtx *ctx) {
-  sMfltCoredumpHeader hdr = (sMfltCoredumpHeader) {
+static bool prv_write_coredump_header(size_t total_coredump_size, sTcsCoredumpWriteCtx *ctx) {
+  sTcsCoredumpHeader hdr = (sTcsCoredumpHeader) {
     .magic = TICOS_COREDUMP_MAGIC,
     .version = TICOS_COREDUMP_VERSION,
     .total_size = total_coredump_size,
@@ -298,18 +298,18 @@ static bool prv_write_coredump_header(size_t total_coredump_size, sMfltCoredumpW
   return prv_platform_coredump_write(&hdr, sizeof(hdr), ctx);
 }
 
-static bool prv_write_trace_reason(sMfltCoredumpWriteCtx *ctx, uint32_t trace_reason) {
-  sMfltTraceReasonBlock trace_info = {
+static bool prv_write_trace_reason(sTcsCoredumpWriteCtx *ctx, uint32_t trace_reason) {
+  sTcsTraceReasonBlock trace_info = {
     .reason = trace_reason,
   };
 
-  return prv_write_non_memory_block(kMfltCoredumpRegionType_TraceReason,
+  return prv_write_non_memory_block(kTcsCoredumpRegionType_TraceReason,
                                     &trace_info, sizeof(trace_info), ctx);
 }
 
 // When copying out some regions (for example, memory or register banks)
 // we want to make sure we can do word-aligned accesses.
-static void prv_insert_padding_if_necessary(sMfltCoredumpWriteCtx *write_ctx) {
+static void prv_insert_padding_if_necessary(sTcsCoredumpWriteCtx *write_ctx) {
   #define TICOS_WORD_SIZE 4
   const size_t remainder = write_ctx->offset % TICOS_WORD_SIZE;
   if (remainder == 0) {
@@ -322,18 +322,18 @@ static void prv_insert_padding_if_necessary(sMfltCoredumpWriteCtx *write_ctx) {
   size_t padding_needed = TICOS_WORD_SIZE - remainder;
   memset(pad_bytes, 0x0, padding_needed);
 
-  prv_write_non_memory_block(kMfltCoredumpRegionType_PaddingRegion,
+  prv_write_non_memory_block(kTcsCoredumpRegionType_PaddingRegion,
                              &pad_bytes, padding_needed, write_ctx);
 }
 
 //! Callback that will be called to write coredump data.
-typedef bool(*MfltCoredumpReadCb)(uint32_t offset, void *data, size_t read_len);
+typedef bool(*TcsCoredumpReadCb)(uint32_t offset, void *data, size_t read_len);
 
 
-static bool prv_get_info_and_header(sMfltCoredumpHeader *hdr_out,
-                                    sMfltCoredumpStorageInfo *info_out,
-                                    MfltCoredumpReadCb coredump_read_cb) {
-  sMfltCoredumpStorageInfo info = { 0 };
+static bool prv_get_info_and_header(sTcsCoredumpHeader *hdr_out,
+                                    sTcsCoredumpStorageInfo *info_out,
+                                    TcsCoredumpReadCb coredump_read_cb) {
+  sTcsCoredumpStorageInfo info = { 0 };
   ticos_platform_coredump_storage_get_info(&info);
   if (info.size == 0) {
     return false; // no space for core files!
@@ -352,23 +352,23 @@ static bool prv_get_info_and_header(sMfltCoredumpHeader *hdr_out,
   return true;
 }
 
-static bool prv_coredump_get_header(sMfltCoredumpHeader *hdr_out,
-                                    MfltCoredumpReadCb coredump_read_cb) {
+static bool prv_coredump_get_header(sTcsCoredumpHeader *hdr_out,
+                                    TcsCoredumpReadCb coredump_read_cb) {
   return prv_get_info_and_header(hdr_out, NULL, coredump_read_cb);
 }
 
-static bool prv_coredump_header_is_valid(const sMfltCoredumpHeader *hdr) {
+static bool prv_coredump_header_is_valid(const sTcsCoredumpHeader *hdr) {
   return (hdr && hdr->magic == TICOS_COREDUMP_MAGIC);
 }
 
-static bool prv_write_regions(sMfltCoredumpWriteCtx *write_ctx, const sMfltCoredumpRegion *regions,
+static bool prv_write_regions(sTcsCoredumpWriteCtx *write_ctx, const sTcsCoredumpRegion *regions,
                               size_t num_regions) {
   for (size_t i = 0; i < num_regions; i++) {
     prv_insert_padding_if_necessary(write_ctx);
 
     // Just in case *regions is some how in r/o memory make a non-const copy
     // and work with that from here on.
-    sMfltCoredumpRegion region_copy = regions[i];
+    sTcsCoredumpRegion region_copy = regions[i];
 
     uint32_t address = (uint32_t)(uintptr_t)region_copy.region_start;
     if (!prv_fixup_if_cached_block(&region_copy, &address)) {
@@ -377,7 +377,7 @@ static bool prv_write_regions(sMfltCoredumpWriteCtx *write_ctx, const sMfltCored
     }
 
     const bool word_aligned_reads_only =
-        (region_copy.type == kMfltCoredumpRegionType_MemoryWordAccessOnly);
+        (region_copy.type == kTcsCoredumpRegionType_MemoryWordAccessOnly);
 
     if (!prv_write_block_with_address(prv_region_type_to_storage_type(region_copy.type),
                                       region_copy.region_start, region_copy.region_size,
@@ -390,12 +390,12 @@ static bool prv_write_regions(sMfltCoredumpWriteCtx *write_ctx, const sMfltCored
 
 static bool prv_write_coredump_sections(const sTicosCoredumpSaveInfo *save_info,
                                         bool compute_size_only, size_t *total_size) {
-  sMfltCoredumpStorageInfo info = { 0 };
-  sMfltCoredumpHeader hdr = { 0 };
+  sTcsCoredumpStorageInfo info = { 0 };
+  sTcsCoredumpHeader hdr = { 0 };
 
   // are there some regions for us to save?
   size_t num_regions = save_info->num_regions;
-  const sMfltCoredumpRegion *regions = save_info->regions;
+  const sTcsCoredumpRegion *regions = save_info->regions;
   if ((regions == NULL) || (num_regions == 0)) {
     // sanity check that we got something valid from the caller
     return false;
@@ -408,7 +408,7 @@ static bool prv_write_coredump_sections(const sTicosCoredumpSaveInfo *save_info,
 
     // If we are saving a new coredump but one is already stored, don't overwrite it. This way
     // the first issue which started the crash loop can be determined
-    MfltCoredumpReadCb coredump_read_cb = ticos_platform_coredump_storage_read;
+    TcsCoredumpReadCb coredump_read_cb = ticos_platform_coredump_storage_read;
     if (!prv_get_info_and_header(&hdr, &info, coredump_read_cb)) {
       return false;
     }
@@ -423,7 +423,7 @@ static bool prv_write_coredump_sections(const sTicosCoredumpSaveInfo *save_info,
     return false;
   }
 
-  sMfltCoredumpWriteCtx write_ctx = {
+  sTcsCoredumpWriteCtx write_ctx = {
     // We will write the header last as a way to mark validity
     // so advance the offset past it to start
     .offset = sizeof(hdr),
@@ -431,15 +431,15 @@ static bool prv_write_coredump_sections(const sTicosCoredumpSaveInfo *save_info,
     .storage_size = info.size,
   };
 
-  if (write_ctx.storage_size > sizeof(sMfltCoredumpFooter)) {
+  if (write_ctx.storage_size > sizeof(sTcsCoredumpFooter)) {
     // always leave space for footer
-    write_ctx.storage_size -= sizeof(sMfltCoredumpFooter);
+    write_ctx.storage_size -= sizeof(sTcsCoredumpFooter);
   }
 
   const void *regs = save_info->regs;
   const size_t regs_size = save_info->regs_size;
   if (regs != NULL) {
-    if (!prv_write_non_memory_block(kMfltCoredumpBlockType_CurrentRegisters,
+    if (!prv_write_non_memory_block(kTcsCoredumpBlockType_CurrentRegisters,
                                     regs, regs_size, &write_ctx)) {
       return false;
     }
@@ -456,9 +456,9 @@ static bool prv_write_coredump_sections(const sTicosCoredumpSaveInfo *save_info,
 
   // write out any architecture specific regions
   size_t num_arch_regions = 0;
-  const sMfltCoredumpRegion *arch_regions = ticos_coredump_get_arch_regions(&num_arch_regions);
+  const sTcsCoredumpRegion *arch_regions = ticos_coredump_get_arch_regions(&num_arch_regions);
   size_t num_sdk_regions = 0;
-  const sMfltCoredumpRegion *sdk_regions = ticos_coredump_get_sdk_regions(&num_sdk_regions);
+  const sTcsCoredumpRegion *sdk_regions = ticos_coredump_get_sdk_regions(&num_sdk_regions);
 
   const bool write_completed =
       prv_write_regions(&write_ctx, arch_regions, num_arch_regions) &&
@@ -469,9 +469,9 @@ static bool prv_write_coredump_sections(const sTicosCoredumpSaveInfo *save_info,
     return false;
   }
 
-  const sMfltCoredumpFooter footer = (sMfltCoredumpFooter) {
+  const sTcsCoredumpFooter footer = (sTcsCoredumpFooter) {
     .magic = TICOS_COREDUMP_FOOTER_MAGIC,
-    .flags = write_ctx.truncated ? (1 << kMfltCoredumpBlockType_SaveTruncated) : 0,
+    .flags = write_ctx.truncated ? (1 << kTcsCoredumpBlockType_SaveTruncated) : 0,
   };
   write_ctx.storage_size = info.size;
   if (!prv_platform_coredump_write(&footer, sizeof(footer), &write_ctx)) {
@@ -507,10 +507,10 @@ bool ticos_coredump_save(const sTicosCoredumpSaveInfo *save_info) {
 }
 
 bool ticos_coredump_has_valid_coredump(size_t *total_size_out) {
-  sMfltCoredumpHeader hdr = { 0 };
+  sTcsCoredumpHeader hdr = { 0 };
   // This routine is only called while the system is running so _always_ use the
   // ticos_coredump_read, which is safe to call while the system is running
-  MfltCoredumpReadCb coredump_read_cb = ticos_coredump_read;
+  TcsCoredumpReadCb coredump_read_cb = ticos_coredump_read;
   if (!prv_coredump_get_header(&hdr, coredump_read_cb)) {
     return false;
   }

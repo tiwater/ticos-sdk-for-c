@@ -136,7 +136,7 @@ extern "C" {
 //! 0b0000.0001 => 0 arguments
 //! 0b0000.0110 => 1 argument  (arg0=0b10=double)
 //! 0b0111.0100 => 3 arguments (arg0=0b11=str, arg1=0b01=int64, arg2=0b00=int)
-#define MFLT_GET_COMPRESSED_LOG_FMT(...)                    \
+#define Tcs_GET_COMPRESSED_LOG_FMT(...)                    \
   ((_MF_FOR_EACH(TICOS_FMT_ENCODE_OP, ## __VA_ARGS__)) | \
    (1 << (2 * TICOS_ARG_COUNT_UP_TO_32(__VA_ARGS__))))
 

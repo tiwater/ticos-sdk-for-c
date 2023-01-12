@@ -12,31 +12,31 @@ CURRENT_DIR := $(dir $(MKFILE_PATH))
 # Convenience defines that can be used for individual tests in makefiles/
 export BUILD_DIR=build
 export PROJECT_DIR := $(abspath $(CURRENT_DIR)/..)
-export MFLT_TEST_ROOT := $(CURRENT_DIR)
+export Tcs_TEST_ROOT := $(CURRENT_DIR)
 export PROJECT_ROOT_DIR := $(PROJECT_DIR)
-export MFLT_PORTS_DIR := $(PROJECT_DIR)/ports
-export MFLT_COMPONENTS_DIR := $(PROJECT_DIR)/components
-export MFLT_UTILS_SRC_DIR := $(MFLT_COMPONENTS_DIR)/util/src
+export Tcs_PORTS_DIR := $(PROJECT_DIR)/ports
+export Tcs_COMPONENTS_DIR := $(PROJECT_DIR)/components
+export Tcs_UTILS_SRC_DIR := $(Tcs_COMPONENTS_DIR)/util/src
 
-export MFLT_TEST_SRC_DIR ?= $(MFLT_TEST_ROOT)/src
-export MFLT_TEST_COMMON_SRC_DIR := $(MFLT_TEST_ROOT)/src
-export MFLT_TEST_FAKE_DIR := $(MFLT_TEST_ROOT)/fakes
-export MFLT_TEST_MOCK_DIR := $(MFLT_TEST_ROOT)/mocks
-export MFLT_TEST_STUB_DIR := $(MFLT_TEST_ROOT)/stubs
-export CPPUTEST_MAKFILE_INFRA := $(MFLT_TEST_ROOT)/MakefileWorkerOverrides.mk
+export Tcs_TEST_SRC_DIR ?= $(Tcs_TEST_ROOT)/src
+export Tcs_TEST_COMMON_SRC_DIR := $(Tcs_TEST_ROOT)/src
+export Tcs_TEST_FAKE_DIR := $(Tcs_TEST_ROOT)/fakes
+export Tcs_TEST_MOCK_DIR := $(Tcs_TEST_ROOT)/mocks
+export Tcs_TEST_STUB_DIR := $(Tcs_TEST_ROOT)/stubs
+export CPPUTEST_MAKFILE_INFRA := $(Tcs_TEST_ROOT)/MakefileWorkerOverrides.mk
 
 # Gather -Icomponents/*/src and -Icomponents/*/include:
-MFLT_COMPONENTS_ALL_INCLUDE_DIRS := \
-  $(wildcard $(MFLT_COMPONENTS_DIR)/*/include) \
+Tcs_COMPONENTS_ALL_INCLUDE_DIRS := \
+  $(wildcard $(Tcs_COMPONENTS_DIR)/*/include) \
   $(PROJECT_DIR)/components/include \
   $(PROJECT_DIR)/ports/include
 
-MFLT_COMPONENTS_ALL_SRC_DIRS := $(wildcard $(MFLT_COMPONENTS_DIR)/*/src)
-MFLT_COMPONENTS_ALL_INCLUDE_FLAGS := \
-  $(foreach COMPONENT_INCLUDE, $(MFLT_COMPONENTS_ALL_INCLUDE_DIRS) $(MFLT_COMPONENTS_ALL_SRC_DIRS), -I$(COMPONENT_INCLUDE))
+Tcs_COMPONENTS_ALL_SRC_DIRS := $(wildcard $(Tcs_COMPONENTS_DIR)/*/src)
+Tcs_COMPONENTS_ALL_INCLUDE_FLAGS := \
+  $(foreach COMPONENT_INCLUDE, $(Tcs_COMPONENTS_ALL_INCLUDE_DIRS) $(Tcs_COMPONENTS_ALL_SRC_DIRS), -I$(COMPONENT_INCLUDE))
 
 export TICOS_EXTRA_INC_PATHS += \
-  $(MFLT_COMPONENTS_ALL_INCLUDE_FLAGS)
+  $(Tcs_COMPONENTS_ALL_INCLUDE_FLAGS)
 
 all: $(TEST_MAKEFILES)
 
@@ -59,7 +59,7 @@ CLANG_STR = clang
 ifeq ($(findstring $(CLANG_STR),$(CC_VERSION_OUTPUT)),$(CLANG_STR))
   USE_LCOV = 1
   # use llvm-cov
-  GCOV_TOOL = $(abspath $(MFLT_TEST_ROOT)/llvm-cov-wrapper.sh)
+  GCOV_TOOL = $(abspath $(Tcs_TEST_ROOT)/llvm-cov-wrapper.sh)
 else
   # if the compiler is gcc < 9, use lcov. gcc 9+ will use fastcov
   GCC_VERSION :=  $(shell $(CC) -dumpversion)

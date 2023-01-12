@@ -15,20 +15,20 @@
 
 void ticos_reboot_reason_get(sResetBootupInfo *info) {
   const uint32_t reset_cause = (uint32_t)REG_RSTC_RCAUSE;
-  eTicosRebootReason reset_reason = kMfltRebootReason_Unknown;
+  eTicosRebootReason reset_reason = kTcsRebootReason_Unknown;
 
   if (reset_cause & RSTC_RCAUSE_POR_Msk) {
-    reset_reason = kMfltRebootReason_PowerOnReset;
+    reset_reason = kTcsRebootReason_PowerOnReset;
   } else if (reset_cause & RSTC_RCAUSE_BODCORE_Msk) {
-    reset_reason = kMfltRebootReason_BrownOutReset;
+    reset_reason = kTcsRebootReason_BrownOutReset;
   } else if (reset_cause & RSTC_RCAUSE_BODVDD_Msk) {
-    reset_reason = kMfltRebootReason_BrownOutReset;
+    reset_reason = kTcsRebootReason_BrownOutReset;
   } else if (reset_cause & RSTC_RCAUSE_EXT_Msk) {
-    reset_reason = kMfltRebootReason_PinReset;
+    reset_reason = kTcsRebootReason_PinReset;
   } else if (reset_cause & RSTC_RCAUSE_WDT_Msk) {
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & RSTC_RCAUSE_SYST_Msk) {
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   }
 
   *info = (sResetBootupInfo) {

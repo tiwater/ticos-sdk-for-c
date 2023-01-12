@@ -12,13 +12,13 @@ CURRENT_DIR := $(dir $(MKFILE_PATH))
 LD_LIBRARIES = -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 
 TEST_SRC_FILES += \
-  $(MFLT_TEST_COMMON_SRC_DIR)/AllTests.cpp
+  $(Tcs_TEST_COMMON_SRC_DIR)/AllTests.cpp
 
 TICOS_EXTRA_INC_PATHS += \
   -I$(CPPUTEST_HOME)/include \
   -I$(PROJECT_DIR)/src \
-  -I$(MFLT_TEST_ROOT)/ \
-  -I$(MFLT_TEST_ROOT)/stub_includes \
+  -I$(Tcs_TEST_ROOT)/ \
+  -I$(Tcs_TEST_ROOT)/stub_includes \
   -I$(PROJECT_DIR)
 
 CPPUTEST_CPPFLAGS += $(TICOS_EXTRA_INC_PATHS) \

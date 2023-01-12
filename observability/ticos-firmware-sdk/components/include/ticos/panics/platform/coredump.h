@@ -24,29 +24,29 @@ extern "C" {
 #endif
 
 //! Architecture specific register state
-typedef struct MfltRegState sMfltRegState;
+typedef struct TcsRegState sTcsRegState;
 
-typedef enum MfltCoredumpRegionType {
-  kMfltCoredumpRegionType_Memory,
-  kMfltCoredumpRegionType_MemoryWordAccessOnly,
-  kMfltCoredumpRegionType_ImageIdentifier,
-  kMfltCoredumpRegionType_ArmV6orV7MpuUnrolled,
-  kMfltCoredumpRegionType_CachedMemory,
-} eMfltCoredumpRegionType;
+typedef enum TcsCoredumpRegionType {
+  kTcsCoredumpRegionType_Memory,
+  kTcsCoredumpRegionType_MemoryWordAccessOnly,
+  kTcsCoredumpRegionType_ImageIdentifier,
+  kTcsCoredumpRegionType_ArmV6orV7MpuUnrolled,
+  kTcsCoredumpRegionType_CachedMemory,
+} eTcsCoredumpRegionType;
 
-//! Convenience macro to define a sMfltCoredumpRegion of type kMfltCoredumpRegionType_Memory.
+//! Convenience macro to define a sTcsCoredumpRegion of type kTcsCoredumpRegionType_Memory.
 #define TICOS_COREDUMP_MEMORY_REGION_INIT(_start, _size) \
-  (sMfltCoredumpRegion) { \
-    .type = kMfltCoredumpRegionType_Memory, \
+  (sTcsCoredumpRegion) { \
+    .type = kTcsCoredumpRegionType_Memory, \
     .region_start = _start, \
     .region_size = _size, \
   }
 
-typedef struct MfltCoredumpRegion {
-  eMfltCoredumpRegionType type;
+typedef struct TcsCoredumpRegion {
+  eTcsCoredumpRegionType type;
   const void *region_start;
   uint32_t region_size;
-} sMfltCoredumpRegion;
+} sTcsCoredumpRegion;
 
 typedef struct CoredumpCrashInfo {
   //! The address of the stack at the time of the error. This makes it easy to generate
@@ -59,12 +59,12 @@ typedef struct CoredumpCrashInfo {
   //! ticos_platform_coredump_get_regions() invoked from
   //! ticos_coredump_storage_compute_size_required())
   //!
-  //! Definitions for "struct MfltRegstate" are architecture dependent and
+  //! Definitions for "struct TcsRegstate" are architecture dependent and
   //! can be found at:
   //!   ticos/panics/arch/arm/cortex_m.h
   //!   ticos/panics/arch/xtensa/xtensa.h
   //!   etc
-  const sMfltRegState *exception_reg_state;
+  const sTcsRegState *exception_reg_state;
 } sCoredumpCrashInfo;
 
 //! Returns an array of the regions to capture when the system crashes
@@ -72,7 +72,7 @@ typedef struct CoredumpCrashInfo {
 //!   whether or not to use this info when generating coredump regions to collect. Some
 //!   example ideas can be found in the comments for the struct above
 //! @param num_regions The number of regions in the list returned
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
     const sCoredumpCrashInfo *crash_info, size_t *num_regions);
 
 //! Given a pointer and size returns the actual size which should be collected.
@@ -96,16 +96,16 @@ const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
 //! @return The actual size to collect or 0 if the address is invalid.
 size_t ticos_platform_sanitize_address_range(void *start_addr, size_t desired_size);
 
-typedef struct MfltCoredumpStorageInfo {
+typedef struct TcsCoredumpStorageInfo {
   //! The size of the coredump storage region (must be greater than the space needed to capture all
   //! the regions returned from @ref ticos_platform_coredump_get_regions)
   size_t size;
   //! Sector size for storage medium used for coredump storage
   size_t sector_size;
-} sMfltCoredumpStorageInfo;
+} sTcsCoredumpStorageInfo;
 
 //! Return info pertaining to the region a coredump will be stored in
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info);
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info);
 
 //! Issue write to the platforms coredump storage region
 //!

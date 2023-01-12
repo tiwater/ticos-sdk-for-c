@@ -14,9 +14,9 @@
 #endif
 
 #if !TICOS_PLATFORM_COREDUMP_STORAGE_REGIONS_CUSTOM
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
   const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
-  static sMfltCoredumpRegion s_coredump_regions[1];
+  static sTcsCoredumpRegion s_coredump_regions[1];
 
   int region_idx = 0;
 

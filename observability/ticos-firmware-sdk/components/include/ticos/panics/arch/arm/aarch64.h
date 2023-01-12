@@ -18,7 +18,7 @@ extern "C" {
 
 //! Note: With aarch64, it is the programmer's responsiblity to store an exception frame
 //! so there is no standard layout.
-TICOS_PACKED_STRUCT MfltRegState {
+TICOS_PACKED_STRUCT TcsRegState {
   uint64_t sp; // sp prior to exception entry
   uint64_t pc; // pc prior to exception entry
   // Note: The CPSR is a 32 bit register but storing as a 64 bit register to keep packing simple

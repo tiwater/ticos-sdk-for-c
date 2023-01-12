@@ -41,9 +41,9 @@ struct { //
   .sector_size = 128 * 1024,
 };
 
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(const sCoredumpCrashInfo *crash_info,
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(const sCoredumpCrashInfo *crash_info,
                                                                   size_t *num_regions) {
-  static sMfltCoredumpRegion s_coredump_regions[2];
+  static sTcsCoredumpRegion s_coredump_regions[2];
   // NOTE: This is just an example of regions which could be collected
   // Typically sizes are derived from variables added to the .ld script of the port
 
@@ -86,8 +86,8 @@ void ticos_platform_coredump_storage_clear(void) {
   HAL_FLASH_Lock();
 }
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
-  *info  = (sMfltCoredumpStorageInfo) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
+  *info  = (sTcsCoredumpStorageInfo) {
     .size = s_coredump_flash_storage.bank_end_off - s_coredump_flash_storage.bank_start_off,
     .sector_size = s_coredump_flash_storage.sector_size,
   };

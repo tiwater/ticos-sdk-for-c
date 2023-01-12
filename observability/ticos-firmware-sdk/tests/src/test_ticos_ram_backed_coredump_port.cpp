@@ -14,29 +14,29 @@ size_t ticos_platform_sanitize_address_range(void *start_addr, size_t desired_si
   return desired_size;
 }
 
-TEST_GROUP(MfltRamBackedCoredumpPort) {
+TEST_GROUP(TcsRamBackedCoredumpPort) {
   void setup() { }
   void teardown() {}
 };
 
-TEST(MfltRamBackedCoredumpPort, Test_GetRegions) {
+TEST(TcsRamBackedCoredumpPort, Test_GetRegions) {
   sCoredumpCrashInfo info = {
     .stack_address = (void *)0x28000000,
   };
 
   size_t num_regions;
-  const sMfltCoredumpRegion *regions =
+  const sTcsCoredumpRegion *regions =
       ticos_platform_coredump_get_regions(&info, &num_regions);
   LONGS_EQUAL(1, num_regions);
 
-  const sMfltCoredumpRegion *r = &regions[0];
-  LONGS_EQUAL(kMfltCoredumpRegionType_Memory, r->type);
+  const sTcsCoredumpRegion *r = &regions[0];
+  LONGS_EQUAL(kTcsCoredumpRegionType_Memory, r->type);
   LONGS_EQUAL(info.stack_address, r->region_start);
   LONGS_EQUAL(TICOS_PLATFORM_ACTIVE_STACK_SIZE_TO_COLLECT, r->region_size);
 }
 
-TEST(MfltRamBackedCoredumpPort, Test_GetInfo) {
-  sMfltCoredumpStorageInfo info;
+TEST(TcsRamBackedCoredumpPort, Test_GetInfo) {
+  sTcsCoredumpStorageInfo info;
   ticos_platform_coredump_storage_get_info(&info);
 
   // Assert if the size changes so we can catch this and make _sure_ it's what we want to do
@@ -44,12 +44,12 @@ TEST(MfltRamBackedCoredumpPort, Test_GetInfo) {
 }
 
 static size_t prv_get_size(void) {
-  sMfltCoredumpStorageInfo info;
+  sTcsCoredumpStorageInfo info;
   ticos_platform_coredump_storage_get_info(&info);
   return info.size;
 }
 
-TEST(MfltRamBackedCoredumpPort, Test_BadOffsets) {
+TEST(TcsRamBackedCoredumpPort, Test_BadOffsets) {
   size_t size = prv_get_size();
 
   uint8_t byte = 0xAB;
@@ -80,7 +80,7 @@ static void prv_assert_storage_empty(void) {
   MEMCMP_EQUAL(expected_data, data, sizeof(data));
 }
 
-TEST(MfltRamBackedCoredumpPort, Test_EraseReadWrite) {
+TEST(TcsRamBackedCoredumpPort, Test_EraseReadWrite) {
   const size_t size = prv_get_size();
 
   ticos_platform_coredump_storage_erase(0, size);

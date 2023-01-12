@@ -17,7 +17,7 @@
 //!   project's .ld file:
 //!
 //!     __TicosCoredumpRamStart = ORIGIN(RAM);
-//!     __MfltCoredumpRamEnd = ORIGIN(RAM) + LENGTH(RAM);
+//!     __TcsCoredumpRamEnd = ORIGIN(RAM) + LENGTH(RAM);
 //!
 
 #include "ticos/core/math.h"
@@ -59,14 +59,14 @@ extern uint32_t __TicosCoredumpRamStart[];
   #endif
 
   #ifndef TICOS_COREDUMP_RAM_REGION_END_ADDR
-extern uint32_t __MfltCoredumpRamEnd[];
+extern uint32_t __TcsCoredumpRamEnd[];
     #define TICOS_COREDUMP_STORAGE_END_ADDR ((uint32_t)__TicosCoreStorageEnd)
   #endif
 
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
   const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
   // Let's collect the callstack at the time of crash
-  static sMfltCoredumpRegion s_coredump_regions[1];
+  static sTcsCoredumpRegion s_coredump_regions[1];
 
   #if (TICOS_PLATFORM_COREDUMP_CAPTURE_STACK_ONLY == 1)
   const void *stack_start_addr = crash_info->stack_address;

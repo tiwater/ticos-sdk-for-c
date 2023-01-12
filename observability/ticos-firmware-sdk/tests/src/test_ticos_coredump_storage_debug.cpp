@@ -23,14 +23,14 @@ static uint8_t s_ram_backed_coredump_region[200];
 #define COREDUMP_REGION_SIZE sizeof(s_ram_backed_coredump_region)
 
 static bool s_inject_get_info_failure = false;
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
   if (s_inject_get_info_failure) {
     return; // fail to populate information
   }
 
   const size_t coredump_region_size = sizeof(s_ram_backed_coredump_region);
 
-  *info = (sMfltCoredumpStorageInfo) {
+  *info = (sTcsCoredumpStorageInfo) {
     .size = coredump_region_size,
     .sector_size = coredump_region_size
   };
@@ -155,7 +155,7 @@ void ticos_platform_coredump_storage_clear(void) {
   ticos_platform_coredump_storage_write(0, &clear_byte, sizeof(clear_byte));
 }
 
-TEST_GROUP(MfltCoredumpStorageTestGroup) {
+TEST_GROUP(TcsCoredumpStorageTestGroup) {
   void setup() {
     s_inject_write_failure = kTicosWriteFailureMode_None;
     s_inject_read_failure_offset = -1;
@@ -168,13 +168,13 @@ TEST_GROUP(MfltCoredumpStorageTestGroup) {
   }
 };
 
-TEST(MfltCoredumpStorageTestGroup, Test_StorageImplementationGood) {
+TEST(TcsCoredumpStorageTestGroup, Test_StorageImplementationGood) {
   bool success = ticos_coredump_storage_debug_test_begin();
   success &= ticos_coredump_storage_debug_test_finish();
   CHECK(success);
 }
 
-TEST(MfltCoredumpStorageTestGroup, Test_WriteFailureModes) {
+TEST(TcsCoredumpStorageTestGroup, Test_WriteFailureModes) {
   for (int i = 1; i < kTicosWriteFailureMode_NumModes; i++) {
     s_inject_write_failure = (eTicosWriteFailureMode)i;
     s_inject_read_failure_offset = -1;
@@ -184,7 +184,7 @@ TEST(MfltCoredumpStorageTestGroup, Test_WriteFailureModes) {
   }
 }
 
-TEST(MfltCoredumpStorageTestGroup, Test_ReadCompareFailure) {
+TEST(TcsCoredumpStorageTestGroup, Test_ReadCompareFailure) {
   for (size_t i = 0; i < COREDUMP_REGION_SIZE; i++) {
     s_inject_read_failure_offset = i;
     bool success = ticos_coredump_storage_debug_test_begin();
@@ -193,7 +193,7 @@ TEST(MfltCoredumpStorageTestGroup, Test_ReadCompareFailure) {
   }
 }
 
-TEST(MfltCoredumpStorageTestGroup, Test_EraseFailure) {
+TEST(TcsCoredumpStorageTestGroup, Test_EraseFailure) {
   for (int i = 1; i < kTicosEraseFailureMode_NumModes; i++) {
     s_inject_erase_failure = (eTicosEraseFailureMode)i;
     bool success = ticos_coredump_storage_debug_test_begin();
@@ -202,7 +202,7 @@ TEST(MfltCoredumpStorageTestGroup, Test_EraseFailure) {
   }
 }
 
-TEST(MfltCoredumpStorageTestGroup, Test_ClearFailureDueToWriteFailure) {
+TEST(TcsCoredumpStorageTestGroup, Test_ClearFailureDueToWriteFailure) {
   bool success = ticos_coredump_storage_debug_test_begin();
   CHECK(success);
 
@@ -211,7 +211,7 @@ TEST(MfltCoredumpStorageTestGroup, Test_ClearFailureDueToWriteFailure) {
   CHECK(!success);
 }
 
-TEST(MfltCoredumpStorageTestGroup, Test_ClearFailureDueToReadFailure) {
+TEST(TcsCoredumpStorageTestGroup, Test_ClearFailureDueToReadFailure) {
   bool success = ticos_coredump_storage_debug_test_begin();
   CHECK(success);
 
@@ -220,14 +220,14 @@ TEST(MfltCoredumpStorageTestGroup, Test_ClearFailureDueToReadFailure) {
   CHECK(!success);
 }
 
-TEST(MfltCoredumpStorageTestGroup, Test_GetInfoFail) {
+TEST(TcsCoredumpStorageTestGroup, Test_GetInfoFail) {
   s_inject_get_info_failure = true;
   bool success = ticos_coredump_storage_debug_test_begin();
   success &= ticos_coredump_storage_debug_test_finish();
   CHECK(!success);
 }
 
-TEST(MfltCoredumpStorageTestGroup, Test_PrepareFail) {
+TEST(TcsCoredumpStorageTestGroup, Test_PrepareFail) {
   s_inject_prepare_failure = true;
   bool success = ticos_coredump_storage_debug_test_begin();
   success &= ticos_coredump_storage_debug_test_finish();

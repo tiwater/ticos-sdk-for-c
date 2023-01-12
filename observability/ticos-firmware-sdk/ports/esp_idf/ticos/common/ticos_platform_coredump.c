@@ -81,9 +81,9 @@ static const esp_partition_t *prv_get_core_partition(void) {
 //! easily override the port defaults by re-defining a non-weak version of
 //! the function in another file
 TICOS_WEAK
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
     const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
-  static sMfltCoredumpRegion s_coredump_regions[1];
+  static sTcsCoredumpRegion s_coredump_regions[1];
 
   const uint32_t esp32_dram_start_addr = SOC_DMA_LOW;
 
@@ -176,16 +176,16 @@ void ticos_platform_coredump_storage_clear(void) {
   }
 }
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
   // we are about to perform a sequence of operations on coredump storage
   // sanity check that the memory holding the info is populated and not corrupted
   const esp_partition_t *core_part = prv_validate_and_get_core_partition();
   if (core_part == NULL) {
-    *info = (sMfltCoredumpStorageInfo) { 0 };
+    *info = (sTcsCoredumpStorageInfo) { 0 };
     return;
   }
 
-  *info  = (sMfltCoredumpStorageInfo) {
+  *info  = (sTcsCoredumpStorageInfo) {
     .size = core_part->size,
     .sector_size = SPI_FLASH_SEC_SIZE,
   };

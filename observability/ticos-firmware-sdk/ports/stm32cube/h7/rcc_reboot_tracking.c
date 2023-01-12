@@ -44,7 +44,7 @@ typedef enum ResetSource {
 void ticos_reboot_reason_get(sResetBootupInfo *info) {
   const uint32_t reset_cause = RCC->RSR;
 
-  eTicosRebootReason reset_reason = kMfltRebootReason_Unknown;
+  eTicosRebootReason reset_reason = kTcsRebootReason_Unknown;
 
   TICOS_PRINT_RESET_INFO("Reset Reason, RCC_RSR=0x%" PRIx32, reset_cause);
   TICOS_PRINT_RESET_INFO("Reset Causes: ");
@@ -57,44 +57,44 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
   switch (reset_cause & reset_mask_all) {
     case kResetSource_PwrPor:
       TICOS_PRINT_RESET_INFO(" Power on Reset");
-      reset_reason = kMfltRebootReason_PowerOnReset;
+      reset_reason = kTcsRebootReason_PowerOnReset;
       break;
     case kResetSource_Pin:
       TICOS_PRINT_RESET_INFO(" Pin Reset");
-      reset_reason = kMfltRebootReason_PinReset;
+      reset_reason = kTcsRebootReason_PinReset;
       break;
     case kResetSource_PwrBor:
       TICOS_PRINT_RESET_INFO(" Brown out");
-      reset_reason = kMfltRebootReason_BrownOutReset;
+      reset_reason = kTcsRebootReason_BrownOutReset;
       break;
     case kResetSource_Software:
       TICOS_PRINT_RESET_INFO(" Software");
-      reset_reason = kMfltRebootReason_SoftwareReset;
+      reset_reason = kTcsRebootReason_SoftwareReset;
       break;
     case kResetSource_Cpu:
       // A reset generated via RCC_AHB3RSTR
       TICOS_PRINT_RESET_INFO(" Cpu");
-      reset_reason = kMfltRebootReason_SoftwareReset;
+      reset_reason = kTcsRebootReason_SoftwareReset;
       break;
     case kResetSource_Wwdg:
       TICOS_PRINT_RESET_INFO(" Window Watchdog");
-      reset_reason = kMfltRebootReason_HardwareWatchdog;
+      reset_reason = kTcsRebootReason_HardwareWatchdog;
       break;
     case kResetSource_Iwdg:
       TICOS_PRINT_RESET_INFO(" Independent Watchdog");
-      reset_reason = kMfltRebootReason_HardwareWatchdog;
+      reset_reason = kTcsRebootReason_HardwareWatchdog;
       break;
     case kResetSource_D1Exit:
       TICOS_PRINT_RESET_INFO(" D1 Low Power Exit");
-      reset_reason = kMfltRebootReason_LowPower;
+      reset_reason = kTcsRebootReason_LowPower;
       break;
     case kResetSource_D2Exit:
       TICOS_PRINT_RESET_INFO(" D2 Low Power Exit");
-      reset_reason = kMfltRebootReason_LowPower;
+      reset_reason = kTcsRebootReason_LowPower;
       break;
     case kResetSource_LowPowerError:
       TICOS_PRINT_RESET_INFO(" Illegal D1 DStandby / CStop");
-      reset_reason = kMfltRebootReason_UnknownError;
+      reset_reason = kTcsRebootReason_UnknownError;
       break;
     default:
       TICOS_PRINT_RESET_INFO(" Unknown");

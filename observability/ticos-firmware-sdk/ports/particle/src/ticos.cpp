@@ -120,7 +120,7 @@ static int prv_test_trace(int argc, char *argv[]) {
 
 //! Trigger a user initiated reboot and confirm reason is persisted
 static int prv_test_reboot(int argc, char *argv[]) {
-  ticos_reboot_tracking_mark_reset_imminent(kMfltRebootReason_UserReset, NULL);
+  ticos_reboot_tracking_mark_reset_imminent(kTcsRebootReason_UserReset, NULL);
   ticos_platform_reboot();
 }
 
@@ -270,44 +270,44 @@ void Ticos::handle_cloud_connectivity_event(system_event_t event, int param) {
 
 static void prv_ticos_reboot_reason_get(sResetBootupInfo *info) {
   const uint32_t s_last_mcu_reset_reason = System.resetReason();
-  eTicosRebootReason reset_reason = kMfltRebootReason_Unknown;
+  eTicosRebootReason reset_reason = kTcsRebootReason_Unknown;
 
   switch (s_last_mcu_reset_reason) {
     case RESET_REASON_UNKNOWN:
-      reset_reason = kMfltRebootReason_Unknown;
+      reset_reason = kTcsRebootReason_Unknown;
       break;
     case RESET_REASON_PIN_RESET:
-      reset_reason = kMfltRebootReason_PinReset;
+      reset_reason = kTcsRebootReason_PinReset;
       break;
     case RESET_REASON_WATCHDOG:
-      reset_reason = kMfltRebootReason_HardwareWatchdog;
+      reset_reason = kTcsRebootReason_HardwareWatchdog;
       break;
     case RESET_REASON_USER:
-      reset_reason = kMfltRebootReason_UserReset;
+      reset_reason = kTcsRebootReason_UserReset;
       break;
     case RESET_REASON_POWER_DOWN:
     case RESET_REASON_POWER_MANAGEMENT:
-      reset_reason = kMfltRebootReason_UserShutdown;
+      reset_reason = kTcsRebootReason_UserShutdown;
       break;
     case RESET_REASON_POWER_BROWNOUT:
-      reset_reason = kMfltRebootReason_BrownOutReset;
+      reset_reason = kTcsRebootReason_BrownOutReset;
       break;
     case RESET_REASON_UPDATE:
-      reset_reason = kMfltRebootReason_FirmwareUpdate;
+      reset_reason = kTcsRebootReason_FirmwareUpdate;
       break;
     case RESET_REASON_UPDATE_TIMEOUT:
-      reset_reason = kMfltRebootReason_FirmwareUpdateError;
+      reset_reason = kTcsRebootReason_FirmwareUpdateError;
       break;
     case RESET_REASON_PANIC:
-      reset_reason = kMfltRebootReason_KernelPanic;
+      reset_reason = kTcsRebootReason_KernelPanic;
       break;
     case RESET_REASON_SAFE_MODE:
     case RESET_REASON_DFU_MODE:
-      reset_reason = kMfltRebootReason_SoftwareReset;
+      reset_reason = kTcsRebootReason_SoftwareReset;
       break;
 
     default:
-      reset_reason = kMfltRebootReason_Unknown;
+      reset_reason = kTcsRebootReason_Unknown;
       break;
   }
 
@@ -383,7 +383,7 @@ void ticos_platform_reboot(void) {
 #define TICOS_FREERTOS_TCB_SIZE 200
 
 static size_t prv_get_task_region(
-    os_thread_dump_info_t *info, sMfltCoredumpRegion *regions, size_t num_regions, const bool tcb) {
+    os_thread_dump_info_t *info, sTcsCoredumpRegion *regions, size_t num_regions, const bool tcb) {
   if ((info == NULL) || (regions == NULL) || (num_regions == 0)) {
     return 0;
   }
@@ -436,12 +436,12 @@ size_t ticos_platform_sanitize_address_range(void *start_addr,
   return 0;
 }
 
-const sMfltCoredumpRegion *
+const sTcsCoredumpRegion *
 ticos_platform_coredump_get_regions(const sCoredumpCrashInfo *crash_info,
                                        size_t *num_regions) {
   int region_idx = 0;
 
-  static sMfltCoredumpRegion s_coredump_regions[16];
+  static sTcsCoredumpRegion s_coredump_regions[16];
 
   // first, capture the stack that was active at the time of crash
   const size_t active_stack_size_to_collect = 512;

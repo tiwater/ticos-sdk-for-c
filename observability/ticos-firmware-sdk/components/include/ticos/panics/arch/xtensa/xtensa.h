@@ -26,7 +26,7 @@ typedef enum {
 } eTicosEsp32RegCollectionType;
 
 //! Register State collected for ESP32 when a fault occurs
-TICOS_PACKED_STRUCT MfltRegState {
+TICOS_PACKED_STRUCT TcsRegState {
   uint32_t collection_type; // eTicosEsp32RegCollectionType
   // NOTE: This matches the layout expected for kTicosEsp32RegCollectionType_ActiveWindow
   uint32_t pc;

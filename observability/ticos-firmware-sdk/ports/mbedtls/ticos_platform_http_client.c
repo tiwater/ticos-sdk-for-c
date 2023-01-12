@@ -92,7 +92,7 @@ void mbedtls_net_free(mbedtls_net_context *ctx) {
 }
 #endif /* TICOS_PORT_MBEDTLS_USE_LWIP */
 
-struct MfltHttpClient {
+struct TcsHttpClient {
   bool active;
 
   mbedtls_net_context net_ctx;
@@ -104,13 +104,13 @@ struct MfltHttpClient {
   mbedtls_x509_crt cacert;
 };
 
-typedef struct MfltHttpResponse {
+typedef struct TcsHttpResponse {
   uint32_t status_code;
-} sMfltHttpResponse;
+} sTcsHttpResponse;
 
-static sMfltHttpClient s_client;
+static sTcsHttpClient s_client;
 
-static void prv_teardown_mbedtls(sMfltHttpClient *client) {
+static void prv_teardown_mbedtls(sTcsHttpClient *client) {
   mbedtls_net_free(&client->net_ctx);
   mbedtls_x509_crt_free(&client->cacert);
   mbedtls_ssl_free(&client->ssl);
@@ -119,7 +119,7 @@ static void prv_teardown_mbedtls(sMfltHttpClient *client) {
   mbedtls_entropy_free(&client->entropy);
 }
 
-sMfltHttpClient *ticos_platform_http_client_create(void) {
+sTcsHttpClient *ticos_platform_http_client_create(void) {
   if (s_client.active) {
     TICOS_LOG_ERROR("Ticos HTTP client already in use");
     return NULL;
@@ -203,7 +203,7 @@ cleanup:
   return NULL;
 }
 
-int ticos_platform_http_client_destroy(sMfltHttpClient *client) {
+int ticos_platform_http_client_destroy(sTcsHttpClient *client) {
   if (!client->active) {
     return -1;
   }
@@ -215,12 +215,12 @@ int ticos_platform_http_client_destroy(sMfltHttpClient *client) {
 }
 
 int ticos_platform_http_client_wait_until_requests_completed(
-    TICOS_UNUSED sMfltHttpClient *client, TICOS_UNUSED uint32_t timeout_ms) {
+    TICOS_UNUSED sTcsHttpClient *client, TICOS_UNUSED uint32_t timeout_ms) {
   // No-op because ticos_platform_http_client_post_data() is synchronous
   return 0;
 }
 
-static bool prv_try_send(sMfltHttpClient *client, const uint8_t *buf, size_t buf_len) {
+static bool prv_try_send(sTcsHttpClient *client, const uint8_t *buf, size_t buf_len) {
   size_t idx = 0;
   while (idx != buf_len) {
     int rv = mbedtls_ssl_write(&client->ssl, (const unsigned char *)buf, buf_len);
@@ -236,11 +236,11 @@ static bool prv_try_send(sMfltHttpClient *client, const uint8_t *buf, size_t buf
 }
 
 static bool prv_send_data(const void *data, size_t data_len, void *ctx) {
-  sMfltHttpClient *client = (sMfltHttpClient *)ctx;
+  sTcsHttpClient *client = (sTcsHttpClient *)ctx;
   return prv_try_send(client, data, data_len);
 }
 
-static bool prv_read_socket_data(sMfltHttpClient *client, void *buf, size_t *buf_len) {
+static bool prv_read_socket_data(sTcsHttpClient *client, void *buf, size_t *buf_len) {
   int rv = mbedtls_ssl_read(&client->ssl, buf, *buf_len);
   if ((rv == MBEDTLS_ERR_SSL_WANT_READ) || (rv == MBEDTLS_ERR_SSL_WANT_WRITE)) {
     *buf_len = 0;
@@ -255,7 +255,7 @@ static bool prv_read_socket_data(sMfltHttpClient *client, void *buf, size_t *buf
   return true;
 }
 
-static int prv_wait_for_http_response(sMfltHttpClient *client) {
+static int prv_wait_for_http_response(sTcsHttpClient *client) {
   sTicosHttpResponseContext ctx = { 0 };
   while (1) {
     // We don't expect any response that needs to be parsed so
@@ -277,7 +277,7 @@ static int prv_wait_for_http_response(sMfltHttpClient *client) {
 }
 
 int ticos_platform_http_client_post_data(
-    sMfltHttpClient *client, TicosHttpClientResponseCallback callback, void *ctx) {
+    sTcsHttpClient *client, TicosHttpClientResponseCallback callback, void *ctx) {
   if (!client->active) {
     return -1;
   }
@@ -292,7 +292,7 @@ int ticos_platform_http_client_post_data(
   const bool data_available = ticos_packetizer_begin(&cfg, &metadata);
   if (!data_available) {
     TICOS_LOG_DEBUG("No more data to send");
-    return kMfltPostDataStatus_NoDataFound;
+    return kTcsPostDataStatus_NoDataFound;
   }
 
   ticos_http_start_chunk_post(prv_send_data, client, metadata.single_chunk_message_length);
@@ -319,7 +319,7 @@ int ticos_platform_http_client_post_data(
   }
 
   // we've sent a chunk, drain status
-  sMfltHttpResponse response = {
+  sTcsHttpResponse response = {
     .status_code = prv_wait_for_http_response(client),
   };
 
@@ -330,7 +330,7 @@ int ticos_platform_http_client_post_data(
   return response.status_code != 202 ? response.status_code : 0;
 }
 
-int ticos_platform_http_response_get_status(const sMfltHttpResponse *response, uint32_t *status_out) {
+int ticos_platform_http_response_get_status(const sTcsHttpResponse *response, uint32_t *status_out) {
   TICOS_SDK_ASSERT(response != NULL);
 
   *status_out = response->status_code;

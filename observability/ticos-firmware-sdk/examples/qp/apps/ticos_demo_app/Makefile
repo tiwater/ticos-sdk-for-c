@@ -1,9 +1,9 @@
-EMBEDDED_MFLT_SDK_ROOT ?=
+EMBEDDED_Tcs_SDK_ROOT ?=
 QPC_DIR ?=
 Q ?= @
 
-ifeq ($(EMBEDDED_MFLT_SDK_ROOT),)
-$(error Please set EMBEDDED_MFLT_SDK_ROOT environment variable to point to the where the Ticos Firmware SDK is installed.\
+ifeq ($(EMBEDDED_Tcs_SDK_ROOT),)
+$(error Please set EMBEDDED_Tcs_SDK_ROOT environment variable to point to the where the Ticos Firmware SDK is installed.\
 Download it from here: https://github.com/ticos/ticos-firmware-sdk/releases)
 endif
 
@@ -24,11 +24,11 @@ BUILD_DIR := $(CURDIR)/build
 PROJECT ?= ticos_demo_app
 
 TICOS_COMPONENTS := core panics util demo http
-TICOS_SDK_ROOT := $(EMBEDDED_MFLT_SDK_ROOT)
+TICOS_SDK_ROOT := $(EMBEDDED_Tcs_SDK_ROOT)
 include $(TICOS_SDK_ROOT)/makefiles/TicosWorker.mk
 
 TICOS_PORT_SRCS := \
-	$(EMBEDDED_MFLT_SDK_ROOT)/ports/panics/src/ticos_platform_ram_backed_coredump.c
+	$(EMBEDDED_Tcs_SDK_ROOT)/ports/panics/src/ticos_platform_ram_backed_coredump.c
 
 QF_SRC_DIR := $(QPC_DIR)/src/qf
 QV_SRC_DIR := $(QPC_DIR)/src/qv

@@ -18,16 +18,16 @@
 extern "C" {
 #endif
 
-int ticos_trace_event_capture(eMfltTraceReasonUser reason, void *pc_addr, void *lr_addr);
+int ticos_trace_event_capture(eTcsTraceReasonUser reason, void *pc_addr, void *lr_addr);
 int ticos_trace_event_with_status_capture(
-    eMfltTraceReasonUser reason, void *pc_addr, void *lr_addr, int32_t status);
+    eTcsTraceReasonUser reason, void *pc_addr, void *lr_addr, int32_t status);
 
 TICOS_PRINTF_LIKE_FUNC(4, 5)
 int ticos_trace_event_with_log_capture(
-    eMfltTraceReasonUser reason, void *pc_addr, void *lr_addr, const char *fmt, ...);
+    eTcsTraceReasonUser reason, void *pc_addr, void *lr_addr, const char *fmt, ...);
 
 int ticos_trace_event_with_compact_log_capture(
-    eMfltTraceReasonUser reason, void *lr_addr,
+    eTcsTraceReasonUser reason, void *lr_addr,
     uint32_t log_id, uint32_t fmt, ...);
 
 #ifdef __cplusplus

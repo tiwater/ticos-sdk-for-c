@@ -14,19 +14,19 @@
 #include "cy_secure_sockets.h"
 #include "cy_tls.h"
 
-struct MfltHttpClient {
+struct TcsHttpClient {
   bool active;
   cy_socket_t handle;
   cy_socket_sockaddr_t sock_addr;
 };
 
-typedef struct MfltHttpResponse {
+typedef struct TcsHttpResponse {
   uint32_t status_code;
-} sMfltHttpResponse;
+} sTcsHttpResponse;
 
-static sMfltHttpClient s_client;
+static sTcsHttpClient s_client;
 
-static cy_rslt_t prv_teardown_connection(sMfltHttpClient *client) {
+static cy_rslt_t prv_teardown_connection(sTcsHttpClient *client) {
   cy_rslt_t result = cy_socket_disconnect(client->handle, 0);
   if (result != CY_RSLT_SUCCESS) {
     TICOS_LOG_ERROR("cy_socket_disconnect failed: rv=0x%x", (int)result);
@@ -43,7 +43,7 @@ static cy_rslt_t prv_disconnect_handler(cy_socket_t socket_handle, void *arg) {
   return 0;
 }
 
-static cy_rslt_t prv_open_socket(sMfltHttpClient *client) {
+static cy_rslt_t prv_open_socket(sTcsHttpClient *client) {
   cy_rslt_t result = cy_socket_create(CY_SOCKET_DOMAIN_AF_INET, CY_SOCKET_TYPE_STREAM,
                                       CY_SOCKET_IPPROTO_TLS, &client->handle);
 
@@ -82,13 +82,13 @@ static cy_rslt_t prv_open_socket(sMfltHttpClient *client) {
   return result;
 }
 
-sMfltHttpClient *ticos_platform_http_client_create(void) {
+sTcsHttpClient *ticos_platform_http_client_create(void) {
   if (s_client.active) {
     TICOS_LOG_ERROR("Ticos HTTP client already in use");
     return NULL;
   }
 
-  s_client = (sMfltHttpClient) {
+  s_client = (sTcsHttpClient) {
     .sock_addr = {
       .port = TICOS_HTTP_GET_CHUNKS_API_PORT(),
     },
@@ -111,7 +111,7 @@ sMfltHttpClient *ticos_platform_http_client_create(void) {
 }
 
 
-static bool prv_try_send(sMfltHttpClient *client, const uint8_t *buf, size_t buf_len) {
+static bool prv_try_send(sTcsHttpClient *client, const uint8_t *buf, size_t buf_len) {
   cy_rslt_t idx = 0;
   while (idx != buf_len) {
     uint32_t bytes_sent = 0;
@@ -129,25 +129,25 @@ static bool prv_try_send(sMfltHttpClient *client, const uint8_t *buf, size_t buf
 }
 
 static bool prv_send_data(const void *data, size_t data_len, void *ctx) {
-  sMfltHttpClient *client = (sMfltHttpClient *)ctx;
+  sTcsHttpClient *client = (sTcsHttpClient *)ctx;
   return prv_try_send(client, data, data_len);
 }
 
-static bool prv_read_socket_data(sMfltHttpClient *client, void *buf, size_t *buf_len) {
+static bool prv_read_socket_data(sTcsHttpClient *client, void *buf, size_t *buf_len) {
   uint32_t buf_len_out;
   cy_rslt_t result = cy_socket_recv(client->handle, buf, *buf_len, CY_SOCKET_FLAGS_NONE, &buf_len_out);
   *buf_len = (size_t)buf_len_out;
   return result == CY_RSLT_SUCCESS;
 }
 
-int ticos_platform_http_response_get_status(const sMfltHttpResponse *response, uint32_t *status_out) {
+int ticos_platform_http_response_get_status(const sTcsHttpResponse *response, uint32_t *status_out) {
   TICOS_SDK_ASSERT(response != NULL);
 
   *status_out = response->status_code;
   return 0;
 }
 
-static int prv_wait_for_http_response(sMfltHttpClient *client) {
+static int prv_wait_for_http_response(sTcsHttpClient *client) {
   sTicosHttpResponseContext ctx = { 0 };
   while (1) {
     // We don't expect any response that needs to be parsed so
@@ -169,7 +169,7 @@ static int prv_wait_for_http_response(sMfltHttpClient *client) {
 }
 
 int ticos_platform_http_client_post_data(
-    sMfltHttpClient *client, TicosHttpClientResponseCallback callback, void *ctx) {
+    sTcsHttpClient *client, TicosHttpClientResponseCallback callback, void *ctx) {
   if (!client->active) {
     return -1;
   }
@@ -184,7 +184,7 @@ int ticos_platform_http_client_post_data(
   const bool data_available = ticos_packetizer_begin(&cfg, &metadata);
   if (!data_available) {
     TICOS_LOG_DEBUG("No more data to send");
-    return kMfltPostDataStatus_NoDataFound;
+    return kTcsPostDataStatus_NoDataFound;
   }
 
   ticos_http_start_chunk_post(prv_send_data, client, metadata.single_chunk_message_length);
@@ -211,7 +211,7 @@ int ticos_platform_http_client_post_data(
   }
 
   // we've sent a chunk, drain status
-  sMfltHttpResponse response = {
+  sTcsHttpResponse response = {
     .status_code = prv_wait_for_http_response(client),
   };
 
@@ -222,7 +222,7 @@ int ticos_platform_http_client_post_data(
   return 0;
 }
 
-int ticos_platform_http_client_destroy(sMfltHttpClient *client) {
+int ticos_platform_http_client_destroy(sTcsHttpClient *client) {
   if (!client->active) {
     return -1;
   }
@@ -232,7 +232,7 @@ int ticos_platform_http_client_destroy(sMfltHttpClient *client) {
 }
 
 int ticos_platform_http_client_wait_until_requests_completed(
-    sMfltHttpClient *client, uint32_t timeout_ms) {
+    sTcsHttpClient *client, uint32_t timeout_ms) {
   // No-op because ticos_platform_http_client_post_data() is synchronous
   return 0;
 }

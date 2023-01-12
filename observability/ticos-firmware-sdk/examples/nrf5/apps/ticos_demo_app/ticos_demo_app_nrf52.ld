@@ -16,7 +16,7 @@ __TicosCoreStorageStart = ORIGIN(TICOS_CORES);
 __TicosCoreStorageEnd = ORIGIN(TICOS_CORES) + LENGTH(TICOS_CORES);
 
 __TicosCoredumpRamStart = ORIGIN(RAM);
-__MfltCoredumpRamEnd = ORIGIN(RAM) + LENGTH(RAM);
+__TcsCoredumpRamEnd = ORIGIN(RAM) + LENGTH(RAM);
 
 SECTIONS
 {

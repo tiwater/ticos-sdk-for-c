@@ -15,7 +15,7 @@
 
 #include "ticos/core/math.h"
 
-bool ticos_circular_buffer_init(sMfltCircularBuffer *circular_buf,
+bool ticos_circular_buffer_init(sTcsCircularBuffer *circular_buf,
                                    void *storage_buf, size_t storage_len) {
   if ((circular_buf == NULL) || (storage_buf == NULL) || (storage_len == 0)) {
     return false;
@@ -24,7 +24,7 @@ bool ticos_circular_buffer_init(sMfltCircularBuffer *circular_buf,
   // doesn't really matter but put buffer in a clean state for easier debug
   memset(storage_buf, 0x0, storage_len);
 
-  *circular_buf = (sMfltCircularBuffer){.read_offset = 0,
+  *circular_buf = (sTcsCircularBuffer){.read_offset = 0,
                                         .read_size = 0,
                                         .total_space = storage_len,
                                         .storage = storage_buf};
@@ -32,7 +32,7 @@ bool ticos_circular_buffer_init(sMfltCircularBuffer *circular_buf,
   return true;
 }
 
-bool ticos_circular_buffer_read(sMfltCircularBuffer *circular_buf,
+bool ticos_circular_buffer_read(sTcsCircularBuffer *circular_buf,
                                    size_t offset, void *data, size_t data_len) {
   if ((circular_buf == NULL) || (data == NULL)) {
     return false;
@@ -60,7 +60,7 @@ bool ticos_circular_buffer_read(sMfltCircularBuffer *circular_buf,
   return true;
 }
 
-bool ticos_circular_buffer_get_read_pointer(sMfltCircularBuffer *circular_buf, size_t offset,
+bool ticos_circular_buffer_get_read_pointer(sTcsCircularBuffer *circular_buf, size_t offset,
                                                uint8_t **read_ptr, size_t *read_ptr_len) {
   if ((circular_buf == NULL) || (read_ptr == NULL) || (read_ptr_len == NULL)) {
     return false;
@@ -80,7 +80,7 @@ bool ticos_circular_buffer_get_read_pointer(sMfltCircularBuffer *circular_buf, s
   return true;
 }
 
-bool ticos_circular_buffer_read_with_callback(sMfltCircularBuffer *circular_buf,
+bool ticos_circular_buffer_read_with_callback(sTcsCircularBuffer *circular_buf,
                                                  size_t offset, size_t data_len, void *ctx,
                                                  TicosCircularBufferReadCallback callback) {
   if (circular_buf == NULL) {
@@ -114,7 +114,7 @@ bool ticos_circular_buffer_read_with_callback(sMfltCircularBuffer *circular_buf,
   return true;
 }
 
-bool ticos_circular_buffer_consume(sMfltCircularBuffer *circular_buf, size_t consume_len) {
+bool ticos_circular_buffer_consume(sTcsCircularBuffer *circular_buf, size_t consume_len) {
   if (circular_buf == NULL) {
     return false;
   }
@@ -130,7 +130,7 @@ bool ticos_circular_buffer_consume(sMfltCircularBuffer *circular_buf, size_t con
 }
 
 bool ticos_circular_buffer_consume_from_end(
-    sMfltCircularBuffer *circular_buf, size_t consume_len) {
+    sTcsCircularBuffer *circular_buf, size_t consume_len) {
   if (circular_buf == NULL) {
     return false;
   }
@@ -143,11 +143,11 @@ bool ticos_circular_buffer_consume_from_end(
   return true;
 }
 
-static size_t prv_get_space_available(const sMfltCircularBuffer *circular_buf) {
+static size_t prv_get_space_available(const sTcsCircularBuffer *circular_buf) {
   return circular_buf->total_space - circular_buf->read_size;
 }
 
-size_t ticos_circular_buffer_get_write_size(const sMfltCircularBuffer *circular_buf) {
+size_t ticos_circular_buffer_get_write_size(const sTcsCircularBuffer *circular_buf) {
   if (circular_buf == NULL) {
     return 0;
   }
@@ -155,7 +155,7 @@ size_t ticos_circular_buffer_get_write_size(const sMfltCircularBuffer *circular_
   return prv_get_space_available(circular_buf);
 }
 
-static bool prv_write_at_offset_from_end(sMfltCircularBuffer *circular_buf, size_t offset_from_end,
+static bool prv_write_at_offset_from_end(sTcsCircularBuffer *circular_buf, size_t offset_from_end,
                                          const void *data, size_t data_len) {
   if ((circular_buf == NULL) || (data == NULL)) {
     return false;
@@ -191,17 +191,17 @@ static bool prv_write_at_offset_from_end(sMfltCircularBuffer *circular_buf, size
   return true;
 }
 
-bool ticos_circular_buffer_write(sMfltCircularBuffer *circular_buf,
+bool ticos_circular_buffer_write(sTcsCircularBuffer *circular_buf,
                                     const void *data, size_t data_len) {
   return prv_write_at_offset_from_end(circular_buf, 0, data, data_len);
 }
 
 bool ticos_circular_buffer_write_at_offset(
-    sMfltCircularBuffer *circular_buf, size_t offset_from_end, const void *data, size_t data_len) {
+    sTcsCircularBuffer *circular_buf, size_t offset_from_end, const void *data, size_t data_len) {
   return prv_write_at_offset_from_end(circular_buf, offset_from_end, data, data_len);
 }
 
-size_t ticos_circular_buffer_get_read_size(const sMfltCircularBuffer *circular_buf) {
+size_t ticos_circular_buffer_get_read_size(const sTcsCircularBuffer *circular_buf) {
   if (circular_buf == NULL) {
     return 0;
   }

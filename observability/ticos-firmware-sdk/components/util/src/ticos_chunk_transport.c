@@ -63,11 +63,11 @@ TICOS_STATIC_ASSERT(
     TICOS_MIN_CHUNK_BUF_LEN == (1 /* hdr */ +  TICOS_UINT32_MAX_VARINT_LENGTH + 2 /* crc16 */ + 1 /* at least one data byte */),
     "Not enough space to chunk up at least one byte in a maximally sized message");
 
-static size_t prv_compute_single_message_chunk_size(sMfltChunkTransportCtx *ctx) {
+static size_t prv_compute_single_message_chunk_size(sTcsChunkTransportCtx *ctx) {
   return 1 /* hdr */ + 2 /* crc16 */ + ctx->total_size;
 }
 
-bool ticos_chunk_transport_get_next_chunk(sMfltChunkTransportCtx *ctx,
+bool ticos_chunk_transport_get_next_chunk(sTcsChunkTransportCtx *ctx,
                                              void *out_buf, size_t *out_buf_len) {
   // There's not enough space to encode anything. Consumers of this API should be
   // passing a buffer of at least TICOS_MIN_CHUNK_BUF_LEN in length
@@ -168,7 +168,7 @@ bool ticos_chunk_transport_get_next_chunk(sMfltChunkTransportCtx *ctx,
   return more_data;
 }
 
-void ticos_chunk_transport_get_chunk_info(sMfltChunkTransportCtx *ctx) {
+void ticos_chunk_transport_get_chunk_info(sTcsChunkTransportCtx *ctx) {
   if (ctx->read_offset != 0) {
     // info has already been populated
     return;

@@ -55,8 +55,8 @@ extern uint32_t link_stack_location;
 extern uint32_t link_stack_end;
 
 // These symbols are defined in the ticos_platform_coredump.ld linker script:
-extern uint32_t __MfltCoredumpRamStart;
-extern uint32_t __MfltCoredumpRamEnd;
+extern uint32_t __TcsCoredumpRamStart;
+extern uint32_t __TcsCoredumpRamEnd;
 
 typedef struct sTicosPlatformCoredumpCtx {
   // Physical flash addresses:
@@ -67,19 +67,19 @@ typedef struct sTicosPlatformCoredumpCtx {
 
 static sTicosPlatformCoredumpCtx *s_ticos_platform_coredump_ctx;
 
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(const sCoredumpCrashInfo *crash_info,
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(const sCoredumpCrashInfo *crash_info,
                                                                   size_t *num_regions) {
   // Let's collect the callstack at the time of crash
 
-  static sMfltCoredumpRegion s_coredump_regions[1];
+  static sTcsCoredumpRegion s_coredump_regions[1];
 
 #if (TICOS_PLATFORM_COREDUMP_CAPTURE_STACK_ONLY == 1)
   // Capture only the interrupt stack. Use only if there is not enough storage to capture all of RAM.
   s_coredump_regions[0] = TICOS_COREDUMP_MEMORY_REGION_INIT(&link_stack_location, link_stack_size);
 #else
   // Capture all of RAM. Recommended: it enables broader post-mortem analyses, but has larger storage requirements.
-  s_coredump_regions[0] = TICOS_COREDUMP_MEMORY_REGION_INIT(&__MfltCoredumpRamStart,
-      (uint32_t)&__MfltCoredumpRamEnd - (uint32_t)&__MfltCoredumpRamStart);
+  s_coredump_regions[0] = TICOS_COREDUMP_MEMORY_REGION_INIT(&__TcsCoredumpRamStart,
+      (uint32_t)&__TcsCoredumpRamEnd - (uint32_t)&__TcsCoredumpRamStart);
 #endif
 
   *num_regions = TICOS_ARRAY_SIZE(s_coredump_regions);
@@ -174,7 +174,7 @@ void ticos_platform_coredump_storage_clear(void) {
   ticos_platform_coredump_storage_write(0, &zero, sizeof(zero));
 }
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
   uint32_t flash_start;
   uint32_t flash_end;
   uint32_t size = 0;
@@ -182,7 +182,7 @@ void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
     size = flash_end - flash_start;
   }
 
-  *info  = (sMfltCoredumpStorageInfo) {
+  *info  = (sTcsCoredumpStorageInfo) {
     .size = size,
     .sector_size = SFLASH_SECTOR_SIZE,
   };

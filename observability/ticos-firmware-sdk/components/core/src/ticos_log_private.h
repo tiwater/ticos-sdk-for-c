@@ -57,13 +57,13 @@ typedef TICOS_PACKED_STRUCT {
   uint8_t len;
   // underlying message
   uint8_t msg[];
-} sMfltRamLogEntry;
+} sTcsRamLogEntry;
 
 typedef struct {
   uint32_t read_offset;
   void *user_ctx;
-  sMfltRamLogEntry entry;
-} sMfltLogIterator;
+  sTcsRamLogEntry entry;
+} sTcsLogIterator;
 
 //! The callback invoked when "ticos_log_iterate" is called
 //!
@@ -73,22 +73,22 @@ typedef struct {
 //! iter->read_offset field gets updated after exiting this callback.
 //!
 //! @return bool to continue iterating, else false
-typedef bool (*TicosLogIteratorCallback)(sMfltLogIterator *iter);
+typedef bool (*TicosLogIteratorCallback)(sTcsLogIterator *iter);
 
 //! Iterates over the logs in the buffer, calling the callback for each log.
-void ticos_log_iterate(TicosLogIteratorCallback callback, sMfltLogIterator *iter);
+void ticos_log_iterate(TicosLogIteratorCallback callback, sTcsLogIterator *iter);
 
 //! Update/rewrite the entry header at the position of the iterator.
 //! @note This MUST ONLY be called from a ticos_log_iterate() callback (it
 //! assumes ticos_lock has been taken by the caller).
-bool ticos_log_iter_update_entry(sMfltLogIterator *iter);
+bool ticos_log_iter_update_entry(sTcsLogIterator *iter);
 
-typedef bool (* TicosLogMsgCopyCallback)(sMfltLogIterator *iter, size_t offset,
+typedef bool (* TicosLogMsgCopyCallback)(sTcsLogIterator *iter, size_t offset,
                                             const char *buf, size_t buf_len);
 
 //! @note This MUST ONLY be called from a ticos_log_iterate() callback (it
 //! assumes ticos_lock has been taken by the caller).
-bool ticos_log_iter_copy_msg(sMfltLogIterator *iter, TicosLogMsgCopyCallback callback);
+bool ticos_log_iter_copy_msg(sTcsLogIterator *iter, TicosLogMsgCopyCallback callback);
 
 #ifdef __cplusplus
 }

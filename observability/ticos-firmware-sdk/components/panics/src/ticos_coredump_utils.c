@@ -11,7 +11,7 @@
 #include "ticos/core/debug_log.h"
 
 bool ticos_coredump_storage_check_size(void) {
-  sMfltCoredumpStorageInfo storage_info = { 0 };
+  sTcsCoredumpStorageInfo storage_info = { 0 };
   ticos_platform_coredump_storage_get_info(&storage_info);
   const size_t size_needed = ticos_coredump_storage_compute_size_required();
   if (size_needed <= storage_info.size) {

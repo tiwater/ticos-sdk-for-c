@@ -33,7 +33,7 @@ extern "C" {
 //! @param buf_len The amount of data to be copied.
 //! @note The chunk transport will _never_ invoke this callback and request data that is past the
 //! total_size of the message being operated on
-typedef void (MfltChunkTransportMsgReaderCb)(uint32_t offset, void *buf,
+typedef void (TcsChunkTransportMsgReaderCb)(uint32_t offset, void *buf,
                                              size_t buf_len);
 
 //! Context used to hold the state of the current message being chunked
@@ -43,7 +43,7 @@ typedef struct {
   //! The total size of the message to be sent
   uint32_t total_size;
   //! A callback for reading portions of the message to be sent
-  MfltChunkTransportMsgReaderCb *read_msg;
+  TcsChunkTransportMsgReaderCb *read_msg;
   //! Instead of having a "chunk" span one call, allow for a chunk to span across multiple calls to
   //! this API. This is an optimization that allows us to send messages across "one" chunk if the
   //! transport does not have any size restrictions
@@ -58,7 +58,7 @@ typedef struct {
   //! A CRC computed over the data (up to read_offset). The CRC for the entire message is written
   //! at the end of the last chunk that makes up a message.
   uint16_t crc16_incremental;
-} sMfltChunkTransportCtx;
+} sTcsChunkTransportCtx;
 
 //! Takes a message and chunks it up into smaller messages
 //!
@@ -69,12 +69,12 @@ typedef struct {
 //! at least TICOS_MIN_CHUNK_BUF_LEN
 //!
 //! @return true if there is more data to send in the message, false otherwise
-bool ticos_chunk_transport_get_next_chunk(sMfltChunkTransportCtx *ctx,
+bool ticos_chunk_transport_get_next_chunk(sTcsChunkTransportCtx *ctx,
                                              void *buf, size_t *buf_len);
 
 //! Computes info about the current chunk being operated on and populates the output arguments of
-//! sMfltChunkTransportCtx with the info
-void ticos_chunk_transport_get_chunk_info(sMfltChunkTransportCtx *ctx);
+//! sTcsChunkTransportCtx with the info
+void ticos_chunk_transport_get_chunk_info(sTcsChunkTransportCtx *ctx);
 
 #ifdef __cplusplus
 }

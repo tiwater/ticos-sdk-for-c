@@ -47,15 +47,15 @@
 #error "dg_configDISABLE_BACKGROUND_FLASH_OPS must be set to 1 in custom_config_*.h"
 #endif
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
-  *info = (sMfltCoredumpStorageInfo) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
+  *info = (sTcsCoredumpStorageInfo) {
     .size = TICOS_PLATFORM_COREDUMP_STORAGE_MAX_SIZE_BYTES,
     .sector_size = FLASH_SECTOR_SIZE,
   };
 }
 
 static bool prv_op_within_flash_bounds(uint32_t offset, size_t data_len) {
-  sMfltCoredumpStorageInfo info = { 0 };
+  sTcsCoredumpStorageInfo info = { 0 };
   ticos_platform_coredump_storage_get_info(&info);
   return (offset + data_len) <= info.size;
 }

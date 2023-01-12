@@ -11,7 +11,7 @@
 
 #include "ticos_test_compact_log_c.h"
 
-TEST_GROUP(MfltCompactLogMacros) {
+TEST_GROUP(TcsCompactLogMacros) {
   void setup() {
     mock().strictOrder();
   }
@@ -22,14 +22,14 @@ TEST_GROUP(MfltCompactLogMacros) {
   }
 };
 
-TEST(MfltCompactLogMacros, Test_MfltCompactLog_ArgExpansion) {
+TEST(TcsCompactLogMacros, Test_TcsCompactLog_ArgExpansion) {
   test_compact_log_c_argument_expansion();
 }
 
-TEST(MfltCompactLogMacros, Test_MfltCompactLog_MultiArg) {
+TEST(TcsCompactLogMacros, Test_TcsCompactLog_MultiArg) {
   test_compact_log_c_multi_arg();
 }
 
-TEST(MfltCompactLogMacros, Test_MfltCompactLog_Complex) {
+TEST(TcsCompactLogMacros, Test_TcsCompactLog_Complex) {
   test_compact_log_c_multi_complex();
 }

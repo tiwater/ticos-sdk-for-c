@@ -125,7 +125,7 @@ static bool prv_try_flush(void) {
 
 static bool ticos_coredump_storage_buffered_write(uint32_t offset, const void *data,
                                                      size_t data_len) {
-  sMfltCoredumpStorageInfo info = { 0 };
+  sTcsCoredumpStorageInfo info = { 0 };
   ticos_platform_coredump_storage_get_info(&info);
   if (((offset + data_len) > info.size) ||
       ((info.size % TICOS_COREDUMP_STORAGE_WRITE_SIZE) != 0) ||

@@ -10,9 +10,9 @@
 
 #include "ticos/panics/coredump.h"
 
-static sMfltCoredumpStorageInfo s_fake_coredump_info;
+static sTcsCoredumpStorageInfo s_fake_coredump_info;
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
   *info = s_fake_coredump_info;
 }
 
@@ -21,7 +21,7 @@ size_t ticos_coredump_storage_compute_size_required(void) {
 }
 
 
-TEST_GROUP(MfltCoredumpUtilTestGroup) {
+TEST_GROUP(TcsCoredumpUtilTestGroup) {
   void setup() {
   }
 
@@ -31,7 +31,7 @@ TEST_GROUP(MfltCoredumpUtilTestGroup) {
 };
 
 
-TEST(MfltCoredumpUtilTestGroup, Test_MfltCoredumpUtilSizeCheck) {
+TEST(TcsCoredumpUtilTestGroup, Test_TcsCoredumpUtilSizeCheck) {
   bool check_passed = ticos_coredump_storage_check_size();
   CHECK(!check_passed);
 

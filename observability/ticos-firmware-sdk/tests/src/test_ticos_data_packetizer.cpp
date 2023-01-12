@@ -107,7 +107,7 @@ const sTicosDataSourceImpl g_ticos_data_rle_source = {
 // For packetizer test purposes, the data within the chunker should be opaque to us
 // so just use this fake implementation which simply copies whatever the backing reader
 // points to
-bool ticos_chunk_transport_get_next_chunk(sMfltChunkTransportCtx *ctx,
+bool ticos_chunk_transport_get_next_chunk(sTcsChunkTransportCtx *ctx,
                                              void *buf, size_t *buf_len) {
   LONGS_EQUAL(s_multi_call_chunking_enabled, ctx->enable_multi_call_chunk);
   const size_t bytes_to_read = TICOS_MIN(*buf_len, ctx->total_size - ctx->read_offset);
@@ -117,7 +117,7 @@ bool ticos_chunk_transport_get_next_chunk(sMfltChunkTransportCtx *ctx,
   return (ctx->read_offset != ctx->total_size);
 }
 
-void ticos_chunk_transport_get_chunk_info(sMfltChunkTransportCtx *ctx) {
+void ticos_chunk_transport_get_chunk_info(sTcsChunkTransportCtx *ctx) {
   // fake chunker has 0 overhead so total_chunk_size just matches that
   ctx->single_chunk_message_length = ctx->total_size;
 }
@@ -609,7 +609,7 @@ TEST(TicosDataPacketizer, Test_ActiveSources) {
 
   // changing the sources will abort any in-progress transmissions
   mock().expectOneCall("ticos_data_source_rle_encoder_set_active");
-  ticos_packetizer_set_active_sources(kMfltDataSourceMask_None);
+  ticos_packetizer_set_active_sources(kTcsDataSourceMask_None);
   mock().checkExpectations();
 
   size_t buf_len = sizeof(packet);
@@ -619,7 +619,7 @@ TEST(TicosDataPacketizer, Test_ActiveSources) {
 
   // exclusively enable coredumps and we should only see the coredump source get called
   mock().expectOneCall("ticos_data_source_rle_encoder_set_active");
-  ticos_packetizer_set_active_sources(kMfltDataSourceMask_Coredump);
+  ticos_packetizer_set_active_sources(kTcsDataSourceMask_Coredump);
 
   prv_setup_expect_coredump_call_expectations(false);
   more_data = ticos_packetizer_get_chunk(packet, &buf_len);
@@ -628,7 +628,7 @@ TEST(TicosDataPacketizer, Test_ActiveSources) {
 
   // exclusively enable events and we should only see the coredump source get called
   mock().expectOneCall("ticos_data_source_rle_encoder_set_active");
-  ticos_packetizer_set_active_sources(kMfltDataSourceMask_Event);
+  ticos_packetizer_set_active_sources(kTcsDataSourceMask_Event);
 
   mock().expectOneCall("prv_heartbeat_metric_has_event").andReturnValue(false);
   more_data = ticos_packetizer_get_chunk(packet, &buf_len);
@@ -637,7 +637,7 @@ TEST(TicosDataPacketizer, Test_ActiveSources) {
 
   // exclusively enabled logs and we should only see the log source get called
   mock().expectOneCall("ticos_data_source_rle_encoder_set_active");
-  ticos_packetizer_set_active_sources(kMfltDataSourceMask_Log);
+  ticos_packetizer_set_active_sources(kTcsDataSourceMask_Log);
 
   mock(s_log_scope).expectOneCall("prv_has_logs").andReturnValue(true);
   more_data = ticos_packetizer_get_chunk(packet, &buf_len);
@@ -646,7 +646,7 @@ TEST(TicosDataPacketizer, Test_ActiveSources) {
 
   // exclusively enabled cdr and we should only see the log source get called
   mock().expectOneCall("ticos_data_source_rle_encoder_set_active");
-  ticos_packetizer_set_active_sources(kMfltDataSourceMask_Cdr);
+  ticos_packetizer_set_active_sources(kTcsDataSourceMask_Cdr);
 
   mock(s_log_scope).expectOneCall("prv_has_cdr").andReturnValue(true);
   more_data = ticos_packetizer_get_chunk(packet, &buf_len);
@@ -656,9 +656,9 @@ TEST(TicosDataPacketizer, Test_ActiveSources) {
   // events + logs enabled
   mock().expectOneCall("ticos_data_source_rle_encoder_set_active");
 
-  // note the cast to eMfltDataSourceMask
+  // note the cast to eTcsDataSourceMask
   ticos_packetizer_set_active_sources(
-    (kMfltDataSourceMask_Event | kMfltDataSourceMask_Log));
+    (kTcsDataSourceMask_Event | kTcsDataSourceMask_Log));
   mock().expectOneCall("prv_heartbeat_metric_has_event").andReturnValue(false);
   mock(s_log_scope).expectOneCall("prv_has_logs").andReturnValue(true);
   more_data = ticos_packetizer_get_chunk(packet, &buf_len);
@@ -667,7 +667,7 @@ TEST(TicosDataPacketizer, Test_ActiveSources) {
 
   // if all sources are enabled, they should all be checked
   mock().expectOneCall("ticos_data_source_rle_encoder_set_active");
-  ticos_packetizer_set_active_sources(kMfltDataSourceMask_All);
+  ticos_packetizer_set_active_sources(kTcsDataSourceMask_All);
 
   prv_setup_expect_coredump_call_expectations(false);
   mock().expectOneCall("prv_heartbeat_metric_has_event").andReturnValue(false);

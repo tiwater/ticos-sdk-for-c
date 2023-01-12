@@ -24,7 +24,7 @@ static uint8_t s_reboot_tracking[TICOS_REBOOT_TRACKING_REGION_SIZE];
 void ticos_reboot_reason_get(sResetBootupInfo *info) {
   TICOS_SDK_ASSERT(info != NULL);
 
-  eTicosRebootReason reset_reason = kMfltRebootReason_Unknown;
+  eTicosRebootReason reset_reason = kTcsRebootReason_Unknown;
 
   const uint32_t reset_cause = Cy_SysLib_GetResetReason();
 
@@ -36,34 +36,34 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
       // Per code comments indicates "POR, XRES, or BOD":
       //  https://github.com/Infineon/mtb-pdl-cat1/blob/3c6aebd/personalities/platform/power-1.3.cypersonality#L205
       TICOS_PRINT_RESET_INFO(" POR, XRES, or BOD");
-      reset_reason = kMfltRebootReason_PowerOnReset;
+      reset_reason = kTcsRebootReason_PowerOnReset;
       break;
 
     case CY_SYSLIB_RESET_HWWDT:
       TICOS_PRINT_RESET_INFO(" HW WDT");
-      reset_reason = kMfltRebootReason_HardwareWatchdog;
+      reset_reason = kTcsRebootReason_HardwareWatchdog;
       break;
     case CY_SYSLIB_RESET_ACT_FAULT:
       // unauthorized protection violations
       TICOS_PRINT_RESET_INFO(" ACT Fault");
-      reset_reason = kMfltRebootReason_UnknownError;
+      reset_reason = kTcsRebootReason_UnknownError;
       break;
     case CY_SYSLIB_RESET_DPSLP_FAULT:
       // failed to enter deep sleep
       TICOS_PRINT_RESET_INFO(" DPSLP Fault");
-      reset_reason = kMfltRebootReason_UnknownError;
+      reset_reason = kTcsRebootReason_UnknownError;
       break;
 
 #if defined (CY_IP_M33SYSCPUSS) || defined (CY_IP_M7CPUSS)
     case CY_SYSLIB_RESET_TC_DBGRESET:
       TICOS_PRINT_RESET_INFO(" TC DBGRESET");
-      reset_reason = kMfltRebootReason_Assert;
+      reset_reason = kTcsRebootReason_Assert;
       break;
 #endif
 
     case CY_SYSLIB_RESET_SOFT:
       TICOS_PRINT_RESET_INFO(" Software Reset");
-      reset_reason = kMfltRebootReason_SoftwareReset;
+      reset_reason = kTcsRebootReason_SoftwareReset;
       break;
 
     case CY_SYSLIB_RESET_SWWDT0:
@@ -71,18 +71,18 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
     case CY_SYSLIB_RESET_SWWDT2:
     case CY_SYSLIB_RESET_SWWDT3:
       TICOS_PRINT_RESET_INFO(" Software Watchdog");
-      reset_reason = kMfltRebootReason_SoftwareWatchdog;
+      reset_reason = kTcsRebootReason_SoftwareWatchdog;
       break;
 
     case CY_SYSLIB_RESET_CSV_LOSS_WAKEUP:
     case CY_SYSLIB_RESET_CSV_ERROR_WAKEUP:
       TICOS_PRINT_RESET_INFO(" Clock-Supervision Logic Reset");
-      reset_reason = kMfltRebootReason_ClockFailure;
+      reset_reason = kTcsRebootReason_ClockFailure;
       break;
 
     case CY_SYSLIB_RESET_HIB_WAKEUP:
       TICOS_PRINT_RESET_INFO(" Hibernation Wakeup");
-      reset_reason = kMfltRebootReason_LowPower;
+      reset_reason = kTcsRebootReason_LowPower;
       break;
 
 #ifdef CY_IP_M7CPUSS
@@ -91,7 +91,7 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
     case CY_SYSLIB_RESET_BODVDDA:
     case CY_SYSLIB_RESET_BODVCCD:
       TICOS_PRINT_RESET_INFO(" Brown Out");
-      reset_reason = kMfltRebootReason_BrownOutReset;
+      reset_reason = kTcsRebootReason_BrownOutReset;
       break;
 
     case CY_SYSLIB_RESET_OVDVDDD:
@@ -103,15 +103,15 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
     case CY_SYSLIB_RESET_PMIC:
     case CY_SYSLIB_RESET_PXRES:
     case CY_SYSLIB_RESET_STRUCT_XRES:
-      reset_reason = kMfltRebootReason_UnknownError;
+      reset_reason = kTcsRebootReason_UnknownError;
       break;
     case CY_SYSLIB_RESET_PORVDDD:
       TICOS_PRINT_RESET_INFO(" Power on Reset");
-      reset_reason = kMfltRebootReason_PowerOnReset;
+      reset_reason = kTcsRebootReason_PowerOnReset;
       break;
 #endif
     default:
-      reset_reason = kMfltRebootReason_Unknown;
+      reset_reason = kTcsRebootReason_Unknown;
       TICOS_PRINT_RESET_INFO(" Unknown");
       break;
 

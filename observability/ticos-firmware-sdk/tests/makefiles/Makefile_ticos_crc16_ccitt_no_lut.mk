@@ -1,8 +1,8 @@
 SRC_FILES = \
-  $(MFLT_COMPONENTS_DIR)/util/src/ticos_crc16_ccitt.c
+  $(Tcs_COMPONENTS_DIR)/util/src/ticos_crc16_ccitt.c
 
 TEST_SRC_FILES = \
-  $(MFLT_TEST_SRC_DIR)/test_ticos_crc16_ccitt.cpp
+  $(Tcs_TEST_SRC_DIR)/test_ticos_crc16_ccitt.cpp
 
 CPPUTEST_CPPFLAGS += -DTICOS_CRC16_LOOKUP_TABLE_ENABLE=0
 

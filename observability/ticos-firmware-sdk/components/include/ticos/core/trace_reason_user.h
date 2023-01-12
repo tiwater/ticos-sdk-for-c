@@ -40,14 +40,14 @@ extern "C" {
 //! it's useful to make these names human readable. C variable naming rules apply.
 //! @note reason must be unique
 #define TICOS_TRACE_REASON_DEFINE(reason) \
-  kMfltTraceReasonUser_##reason,
+  kTcsTraceReasonUser_##reason,
 
 //! Uses a user-defined trace reason. Before you can use a user-defined trace reason, it should
 //! defined using TICOS_TRACE_REASON_DEFINE in ticos_trace_reason_user_config.def
 //! @param reason The name of the reason, without quotes, as defined using
 //! TICOS_TRACE_REASON_DEFINE.
 #define TICOS_TRACE_REASON(reason) \
-  kMfltTraceReasonUser_##reason
+  kTcsTraceReasonUser_##reason
 
 //! If trace events are not being used, including the user config file can be disabled
 //! by adding -DTICOS_DISABLE_USER_TRACE_REASONS=1 to CFLAGs
@@ -68,7 +68,7 @@ extern "C" {
 #  endif
 # endif
 
-typedef enum MfltTraceReasonUser {
+typedef enum TcsTraceReasonUser {
   TICOS_TRACE_REASON_DEFINE(Unknown)
 
 #if (TICOS_DISABLE_USER_TRACE_REASONS == 0)
@@ -80,8 +80,8 @@ typedef enum MfltTraceReasonUser {
   // (ticos_demo_cli_cmd_trace_event.c) and can be used for a user test command as well.
   TICOS_TRACE_REASON_DEFINE(TicosCli_Test)
 
-  kMfltTraceReasonUser_NumReasons,
-} eMfltTraceReasonUser;
+  kTcsTraceReasonUser_NumReasons,
+} eTcsTraceReasonUser;
 
 #ifdef __cplusplus
 }

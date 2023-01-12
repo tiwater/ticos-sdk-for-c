@@ -14,7 +14,7 @@
 
 // configure your project key in mbed_app.json
 // find the key on ticos under settings > general
-sMfltHttpClientConfig g_tcs_http_client_config = {
+sTcsHttpClientConfig g_tcs_http_client_config = {
   .api_key = MBED_CONF_TICOS_PROJECT_API_KEY,
 };
 

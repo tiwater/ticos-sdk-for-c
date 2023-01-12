@@ -23,7 +23,7 @@
 
 void ticos_reboot_reason_get(sResetBootupInfo *info) {
   const uint32_t reset_cause = SRC->SRSR & (SRC_SRSR_W1C_BITS_MASK | SRC_SRSR_TEMPSENSE_RST_B_MASK);
-  eTicosRebootReason reset_reason = kMfltRebootReason_Unknown;
+  eTicosRebootReason reset_reason = kTcsRebootReason_Unknown;
 
   // clear the SRC Reset Status Register by writing a 1 to each bit
 #if TICOS_REBOOT_REASON_CLEAR
@@ -35,35 +35,35 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
   TICOS_PRINT_RESET_INFO("Reset Cause: ");
   if (reset_cause & SRC_SRSR_JTAG_SW_RST_MASK) {
     TICOS_PRINT_RESET_INFO(" Software");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & SRC_SRSR_TEMPSENSE_RST_B_MASK) {
     TICOS_PRINT_RESET_INFO(" Temp Sensor");
-    reset_reason = kMfltRebootReason_UnknownError;
+    reset_reason = kTcsRebootReason_UnknownError;
   } else if (reset_cause & SRC_SRSR_WDOG3_RST_B_MASK) {
     TICOS_PRINT_RESET_INFO(" HW Watchdog3");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & SRC_SRSR_WDOG_RST_B_MASK) {
     TICOS_PRINT_RESET_INFO(" HW Watchdog");
     // reset_cause can be use to disambiguate the watchdog types
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & SRC_SRSR_JTAG_RST_B_MASK) {
     TICOS_PRINT_RESET_INFO(" Debugger");
-    reset_reason = kMfltRebootReason_DebuggerHalted;
+    reset_reason = kTcsRebootReason_DebuggerHalted;
   } else if (reset_cause & SRC_SRSR_IPP_USER_RESET_B_MASK) {
     TICOS_PRINT_RESET_INFO(" Button");
-    reset_reason = kMfltRebootReason_ButtonReset;
+    reset_reason = kTcsRebootReason_ButtonReset;
   } else if (reset_cause & SRC_SRSR_CSU_RESET_B_MASK) {
     // Central Security Unit triggered the reset (see Security Reference
     // Manual)
     TICOS_PRINT_RESET_INFO(" CSU");
-    reset_reason = kMfltRebootReason_UnknownError;
+    reset_reason = kTcsRebootReason_UnknownError;
   } else if (reset_cause & SRC_SRSR_LOCKUP_SYSRESETREQ_MASK) {
     TICOS_PRINT_RESET_INFO(" Lockup");
-    reset_reason = kMfltRebootReason_Lockup;
+    reset_reason = kTcsRebootReason_Lockup;
   } else if (reset_cause & SRC_SRSR_IPP_RESET_B_MASK) {
     // TODO this might be equivalent to POR...
     TICOS_PRINT_RESET_INFO(" Pin Reset");
-    reset_reason = kMfltRebootReason_PinReset;
+    reset_reason = kTcsRebootReason_PinReset;
   } else {
     TICOS_PRINT_RESET_INFO(" Unknown");
   }

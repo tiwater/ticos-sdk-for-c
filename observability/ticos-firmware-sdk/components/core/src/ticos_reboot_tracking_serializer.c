@@ -24,7 +24,7 @@
 #define TICOS_REBOOT_TRACKING_STORAGE_TOO_SMALL (-2)
 
 static bool prv_serialize_reboot_info(sTicosCborEncoder *e,
-                                      const sMfltResetReasonInfo *info) {
+                                      const sTcsResetReasonInfo *info) {
   const size_t extra_event_info_pairs = 1 /* coredump_saved */ +
                                         ((info->reset_reason_reg0 != 0) ? 1 : 0);
   const sTicosTraceEventHelperInfo helper_info = {
@@ -50,14 +50,14 @@ static bool prv_serialize_reboot_info(sTicosCborEncoder *e,
 }
 
 static bool prv_encode_cb(sTicosCborEncoder *encoder, void *ctx) {
-  const sMfltResetReasonInfo *info = (const sMfltResetReasonInfo *)ctx;
+  const sTcsResetReasonInfo *info = (const sTcsResetReasonInfo *)ctx;
   return prv_serialize_reboot_info(encoder, info);
 }
 
 size_t ticos_reboot_tracking_compute_worst_case_storage_size(void) {
   // a reset reason with maximal values so we can compute the worst case encoding size
-  sMfltResetReasonInfo reset_reason = {
-    .reason = kMfltRebootReason_HardFault,
+  sTcsResetReasonInfo reset_reason = {
+    .reason = kTcsRebootReason_HardFault,
     .pc = UINT32_MAX,
     .lr = UINT32_MAX,
     .reset_reason_reg0 = UINT32_MAX,
@@ -79,7 +79,7 @@ int ticos_reboot_tracking_collect_reset_info(const sTicosEventStorageImpl *impl)
   // code if the event could not be stored. This line is here to give the user
   // an idea of how they should size things
 
-  sMfltResetReasonInfo info;
+  sTcsResetReasonInfo info;
   if (!ticos_reboot_tracking_read_reset_info(&info)) {
     // Two ways we get here:
     //  1. ticos_reboot_tracking_boot() has not yet been called

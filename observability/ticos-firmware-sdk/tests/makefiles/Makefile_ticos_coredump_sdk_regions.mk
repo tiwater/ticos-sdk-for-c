@@ -1,8 +1,8 @@
 SRC_FILES = \
-  $(MFLT_COMPONENTS_DIR)/panics/src/ticos_coredump_sdk_regions.c
+  $(Tcs_COMPONENTS_DIR)/panics/src/ticos_coredump_sdk_regions.c
 
 TEST_SRC_FILES = \
-  $(MFLT_TEST_SRC_DIR)/test_ticos_coredump_sdk_regions.cpp
+  $(Tcs_TEST_SRC_DIR)/test_ticos_coredump_sdk_regions.cpp
 
 CPPUTEST_CPPFLAGS += -DTICOS_COREDUMP_COLLECT_LOG_REGIONS=1
 CPPUTEST_CPPFLAGS += -DTICOS_COREDUMP_COLLECT_HEAP_STATS=1

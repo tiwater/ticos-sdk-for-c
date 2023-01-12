@@ -29,7 +29,7 @@
 
 #define TICOS_REBOOT_REASON_NOT_SET 0xffffffff
 
-typedef TICOS_PACKED_STRUCT MfltRebootInfo {
+typedef TICOS_PACKED_STRUCT TcsRebootInfo {
   //! A cheap way to check if the data within the struct is valid
   uint32_t magic;
   //! Version of the struct. If a new field is added it should be appended right before rsvd. This
@@ -51,23 +51,23 @@ typedef TICOS_PACKED_STRUCT MfltRebootInfo {
   uint32_t reset_reason_reg0;
   // Reserved for future additions
   uint32_t rsvd2[10];
-} sMfltRebootInfo;
+} sTcsRebootInfo;
 
-TICOS_STATIC_ASSERT(sizeof(sMfltRebootInfo) == TICOS_REBOOT_TRACKING_REGION_SIZE,
+TICOS_STATIC_ASSERT(sizeof(sTcsRebootInfo) == TICOS_REBOOT_TRACKING_REGION_SIZE,
                        "struct doesn't match expected size");
 
-static sMfltRebootInfo *s_tcs_reboot_info;
+static sTcsRebootInfo *s_tcs_reboot_info;
 
-//! Struct to retrieve reboot reason data from. Matches the fields of sMfltRebootReason
+//! Struct to retrieve reboot reason data from. Matches the fields of sTcsRebootReason
 //! as documented in reboot_tracking.h
 typedef struct {
   eTicosRebootReason reboot_reg_reason;
   eTicosRebootReason prior_stored_reason;
   bool is_valid;
-} sMfltRebootReasonData;
+} sTcsRebootReasonData;
 
 // Private struct to store reboot reason after reboot tracking is initialized
-static sMfltRebootReasonData s_reboot_reason_data = {
+static sTcsRebootReasonData s_reboot_reason_data = {
   .is_valid = false,
 };
 
@@ -81,7 +81,7 @@ static bool prv_check_or_init_struct(void) {
   }
 
   // structure doesn't match what we expect, reset it
-  *s_tcs_reboot_info = (sMfltRebootInfo) {
+  *s_tcs_reboot_info = (sTcsRebootInfo) {
     .magic = TICOS_REBOOT_INFO_MAGIC,
     .version = TICOS_REBOOT_INFO_VERSION,
     .last_reboot_reason = TICOS_REBOOT_REASON_NOT_SET,
@@ -89,13 +89,13 @@ static bool prv_check_or_init_struct(void) {
   return true;
 }
 
-static bool prv_read_reset_info(sMfltResetReasonInfo *info) {
+static bool prv_read_reset_info(sTcsResetReasonInfo *info) {
   if ((s_tcs_reboot_info->last_reboot_reason == TICOS_REBOOT_REASON_NOT_SET) &&
       (s_tcs_reboot_info->reset_reason_reg0 == 0)) {
     return false; // no reset crashes!
   }
 
-  *info = (sMfltResetReasonInfo) {
+  *info = (sTcsResetReasonInfo) {
     .reason = (eTicosRebootReason)s_tcs_reboot_info->last_reboot_reason,
     .pc = s_tcs_reboot_info->pc,
     .lr = s_tcs_reboot_info->lr,
@@ -132,19 +132,19 @@ static bool prv_get_unexpected_reboot_occurred(void) {
   // unknown
   if (s_reboot_reason_data.prior_stored_reason !=
       (eTicosRebootReason)TICOS_REBOOT_REASON_NOT_SET) {
-    if (s_reboot_reason_data.prior_stored_reason == kMfltRebootReason_Unknown ||
-        s_reboot_reason_data.prior_stored_reason >= kMfltRebootReason_UnknownError) {
+    if (s_reboot_reason_data.prior_stored_reason == kTcsRebootReason_Unknown ||
+        s_reboot_reason_data.prior_stored_reason >= kTcsRebootReason_UnknownError) {
       return true;
     }
   }
 
   // Check reboot_reg_reason second, reboot is unexpected if in error range or unknown
-  return (s_reboot_reason_data.reboot_reg_reason == kMfltRebootReason_Unknown ||
-          s_reboot_reason_data.reboot_reg_reason >= kMfltRebootReason_UnknownError);
+  return (s_reboot_reason_data.reboot_reg_reason == kTcsRebootReason_Unknown ||
+          s_reboot_reason_data.reboot_reg_reason >= kTcsRebootReason_UnknownError);
 }
 
 static void prv_record_reboot_event(eTicosRebootReason reboot_reason,
-                                    const sMfltRebootTrackingRegInfo *reg) {
+                                    const sTcsRebootTrackingRegInfo *reg) {
   // Store both the new reason reported by hardware and the current recorded reason
   // The combination of these will be used to determine if the bootup was expected
   // by the metrics subsystem
@@ -177,7 +177,7 @@ void ticos_reboot_tracking_boot(
     return;
   }
 
-  eTicosRebootReason reset_reason = kMfltRebootReason_Unknown;
+  eTicosRebootReason reset_reason = kTcsRebootReason_Unknown;
   if (bootup_info != NULL) {
     s_tcs_reboot_info->reset_reason_reg0 = bootup_info->reset_reason_reg;
     reset_reason = bootup_info->reset_reason;
@@ -191,7 +191,7 @@ void ticos_reboot_tracking_boot(
 }
 
 void ticos_reboot_tracking_mark_reset_imminent(eTicosRebootReason reboot_reason,
-                                                  const sMfltRebootTrackingRegInfo *reg) {
+                                                  const sTcsRebootTrackingRegInfo *reg) {
   if (!prv_check_or_init_struct()) {
     return;
   }
@@ -199,7 +199,7 @@ void ticos_reboot_tracking_mark_reset_imminent(eTicosRebootReason reboot_reason,
   prv_record_reboot_event(reboot_reason, reg);
 }
 
-bool ticos_reboot_tracking_read_reset_info(sMfltResetReasonInfo *info) {
+bool ticos_reboot_tracking_read_reset_info(sTcsResetReasonInfo *info) {
   if (info == NULL) {
     return false;
   }
@@ -247,12 +247,12 @@ void ticos_reboot_tracking_mark_coredump_saved(void) {
   s_tcs_reboot_info->coredump_saved = 1;
 }
 
-int ticos_reboot_tracking_get_reboot_reason(sMfltRebootReason *reboot_reason) {
+int ticos_reboot_tracking_get_reboot_reason(sTcsRebootReason *reboot_reason) {
   if (reboot_reason == NULL || !s_reboot_reason_data.is_valid) {
     return -1;
   }
 
-  *reboot_reason = (sMfltRebootReason){
+  *reboot_reason = (sTcsRebootReason){
     .reboot_reg_reason = s_reboot_reason_data.reboot_reg_reason,
     .prior_stored_reason = s_reboot_reason_data.prior_stored_reason,
   };
@@ -270,7 +270,7 @@ int ticos_reboot_tracking_get_unexpected_reboot_occurred(bool *unexpected_reboot
 }
 
 void ticos_reboot_tracking_clear_reboot_reason(void) {
-  s_reboot_reason_data = (sMfltRebootReasonData){
+  s_reboot_reason_data = (sTcsRebootReasonData){
     .is_valid = false,
   };
 }

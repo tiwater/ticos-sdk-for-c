@@ -17,7 +17,7 @@ typedef struct {
   uint8_t major;
   uint8_t minor;
   uint8_t patch;
-} sMfltSdkVersion;
+} sTcsSdkVersion;
 
 #define TICOS_SDK_VERSION   { .major = 0, .minor = 37, .patch = 0 }
 

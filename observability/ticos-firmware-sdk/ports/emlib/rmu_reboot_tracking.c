@@ -35,43 +35,43 @@ static eTicosRebootReason prv_get_and_print_reason(uint32_t reset_cause) {
   // that are not, we wrap the reason with an ifdef.
   if (reset_cause & RMU_RSTCAUSE_PORST) {
     TICOS_PRINT_RESET_INFO(" Power on Reset");
-    return kMfltRebootReason_PowerOnReset;
+    return kTcsRebootReason_PowerOnReset;
 #if defined(RMU_RSTCAUSE_AVDDBOD)
   } else if (reset_cause & RMU_RSTCAUSE_AVDDBOD) {
     TICOS_PRINT_RESET_INFO(" AVDD Brown Out");
-    return kMfltRebootReason_BrownOutReset;
+    return kTcsRebootReason_BrownOutReset;
 #endif
 #if defined(RMU_RSTCAUSE_DVDDBOD)
   } else if (reset_cause & RMU_RSTCAUSE_DVDDBOD) {
     TICOS_PRINT_RESET_INFO(" DVDD Brown Out");
-    return kMfltRebootReason_BrownOutReset;
+    return kTcsRebootReason_BrownOutReset;
 #endif
 #if defined(RMU_RSTCAUSE_DECBOD)
   } else if (reset_cause & RMU_RSTCAUSE_DECBOD) {
     TICOS_PRINT_RESET_INFO(" DEC Brown Out");
-    return kMfltRebootReason_BrownOutReset;
+    return kTcsRebootReason_BrownOutReset;
 #endif
   } else if (reset_cause & RMU_RSTCAUSE_LOCKUPRST) {
     TICOS_PRINT_RESET_INFO(" Lockup");
-    return kMfltRebootReason_Lockup;
+    return kTcsRebootReason_Lockup;
   } else if (reset_cause & RMU_RSTCAUSE_SYSREQRST) {
     TICOS_PRINT_RESET_INFO(" Software");
-    return kMfltRebootReason_SoftwareReset;
+    return kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & RMU_RSTCAUSE_WDOGRST) {
     TICOS_PRINT_RESET_INFO(" Watchdog");
-    return kMfltRebootReason_HardwareWatchdog;
+    return kTcsRebootReason_HardwareWatchdog;
 #if defined(RMU_RSTCAUSE_EM4WURST)
   } else if (reset_cause & RMU_RSTCAUSE_EM4RST) {
     TICOS_PRINT_RESET_INFO(" EM4 Wakeup");
-    return kMfltRebootReason_DeepSleep;
+    return kTcsRebootReason_DeepSleep;
 #endif
   } else if (reset_cause & RMU_RSTCAUSE_EXTRST) {
     TICOS_PRINT_RESET_INFO(" Pin Reset");
-    return kMfltRebootReason_ButtonReset;
+    return kTcsRebootReason_ButtonReset;
   }
 
   TICOS_PRINT_RESET_INFO(" Unknown");
-  return kMfltRebootReason_Unknown;
+  return kTcsRebootReason_Unknown;
 }
 #elif defined(_EMU_RSTCTRL_MASK)
 
@@ -84,53 +84,53 @@ static eTicosRebootReason prv_get_and_print_reason(uint32_t reset_cause) {
 
   if (reset_cause & EMU_RSTCAUSE_POR) {
     TICOS_PRINT_RESET_INFO(" Power on Reset");
-    return kMfltRebootReason_PowerOnReset;
+    return kTcsRebootReason_PowerOnReset;
   } else if (reset_cause & EMU_RSTCAUSE_AVDDBOD) {
     TICOS_PRINT_RESET_INFO(" AVDD Brown Out");
-    return kMfltRebootReason_BrownOutReset;
+    return kTcsRebootReason_BrownOutReset;
   } else if (reset_cause & EMU_RSTCAUSE_IOVDD0BOD) {
     TICOS_PRINT_RESET_INFO(" IOVDD0 Brown Out");
-    return kMfltRebootReason_BrownOutReset;
+    return kTcsRebootReason_BrownOutReset;
   } else if (reset_cause & EMU_RSTCAUSE_DVDDBOD) {
     TICOS_PRINT_RESET_INFO(" DVDD Brown Out");
-    return kMfltRebootReason_BrownOutReset;
+    return kTcsRebootReason_BrownOutReset;
   } else if (reset_cause &  EMU_RSTCAUSE_DVDDLEBOD) {
     TICOS_PRINT_RESET_INFO(" DVDDLE Brown Out");
-    return kMfltRebootReason_BrownOutReset;
+    return kTcsRebootReason_BrownOutReset;
   } else if (reset_cause & EMU_RSTCAUSE_DECBOD) {
     TICOS_PRINT_RESET_INFO(" DEC Brown Out");
-    return kMfltRebootReason_BrownOutReset;
+    return kTcsRebootReason_BrownOutReset;
   } else if (reset_cause & EMU_RSTCAUSE_LOCKUP) {
     TICOS_PRINT_RESET_INFO(" Lockup");
-    return kMfltRebootReason_Lockup;
+    return kTcsRebootReason_Lockup;
   } else if (reset_cause & EMU_RSTCAUSE_SYSREQ) {
     TICOS_PRINT_RESET_INFO(" Software");
-    return kMfltRebootReason_SoftwareReset;
+    return kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & EMU_RSTCAUSE_WDOG0) {
     TICOS_PRINT_RESET_INFO(" Watchdog 0");
-    return kMfltRebootReason_HardwareWatchdog;
+    return kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & EMU_RSTCAUSE_WDOG1) {
     TICOS_PRINT_RESET_INFO(" Watchdog 1");
-    return kMfltRebootReason_HardwareWatchdog;
+    return kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & EMU_RSTCAUSE_EM4) {
     TICOS_PRINT_RESET_INFO(" EM4 Wakeup");
-    return kMfltRebootReason_DeepSleep;
+    return kTcsRebootReason_DeepSleep;
   } else if (reset_cause & EMU_RSTCAUSE_SETAMPER) {
     TICOS_PRINT_RESET_INFO(" SE Tamper");
-    return kMfltRebootReason_UnknownError;
+    return kTcsRebootReason_UnknownError;
   } else if (reset_cause & EMU_RSTCAUSE_SESYSREQ) {
     TICOS_PRINT_RESET_INFO(" SE Software Reset");
-    return kMfltRebootReason_SoftwareReset;
+    return kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & EMU_RSTCAUSE_SELOCKUP) {
     TICOS_PRINT_RESET_INFO(" SE Lockup");
-    return kMfltRebootReason_Lockup;
+    return kTcsRebootReason_Lockup;
   } else if (reset_cause & EMU_RSTCAUSE_PIN) {
     TICOS_PRINT_RESET_INFO(" SE Pin Reset");
-    return kMfltRebootReason_PinReset;
+    return kTcsRebootReason_PinReset;
   }
 
   TICOS_PRINT_RESET_INFO(" Unknown");
-  return kMfltRebootReason_Unknown;
+  return kTcsRebootReason_Unknown;
 }
 #else
 #error "Unexpected RSTCTRL configuration"

@@ -18,8 +18,8 @@
 TICOS_PUT_IN_SECTION(".noinit.tcs_coredump") TICOS_ALIGNED(8)
 static uint8_t s_ram_backed_coredump_region[CONFIG_TICOS_RAM_BACKED_COREDUMP_SIZE];
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
-  *info = (sMfltCoredumpStorageInfo) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
+  *info = (sTcsCoredumpStorageInfo) {
     .size = sizeof(s_ram_backed_coredump_region),
     .sector_size = sizeof(s_ram_backed_coredump_region),
   };

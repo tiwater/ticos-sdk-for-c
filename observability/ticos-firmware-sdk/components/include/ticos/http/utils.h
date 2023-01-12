@@ -29,7 +29,7 @@ extern "C" {
 //!
 //! For example, this would be where a user of the API would make a call to send() to push data
 //! over a socket
-typedef bool(*MfltHttpClientSendCb)(const void *data, size_t data_len, void *ctx);
+typedef bool(*TcsHttpClientSendCb)(const void *data, size_t data_len, void *ctx);
 
 //! Builds the HTTP 'Request-Line' and Headers for a POST to the Ticos Chunk Endpoint
 //!
@@ -43,7 +43,7 @@ typedef bool(*MfltHttpClientSendCb)(const void *data, size_t data_len, void *ctx
 //!
 //! @return true if the post was successful, false otherwise
 bool ticos_http_start_chunk_post(
-    MfltHttpClientSendCb callback, void *ctx, size_t content_body_length);
+    TcsHttpClientSendCb callback, void *ctx, size_t content_body_length);
 
 //! Builds the HTTP GET request to query the Ticos cloud to see if a new OTA Payload is available
 //!
@@ -59,7 +59,7 @@ bool ticos_http_start_chunk_post(
 //!    200: A new firmware (OTA Payload) is available and the response contains a url for it
 //!    204: No new firmware is available
 //!    4xx, 5xx: Error
-bool ticos_http_get_latest_ota_payload_url(MfltHttpClientSendCb write_callback, void *ctx);
+bool ticos_http_get_latest_ota_payload_url(TcsHttpClientSendCb write_callback, void *ctx);
 
 //! Builds the HTTP GET request to download a Firmware OTA Payload
 //!
@@ -73,25 +73,25 @@ bool ticos_http_get_latest_ota_payload_url(MfltHttpClientSendCb write_callback, 
 //!   the request response body can be read where the Content-Length will contain the size
 //!   of the OTA payload and the message-body will be the OTA Payload that was uploaded via
 //!   the Ticos UI
-bool ticos_http_get_ota_payload(MfltHttpClientSendCb write_callback, void *ctx,
+bool ticos_http_get_ota_payload(TcsHttpClientSendCb write_callback, void *ctx,
                                    const char *url, size_t url_len);
 
-typedef enum MfltHttpParseStatus {
-  kMfltHttpParseStatus_Ok = 0,
-  MfltHttpParseStatus_ParseStatusLineError,
-  MfltHttpParseStatus_ParseHeaderError,
-  MfltHttpParseStatus_HeaderTooLongError,
-} eMfltHttpParseStatus;
+typedef enum TcsHttpParseStatus {
+  kTcsHttpParseStatus_Ok = 0,
+  TcsHttpParseStatus_ParseStatusLineError,
+  TcsHttpParseStatus_ParseHeaderError,
+  TcsHttpParseStatus_HeaderTooLongError,
+} eTcsHttpParseStatus;
 
-typedef enum MfltHttpParsePhase {
-  kMfltHttpParsePhase_ExpectingStatusLine = 0,
-  kMfltHttpParsePhase_ExpectingHeader,
-  kMfltHttpParsePhase_ExpectingBody,
-} eMfltHttpParsePhase;
+typedef enum TcsHttpParsePhase {
+  kTcsHttpParsePhase_ExpectingStatusLine = 0,
+  kTcsHttpParsePhase_ExpectingHeader,
+  kTcsHttpParsePhase_ExpectingBody,
+} eTcsHttpParsePhase;
 
 typedef struct {
   //! true if a error occurred trying to parse the response
-  eMfltHttpParseStatus parse_error;
+  eTcsHttpParseStatus parse_error;
   //! populated with the status code returned as part of the response
   int http_status_code;
   //! Pointer to http_body, may be truncated but always NULL terminated.
@@ -105,7 +105,7 @@ typedef struct {
   int content_length;
 
   // For internal use only
-  eMfltHttpParsePhase phase;
+  eTcsHttpParsePhase phase;
   int content_received;
   size_t line_len;
   char line_buf[128];

@@ -22,7 +22,7 @@
 #define _TICOS_PORT_LOG_IMPL(_level, tcs_level, fmt, ...)   \
   do {                                              \
     TICOS_SDK_LOG_SAVE(tcs_level, fmt, ## __VA_ARGS__);     \
-    NRF_LOG_##_level("MFLT: " fmt, ## __VA_ARGS__); \
+    NRF_LOG_##_level("Tcs: " fmt, ## __VA_ARGS__); \
     NRF_LOG_FLUSH();                                \
   } while (0)
 

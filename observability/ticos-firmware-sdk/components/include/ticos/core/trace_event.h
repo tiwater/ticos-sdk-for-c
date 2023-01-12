@@ -106,7 +106,7 @@ int ticos_trace_event_boot(const sTicosEventStorageImpl *storage_impl);
     TICOS_LOG_FMT_ELF_SECTION_ENTRY(format, ## __VA_ARGS__);                      \
     ticos_trace_event_with_compact_log_capture(TICOS_TRACE_REASON(reason), lr, \
                                           TICOS_LOG_FMT_ELF_SECTION_ENTRY_PTR,    \
-                                          MFLT_GET_COMPRESSED_LOG_FMT(__VA_ARGS__),  \
+                                          Tcs_GET_COMPRESSED_LOG_FMT(__VA_ARGS__),  \
                                           ## __VA_ARGS__);                           \
    } while (0)
 

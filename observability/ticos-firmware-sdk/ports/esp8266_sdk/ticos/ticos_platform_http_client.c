@@ -110,7 +110,7 @@ static int prv_post_chunks(esp_http_client_handle_t client, void *buffer, size_t
 
 static char s_tcs_base_url_buffer[TICOS_HTTP_URL_BUFFER_SIZE];
 
-sMfltHttpClient *ticos_platform_http_client_create(void) {
+sTcsHttpClient *ticos_platform_http_client_create(void) {
   ticos_http_build_url(s_tcs_base_url_buffer, "");
 
   // Mbed TLS parses each cert and loads it into RAM. Since the ESP8266 has a limited amount of
@@ -143,7 +143,7 @@ sMfltHttpClient *ticos_platform_http_client_create(void) {
 
     esp_err_t err = esp_http_client_perform(client);
     if (err == ESP_OK) {
-      return (sMfltHttpClient *)client;
+      return (sTcsHttpClient *)client;
     }
     TICOS_LOG_INFO("Retrying post with root CA %d", i + 1);
     esp_http_client_cleanup(client);
@@ -152,7 +152,7 @@ sMfltHttpClient *ticos_platform_http_client_create(void) {
   return NULL;
 }
 
-int ticos_platform_http_client_destroy(sMfltHttpClient *_client) {
+int ticos_platform_http_client_destroy(sTcsHttpClient *_client) {
   esp_http_client_handle_t client = (esp_http_client_handle_t)_client;
   esp_err_t err = esp_http_client_cleanup(client);
   if (err == ESP_OK) {
@@ -162,11 +162,11 @@ int ticos_platform_http_client_destroy(sMfltHttpClient *_client) {
   return TICOS_PLATFORM_SPECIFIC_ERROR(err);
 }
 
-typedef struct MfltHttpResponse {
+typedef struct TcsHttpResponse {
   uint16_t status;
-} sMfltHttpResponse;
+} sTcsHttpResponse;
 
-int ticos_platform_http_response_get_status(const sMfltHttpResponse *response, uint32_t *status_out) {
+int ticos_platform_http_response_get_status(const sTcsHttpResponse *response, uint32_t *status_out) {
   TICOS_ASSERT(response);
   if (status_out) {
     *status_out = response->status;
@@ -175,7 +175,7 @@ int ticos_platform_http_response_get_status(const sMfltHttpResponse *response, u
 }
 
 int ticos_platform_http_client_post_data(
-    sMfltHttpClient *_client, TicosHttpClientResponseCallback callback, void *ctx) {
+    sTcsHttpClient *_client, TicosHttpClientResponseCallback callback, void *ctx) {
   if (!ticos_esp_port_data_available()) {
     return 0; // no new chunks to send
   }
@@ -203,7 +203,7 @@ int ticos_platform_http_client_post_data(
     return rv;
   }
 
-  const sMfltHttpResponse response = {
+  const sTcsHttpResponse response = {
     .status = (uint32_t)esp_http_client_get_status_code(client),
   };
   if (callback) {
@@ -214,7 +214,7 @@ int ticos_platform_http_client_post_data(
 }
 
 int ticos_platform_http_client_wait_until_requests_completed(
-    sMfltHttpClient *client, uint32_t timeout_ms) {
+    sTcsHttpClient *client, uint32_t timeout_ms) {
   // No-op because ticos_platform_http_client_post_data() is synchronous
   return 0;
 }
@@ -235,14 +235,14 @@ int ticos_esp_port_http_client_post_data(void) {
     return 0;
   }
 
-  sMfltHttpClient *http_client = ticos_http_client_create();
+  sTcsHttpClient *http_client = ticos_http_client_create();
   if (!http_client) {
     TICOS_LOG_ERROR("Failed to create HTTP client");
     return TicosInternalReturnCode_Error;
   }
-  const eMfltPostDataStatus rv =
-      (eMfltPostDataStatus)ticos_http_client_post_data(http_client);
-  if (rv == kMfltPostDataStatus_NoDataFound) {
+  const eTcsPostDataStatus rv =
+      (eTcsPostDataStatus)ticos_http_client_post_data(http_client);
+  if (rv == kTcsPostDataStatus_NoDataFound) {
     TICOS_LOG_INFO("No new data found");
   } else {
     TICOS_LOG_INFO("Result: %d", (int)rv);

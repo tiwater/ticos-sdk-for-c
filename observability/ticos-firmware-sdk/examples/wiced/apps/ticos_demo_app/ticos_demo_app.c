@@ -29,7 +29,7 @@ static char line_buffer[MAX_LINE_LENGTH];
 static char history_buffer_storage[MAX_LINE_LENGTH * MAX_HISTORY_LENGTH];
 
 // Find your key on https://app.ticos.com/ under 'Settings':
-sMfltHttpClientConfig g_tcs_http_client_config = {
+sTcsHttpClientConfig g_tcs_http_client_config = {
     .api_key = "<YOUR PROJECT KEY HERE>",
 };
 

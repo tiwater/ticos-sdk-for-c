@@ -74,45 +74,45 @@ bool ticos_data_source_rle_encoder_set_active(
 
 // NOTE: These values are used by the Ticos cloud chunks API
 typedef enum {
-  kMfltMessageType_None = 0,
-  kMfltMessageType_Coredump = 1,
-  kMfltMessageType_Event = 2,
-  kMfltMessageType_Log = 3,
-  kMfltMessageType_Cdr = 4,
-  kMfltMessageType_NumTypes
-} eMfltMessageType;
+  kTcsMessageType_None = 0,
+  kTcsMessageType_Coredump = 1,
+  kTcsMessageType_Event = 2,
+  kTcsMessageType_Log = 3,
+  kTcsMessageType_Cdr = 4,
+  kTcsMessageType_NumTypes
+} eTcsMessageType;
 
 //! Make sure our externally facing types match the internal ones
-TICOS_STATIC_ASSERT((1 << kMfltMessageType_Coredump) == kMfltDataSourceMask_Coredump,
-                       "kMfltDataSourceMask_Coredump is incorrectly defined");
-TICOS_STATIC_ASSERT((1 << kMfltMessageType_Event) == kMfltDataSourceMask_Event,
-                       "kMfltDataSourceMask_Event, is incorrectly defined");
-TICOS_STATIC_ASSERT((1 << kMfltMessageType_Log) == kMfltDataSourceMask_Log,
-                       "kMfltDataSourceMask_Log is incorrectly defined");
-TICOS_STATIC_ASSERT((1 << kMfltMessageType_Cdr) == kMfltDataSourceMask_Cdr,
-                       "kMfltDataSourceMask_Cdr is incorrectly defined");
-TICOS_STATIC_ASSERT(kMfltMessageType_NumTypes == 5, "eMfltMessageType needs to be updated");
+TICOS_STATIC_ASSERT((1 << kTcsMessageType_Coredump) == kTcsDataSourceMask_Coredump,
+                       "kTcsDataSourceMask_Coredump is incorrectly defined");
+TICOS_STATIC_ASSERT((1 << kTcsMessageType_Event) == kTcsDataSourceMask_Event,
+                       "kTcsDataSourceMask_Event, is incorrectly defined");
+TICOS_STATIC_ASSERT((1 << kTcsMessageType_Log) == kTcsDataSourceMask_Log,
+                       "kTcsDataSourceMask_Log is incorrectly defined");
+TICOS_STATIC_ASSERT((1 << kTcsMessageType_Cdr) == kTcsDataSourceMask_Cdr,
+                       "kTcsDataSourceMask_Cdr is incorrectly defined");
+TICOS_STATIC_ASSERT(kTcsMessageType_NumTypes == 5, "eTcsMessageType needs to be updated");
 
 
 typedef struct TicosDataSource {
-  eMfltMessageType type;
+  eTcsMessageType type;
   bool use_rle;
   const sTicosDataSourceImpl *impl;
 } sTicosDataSource;
 
 static const sTicosDataSource s_ticos_data_source[] = {
   {
-    .type = kMfltMessageType_Coredump,
+    .type = kTcsMessageType_Coredump,
     .use_rle = false,
     .impl = &g_ticos_coredump_data_source,
   },
   {
-    .type = kMfltMessageType_Event,
+    .type = kTcsMessageType_Event,
     .use_rle = false,
     .impl = &g_ticos_event_data_source,
   },
   {
-    .type = kMfltMessageType_Log,
+    .type = kTcsMessageType_Log,
     .use_rle = false,
     .impl = &g_ticos_log_data_source,
   },
@@ -120,7 +120,7 @@ static const sTicosDataSource s_ticos_data_source[] = {
   // thing to keep in mind is that when the encoder is enabled, it requires a lot more short reads
   // to take place on the data source which can be a slow operation for flash based filesystems.
   {
-    .type =  kMfltMessageType_Cdr,
+    .type =  kTcsMessageType_Cdr,
     .use_rle = false,
     .impl = &g_ticos_cdr_source,
   }
@@ -134,16 +134,16 @@ typedef struct {
 typedef struct {
   bool active_message;
   sMessageMetadata msg_metadata;
-  sMfltChunkTransportCtx curr_msg_ctx;
-} sMfltTransportState;
+  sTcsChunkTransportCtx curr_msg_ctx;
+} sTcsTransportState;
 
 typedef TICOS_PACKED_STRUCT {
-  uint8_t tcs_msg_type; // eMfltMessageType
-} sMfltPacketizerHdr;
+  uint8_t tcs_msg_type; // eTcsMessageType
+} sTcsPacketizerHdr;
 
-static sMfltTransportState s_tcs_packetizer_state;
+static sTcsTransportState s_tcs_packetizer_state;
 
-static uint32_t s_active_data_sources = kMfltDataSourceMask_All;
+static uint32_t s_active_data_sources = kTcsDataSourceMask_All;
 
 void ticos_packetizer_set_active_sources(uint32_t mask) {
   ticos_packetizer_abort();
@@ -151,7 +151,7 @@ void ticos_packetizer_set_active_sources(uint32_t mask) {
 }
 
 static void prv_reset_packetizer_state(void) {
-  s_tcs_packetizer_state = (sMfltTransportState) {
+  s_tcs_packetizer_state = (sTcsTransportState) {
     .active_message = false,
   };
 
@@ -162,14 +162,14 @@ static void prv_data_source_chunk_transport_msg_reader(uint32_t offset, void *bu
                                                        size_t buf_len) {
   uint8_t *bufp = buf;
   size_t read_offset = 0;
-  const size_t hdr_size = sizeof(sMfltPacketizerHdr);
+  const size_t hdr_size = sizeof(sTcsPacketizerHdr);
 
   const sMessageMetadata *msg_metadata = &s_tcs_packetizer_state.msg_metadata;
   if (offset < hdr_size) {
     const uint8_t rle_enable_mask = 0x80;
     const uint8_t msg_type = (uint8_t)msg_metadata->source.type;
 
-    sMfltPacketizerHdr hdr = {
+    sTcsPacketizerHdr hdr = {
       .tcs_msg_type = msg_metadata->source.use_rle ? msg_type | rle_enable_mask : msg_type,
     };
     uint8_t *hdr_bytes = (uint8_t *)&hdr;
@@ -243,17 +243,17 @@ static bool prv_more_messages_to_send(sMessageMetadata *msg_metadata) {
 }
 
 static bool prv_load_next_message_to_send(bool enable_multi_packet_chunks,
-                                          sMfltTransportState *state) {
+                                          sTcsTransportState *state) {
   sMessageMetadata msg_metadata;
   if (!prv_more_messages_to_send(&msg_metadata)) {
     return false;
   }
 
-  *state = (sMfltTransportState) {
+  *state = (sTcsTransportState) {
     .active_message = true,
     .msg_metadata = msg_metadata,
-    .curr_msg_ctx = (sMfltChunkTransportCtx) {
-      .total_size = msg_metadata.total_size + sizeof(sMfltPacketizerHdr),
+    .curr_msg_ctx = (sTcsChunkTransportCtx) {
+      .total_size = msg_metadata.total_size + sizeof(sTcsPacketizerHdr),
       .read_msg = prv_data_source_chunk_transport_msg_reader,
       .enable_multi_call_chunk = enable_multi_packet_chunks,
     },

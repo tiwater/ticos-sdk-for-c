@@ -51,7 +51,7 @@ void __wrap_esp_core_dump_to_flash(XtExcFrame *fp) {
   // more reflective of the state of the register prior to the "panicHandler" being invoked
   const uint32_t corrected_ps = fp->ps & ~(PS_EXCM_MASK);
 
-  sMfltRegState regs = {
+  sTcsRegState regs = {
     .collection_type = (uint32_t)kTicosEsp32RegCollectionType_ActiveWindow,
     .pc = fp->pc,
     .ps = corrected_ps,
@@ -87,7 +87,7 @@ void __wrap_esp_core_dump_to_flash(XtExcFrame *fp) {
     .excvaddr = fp->excvaddr,
   };
 
-  ticos_fault_handler(&regs, kMfltRebootReason_HardFault);
+  ticos_fault_handler(&regs, kTcsRebootReason_HardFault);
 }
 
 // Ensure the substituted function signature matches the original function

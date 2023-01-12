@@ -10,7 +10,7 @@ extern "C" {
   #include "ticos/util/circular_buffer.h"
 }
 
-TEST_GROUP(MfltCircularBufferTestGroup) {
+TEST_GROUP(TcsCircularBufferTestGroup) {
   void setup() {
   }
 
@@ -18,11 +18,11 @@ TEST_GROUP(MfltCircularBufferTestGroup) {
    }
 };
 
-TEST(MfltCircularBufferTestGroup, Test_MfltCircularBufferInit) {
+TEST(TcsCircularBufferTestGroup, Test_TcsCircularBufferInit) {
   bool success = ticos_circular_buffer_init(NULL, NULL, 0);
   CHECK(!success);
 
-  sMfltCircularBuffer buffer;
+  sTcsCircularBuffer buffer;
   success = ticos_circular_buffer_init(&buffer, NULL, 0);
   CHECK(!success);
 
@@ -46,10 +46,10 @@ TEST(MfltCircularBufferTestGroup, Test_MfltCircularBufferInit) {
   LONGS_EQUAL(0, space_available);
 }
 
-TEST(MfltCircularBufferTestGroup, Test_MfltCircularWriteAtOffsetBasic) {
+TEST(TcsCircularBufferTestGroup, Test_TcsCircularWriteAtOffsetBasic) {
   const uint8_t buffer_size = 4;
   uint8_t storage_buf[buffer_size];
-  sMfltCircularBuffer buffer;
+  sTcsCircularBuffer buffer;
   bool success = ticos_circular_buffer_init(&buffer, storage_buf, sizeof(storage_buf));
   CHECK(success);
 
@@ -70,10 +70,10 @@ TEST(MfltCircularBufferTestGroup, Test_MfltCircularWriteAtOffsetBasic) {
   MEMCMP_EQUAL(seq2, result, sizeof(result));
 }
 
-TEST(MfltCircularBufferTestGroup, Test_MfltCircularWriteAndReadBasic) {
+TEST(TcsCircularBufferTestGroup, Test_TcsCircularWriteAndReadBasic) {
   const uint8_t buffer_size = 16;
   uint8_t storage_buf[buffer_size];
-  sMfltCircularBuffer buffer;
+  sTcsCircularBuffer buffer;
   bool success = ticos_circular_buffer_init(&buffer, storage_buf, sizeof(storage_buf));
   CHECK(success);
 
@@ -159,7 +159,7 @@ static void prv_fill_write_buf(uint8_t start_idx, uint8_t *buf, size_t buf_len) 
   }
 }
 
-static void prv_read_buf_and_check(sMfltCircularBuffer *buffer, uint8_t start_idx,
+static void prv_read_buf_and_check(sTcsCircularBuffer *buffer, uint8_t start_idx,
                                    size_t total_len) {
   uint8_t read_buf[total_len];
   bool success;
@@ -186,10 +186,10 @@ static void prv_read_buf_and_check(sMfltCircularBuffer *buffer, uint8_t start_id
   CHECK(success);
 }
 
-TEST(MfltCircularBufferTestGroup, Test_MfltCircularWriteAndReadWrapAround) {
+TEST(TcsCircularBufferTestGroup, Test_TcsCircularWriteAndReadWrapAround) {
   const uint8_t buffer_size = 14;
   uint8_t storage_buf[buffer_size];
-  sMfltCircularBuffer buffer;
+  sTcsCircularBuffer buffer;
   bool success = ticos_circular_buffer_init(&buffer, storage_buf, sizeof(storage_buf));
   CHECK(success);
 
@@ -231,10 +231,10 @@ TEST(MfltCircularBufferTestGroup, Test_MfltCircularWriteAndReadWrapAround) {
   }
 }
 
-TEST(MfltCircularBufferTestGroup, Test_MfltCircularWriteAndGetReadPointerBadInput) {
+TEST(TcsCircularBufferTestGroup, Test_TcsCircularWriteAndGetReadPointerBadInput) {
   const uint8_t buffer_size = 20;
   uint8_t storage_buf[buffer_size];
-  sMfltCircularBuffer buffer;
+  sTcsCircularBuffer buffer;
   bool success = ticos_circular_buffer_init(&buffer, storage_buf, sizeof(storage_buf));
   CHECK(success);
 
@@ -257,10 +257,10 @@ TEST(MfltCircularBufferTestGroup, Test_MfltCircularWriteAndGetReadPointerBadInpu
   CHECK(!success);
 }
 
-TEST(MfltCircularBufferTestGroup, Test_MfltCircularWriteAndGetReadPointer) {
+TEST(TcsCircularBufferTestGroup, Test_TcsCircularWriteAndGetReadPointer) {
   const uint8_t buffer_size = 20;
   uint8_t storage_buf[buffer_size];
-  sMfltCircularBuffer buffer;
+  sTcsCircularBuffer buffer;
   bool success = ticos_circular_buffer_init(&buffer, storage_buf, sizeof(storage_buf));
   CHECK(success);
 
@@ -305,10 +305,10 @@ TEST(MfltCircularBufferTestGroup, Test_MfltCircularWriteAndGetReadPointer) {
 }
 
 static uint8_t s_storage_buf[10];
-static sMfltCircularBuffer s_buffer;
+static sTcsCircularBuffer s_buffer;
 static int s_ctx;
 
-TEST_GROUP(MfltCircularBufferReadWithCallbackTestGroup) {
+TEST_GROUP(TcsCircularBufferReadWithCallbackTestGroup) {
   void setup() {
     memset(s_storage_buf, 0, sizeof(s_storage_buf));
     const bool success = ticos_circular_buffer_init(&s_buffer, s_storage_buf, sizeof(s_storage_buf));
@@ -331,28 +331,28 @@ static bool prv_read_callback(void *ctx, size_t offset, const void *buf, size_t 
     .returnBoolValueOrDefault(true);
 }
 
-TEST(MfltCircularBufferReadWithCallbackTestGroup, Test_InvalidParamNullBuffer) {
+TEST(TcsCircularBufferReadWithCallbackTestGroup, Test_InvalidParamNullBuffer) {
   CHECK_FALSE(ticos_circular_buffer_read_with_callback(
       NULL, 0, 1, NULL, prv_read_callback));
 }
 
-TEST(MfltCircularBufferReadWithCallbackTestGroup, Test_InvalidParamNullCallback) {
+TEST(TcsCircularBufferReadWithCallbackTestGroup, Test_InvalidParamNullCallback) {
   CHECK_FALSE(ticos_circular_buffer_read_with_callback(
       &s_buffer, 0, 1, NULL, NULL));
 }
 
-TEST(MfltCircularBufferReadWithCallbackTestGroup, Test_InvalidParamOverReadSize) {
+TEST(TcsCircularBufferReadWithCallbackTestGroup, Test_InvalidParamOverReadSize) {
   CHECK_FALSE(ticos_circular_buffer_read_with_callback(
       &s_buffer, 0, 1, NULL, prv_read_callback));
 }
 
-TEST(MfltCircularBufferReadWithCallbackTestGroup, Test_NothingToRead) {
+TEST(TcsCircularBufferReadWithCallbackTestGroup, Test_NothingToRead) {
   CHECK(ticos_circular_buffer_write(&s_buffer, "hi", 2));
   CHECK(ticos_circular_buffer_read_with_callback(
       &s_buffer, 2, 0, &s_ctx, prv_read_callback));
 }
 
-TEST(MfltCircularBufferReadWithCallbackTestGroup, Test_Contiguous) {
+TEST(TcsCircularBufferReadWithCallbackTestGroup, Test_Contiguous) {
   const size_t read_size = 2;
   const size_t read_offset = 1;
   CHECK(ticos_circular_buffer_write(&s_buffer, "hi", read_size));
@@ -367,7 +367,7 @@ TEST(MfltCircularBufferReadWithCallbackTestGroup, Test_Contiguous) {
       &s_buffer, read_offset, read_size - read_offset, &s_ctx, prv_read_callback));
 }
 
-TEST(MfltCircularBufferReadWithCallbackTestGroup, Test_NonContiguous) {
+TEST(TcsCircularBufferReadWithCallbackTestGroup, Test_NonContiguous) {
   CHECK(ticos_circular_buffer_write(&s_buffer, "0123456789", sizeof(s_storage_buf)));
   CHECK(ticos_circular_buffer_consume(&s_buffer, 5));
   CHECK(ticos_circular_buffer_write(&s_buffer, "hello", 5));
@@ -386,7 +386,7 @@ TEST(MfltCircularBufferReadWithCallbackTestGroup, Test_NonContiguous) {
   CHECK(ticos_circular_buffer_read_with_callback(&s_buffer, 0, 10, &s_ctx, prv_read_callback));
 }
 
-TEST(MfltCircularBufferReadWithCallbackTestGroup, Test_CallbackReturningFalse) {
+TEST(TcsCircularBufferReadWithCallbackTestGroup, Test_CallbackReturningFalse) {
   const size_t read_size = 2;
   const size_t read_offset = 1;
   CHECK(ticos_circular_buffer_write(&s_buffer, "hi", read_size));

@@ -36,7 +36,7 @@ SYS_INIT(prv_install_nmi_handler, APPLICATION, CONFIG_KERNEL_INIT_PRIORITY_DEFAU
 
 void k_sys_fatal_error_handler(unsigned int reason,
                                const z_arch_esf_t *esf) {
-  sMfltRegState reg = {
+  sTcsRegState reg = {
     .exception_frame = esf->exception_frame_addr,
     .r4 = esf->callee_regs->r4,
     .r5 = esf->callee_regs->r5,
@@ -48,5 +48,5 @@ void k_sys_fatal_error_handler(unsigned int reason,
     .r11 = esf->callee_regs->r11,
     .exc_return = esf->callee_regs->exc_return,
   };
-  ticos_fault_handler(&reg, kMfltRebootReason_HardFault);
+  ticos_fault_handler(&reg, kTcsRebootReason_HardFault);
 }

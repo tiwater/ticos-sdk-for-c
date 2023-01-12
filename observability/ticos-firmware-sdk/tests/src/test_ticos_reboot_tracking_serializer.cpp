@@ -11,10 +11,10 @@
 #include "ticos/core/serializer_helper.h"
 #include "ticos_reboot_tracking_private.h"
 
-static sMfltResetReasonInfo s_fake_reset_reason_info;
+static sTcsResetReasonInfo s_fake_reset_reason_info;
 static const sTicosEventStorageImpl *s_fake_event_storage_impl;
 
-bool ticos_reboot_tracking_read_reset_info(sMfltResetReasonInfo *info) {
+bool ticos_reboot_tracking_read_reset_info(sTcsResetReasonInfo *info) {
   *info = s_fake_reset_reason_info;
   return true;
 }
@@ -23,13 +23,13 @@ void ticos_reboot_tracking_clear_reset_info(void) {
   mock().actualCall(__func__);
 }
 
-TEST_GROUP(MfltRebootTrackingSerializer) {
+TEST_GROUP(TcsRebootTrackingSerializer) {
   void setup() {
     static uint8_t s_storage[100];
     s_fake_event_storage_impl = ticos_events_storage_boot(
         &s_storage, sizeof(s_storage));
-    s_fake_reset_reason_info = (sMfltResetReasonInfo) {
-      .reason = kMfltRebootReason_Assert,
+    s_fake_reset_reason_info = (sTcsResetReasonInfo) {
+      .reason = kTcsRebootReason_Assert,
       .pc = 0xbadcafe,
       .lr = 0xdeadbeef,
       .reset_reason_reg0 = 0x12345678,
@@ -56,7 +56,7 @@ static void prv_run_reset_reason_serializer_test(const void *expected_data,
   fake_event_storage_assert_contents_match(expected_data, expected_data_len);
 }
 
-TEST(MfltRebootTrackingSerializer, Test_Serialize) {
+TEST(TcsRebootTrackingSerializer, Test_Serialize) {
   const uint8_t expected_data_all[] = {
     0xa6,
     0x02, 0x02,
@@ -133,12 +133,12 @@ TEST(MfltRebootTrackingSerializer, Test_Serialize) {
                                        sizeof(expected_data_no_optionals));
 }
 
-TEST(MfltRebootTrackingSerializer, Test_GetWorstCaseSerializeSize) {
+TEST(TcsRebootTrackingSerializer, Test_GetWorstCaseSerializeSize) {
   const size_t worst_case_size = ticos_reboot_tracking_compute_worst_case_storage_size();
   LONGS_EQUAL(52, worst_case_size);
 }
 
-TEST(MfltRebootTrackingSerializer, Test_BadParams) {
+TEST(TcsRebootTrackingSerializer, Test_BadParams) {
   const int rv = ticos_reboot_tracking_collect_reset_info(NULL);
   LONGS_EQUAL(-1, rv);
 }

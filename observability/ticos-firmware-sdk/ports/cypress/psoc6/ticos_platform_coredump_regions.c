@@ -21,7 +21,7 @@
 
 #define TICOS_COREDUMP_MAX_TASK_REGIONS ((TICOS_PLATFORM_MAX_TRACKED_TASKS) * 2)
 
-static sMfltCoredumpRegion s_coredump_regions[
+static sTcsCoredumpRegion s_coredump_regions[
     TICOS_COREDUMP_MAX_TASK_REGIONS
     + 2 /* active stack(s) */
     + 1 /* _kernel variable */
@@ -42,7 +42,7 @@ void Cy_OnResetUser(void) {
   memset((uint32_t*)&__ticos_capture_bss_start, 0x0, ticos_region_size);
 }
 
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
     const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
   int region_idx = 0;
   const size_t active_stack_size_to_collect = 512;

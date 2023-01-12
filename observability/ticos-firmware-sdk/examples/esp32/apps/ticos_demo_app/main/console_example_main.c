@@ -148,12 +148,12 @@ static bool prv_handle_ota_download_complete(void *user_ctx) {
   TICOS_GET_PC(pc);
   void *lr;
   TICOS_GET_LR(lr);
-  sMfltRebootTrackingRegInfo reg_info = {
+  sTcsRebootTrackingRegInfo reg_info = {
     .pc = (uint32_t)pc,
     .lr = (uint32_t)lr,
   };
   // Note: "reg_info" may be NULL if no register information collection is desired
-  ticos_reboot_tracking_mark_reset_imminent(kMfltRebootReason_FirmwareUpdate, &reg_info);
+  ticos_reboot_tracking_mark_reset_imminent(kTcsRebootReason_FirmwareUpdate, &reg_info);
 
   esp_restart();
   return true;

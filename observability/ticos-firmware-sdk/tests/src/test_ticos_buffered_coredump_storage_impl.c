@@ -23,8 +23,8 @@ void fake_buffered_coredump_inject_write_failure(void) {
   s_injected_write_failure = true;
 }
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
-  *info = (sMfltCoredumpStorageInfo) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
+  *info = (sTcsCoredumpStorageInfo) {
     .size = s_active_storage_size
   };
 }

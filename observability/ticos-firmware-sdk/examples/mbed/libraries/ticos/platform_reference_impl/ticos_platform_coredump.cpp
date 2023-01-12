@@ -22,8 +22,8 @@ extern uint32_t __bss_end__;
 extern uint32_t __data_start__;
 extern uint32_t __data_end__;
 
-const uint32_t __MfltCoredumpRamStart = 0x20000000;
-const uint32_t __MfltCoredumpRamEnd = (uint32_t)&_estack;
+const uint32_t __TcsCoredumpRamStart = 0x20000000;
+const uint32_t __TcsCoredumpRamEnd = (uint32_t)&_estack;
 
 // We'll use the last STM32F429I flash sector to hold a coredump
 // The part itself has 192kB of regular SRAM and 64kB of external SRAM
@@ -31,13 +31,13 @@ const uint32_t __MfltCoredumpRamEnd = (uint32_t)&_estack;
 #define CORE_REGION_LENGTH (128 * 1024)
 #define CORE_REGION_START (0x8000000 + MBED_ROM_SIZE - CORE_REGION_LENGTH)
 
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
     const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
   // NOTE: This is just an example of regions which could be collected
   // Depending on your use case, you may also want to consider collecting the mbed heap
   // for example. By default, this runs from __bss_end__ up to the beginning of the ISR stack
 
-  static sMfltCoredumpRegion s_coredump_regions[3];
+  static sTcsCoredumpRegion s_coredump_regions[3];
 
   const uint32_t bss_length = (uint32_t)&__bss_end__ - (uint32_t)&__bss_start__;
   const uint32_t data_length = (uint32_t)&__data_end__ - (uint32_t)&__data_start__;
@@ -83,12 +83,12 @@ void ticos_platform_coredump_storage_clear(void) {
   flash.deinit();
 }
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
   flash_t fla;
   int retval = flash_init(&fla);
   if (retval != 0) { return; }
 
-  *info  = (sMfltCoredumpStorageInfo) {
+  *info  = (sTcsCoredumpStorageInfo) {
     .size = CORE_REGION_LENGTH,
     .sector_size = flash_get_sector_size(&fla, CORE_REGION_START),
   };

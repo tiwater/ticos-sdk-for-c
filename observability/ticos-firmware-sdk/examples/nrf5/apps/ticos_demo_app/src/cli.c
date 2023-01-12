@@ -18,7 +18,7 @@
 // to post the chunk data to Ticos:
 
 // Find your key on https://app.ticos.com/ under 'Settings':
-sMfltHttpClientConfig g_tcs_http_client_config = {
+sTcsHttpClientConfig g_tcs_http_client_config = {
     .api_key = "<YOUR PROJECT KEY HERE>",
 };
 

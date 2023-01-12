@@ -15,16 +15,16 @@
 #include "ticos/panics/coredump.h"
 #include "ticos/panics/coredump_impl.h"
 
-const sMfltCoredumpRegion *ticos_coredump_get_arch_regions(size_t *num_regions) {
+const sTcsCoredumpRegion *ticos_coredump_get_arch_regions(size_t *num_regions) {
   *num_regions = 0;
   return NULL;
 }
 
-static eTicosRebootReason s_crash_reason = kMfltRebootReason_Unknown;
+static eTicosRebootReason s_crash_reason = kTcsRebootReason_Unknown;
 
-void ticos_fault_handler(const sMfltRegState *regs, eTicosRebootReason reason) {
-  if (s_crash_reason == kMfltRebootReason_Unknown) {
-    sMfltRebootTrackingRegInfo info = {
+void ticos_fault_handler(const sTcsRegState *regs, eTicosRebootReason reason) {
+  if (s_crash_reason == kTcsRebootReason_Unknown) {
+    sTcsRebootTrackingRegInfo info = {
       .pc = regs->pc,
     };
     ticos_reboot_tracking_mark_reset_imminent(reason, &info);
@@ -65,11 +65,11 @@ void ticos_fault_handler(const sMfltRegState *regs, eTicosRebootReason reason) {
 
 size_t ticos_coredump_storage_compute_size_required(void) {
   // actual values don't matter since we are just computing the size
-  sMfltRegState core_regs = { 0 };
+  sTcsRegState core_regs = { 0 };
   sTicosCoredumpSaveInfo save_info = {
     .regs = &core_regs,
     .regs_size = sizeof(core_regs),
-    .trace_reason = kMfltRebootReason_UnknownError,
+    .trace_reason = kTcsRebootReason_UnknownError,
   };
 
   sCoredumpCrashInfo info = {

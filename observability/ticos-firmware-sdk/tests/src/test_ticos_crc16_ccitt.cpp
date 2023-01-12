@@ -9,12 +9,12 @@ extern "C" {
   #include "ticos/util/crc16_ccitt.h"
 }
 
-TEST_GROUP(MfltCrc16CcittGroup){
+TEST_GROUP(TcsCrc16CcittGroup){
   void setup() { }
   void teardown() { }
 };
 
-TEST(MfltCrc16CcittGroup, Test_MfltCrc16CcittGroupComputeCodewords) {
+TEST(TcsCrc16CcittGroup, Test_TcsCrc16CcittGroupComputeCodewords) {
   const uint8_t codeword1[] = {0x54, 0x1A, 0x71};
   uint16_t crc = ticos_crc16_ccitt_compute(TICOS_CRC16_CCITT_INITIAL_VALUE, codeword1,
                                      sizeof(codeword1));
@@ -28,7 +28,7 @@ TEST(MfltCrc16CcittGroup, Test_MfltCrc16CcittGroupComputeCodewords) {
   LONGS_EQUAL(0x0, crc);
 }
 
-TEST(MfltCrc16CcittGroup, Test_MfltCrc16CcittGroupComputeTestPattern) {
+TEST(TcsCrc16CcittGroup, Test_TcsCrc16CcittGroupComputeTestPattern) {
   const char *test_pattern = "123456789";
 
   uint16_t crc = ticos_crc16_ccitt_compute(
@@ -36,7 +36,7 @@ TEST(MfltCrc16CcittGroup, Test_MfltCrc16CcittGroupComputeTestPattern) {
   LONGS_EQUAL(0x31C3, crc);
 }
 
-TEST(MfltCrc16CcittGroup, Test_MfltCrc16CcittGroupComputeTestPatternOneByte) {
+TEST(TcsCrc16CcittGroup, Test_TcsCrc16CcittGroupComputeTestPatternOneByte) {
   const char *test_pattern = "A";
 
   uint16_t crc = ticos_crc16_ccitt_compute(
@@ -45,7 +45,7 @@ TEST(MfltCrc16CcittGroup, Test_MfltCrc16CcittGroupComputeTestPatternOneByte) {
 }
 
 
-TEST(MfltCrc16CcittGroup, Test_MfltCrc16CcittGroupComputeTestPatternIncemental) {
+TEST(TcsCrc16CcittGroup, Test_TcsCrc16CcittGroupComputeTestPatternIncemental) {
   uint16_t crc = TICOS_CRC16_CCITT_INITIAL_VALUE;
   for (char i = '1'; i <= '9'; i++) {
     crc = ticos_crc16_ccitt_compute(crc, &i, sizeof(i));

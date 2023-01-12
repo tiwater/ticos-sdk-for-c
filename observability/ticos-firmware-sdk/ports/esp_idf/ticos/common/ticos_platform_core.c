@@ -74,7 +74,7 @@ void ticos_platform_halt_if_debugging(void) {
 }
 
 static void prv_record_reboot_reason(void) {
-  eTicosRebootReason reboot_reason = kMfltRebootReason_Unknown;
+  eTicosRebootReason reboot_reason = kTcsRebootReason_Unknown;
   int esp_reset_cause = 0;
 
   // esp_reset_reason is not implemented for 3.x builds
@@ -83,25 +83,25 @@ static void prv_record_reboot_reason(void) {
   esp_reset_cause = (int)esp_reset_reason();
   switch (esp_reset_cause) {
     case ESP_RST_POWERON:
-      reboot_reason = kMfltRebootReason_PowerOnReset;
+      reboot_reason = kTcsRebootReason_PowerOnReset;
       break;
     case ESP_RST_SW:
-      reboot_reason = kMfltRebootReason_SoftwareReset;
+      reboot_reason = kTcsRebootReason_SoftwareReset;
       break;
     case ESP_RST_INT_WDT:
     case ESP_RST_TASK_WDT:
     case ESP_RST_WDT:
-      reboot_reason = kMfltRebootReason_HardwareWatchdog;
+      reboot_reason = kTcsRebootReason_HardwareWatchdog;
       break;
     case ESP_RST_DEEPSLEEP:
-      reboot_reason = kMfltRebootReason_DeepSleep;
+      reboot_reason = kTcsRebootReason_DeepSleep;
       break;
     case ESP_RST_BROWNOUT:
-      reboot_reason = kMfltRebootReason_BrownOutReset;
+      reboot_reason = kTcsRebootReason_BrownOutReset;
       break;
     case ESP_RST_PANIC:
     default:
-      reboot_reason = kMfltRebootReason_UnknownError;
+      reboot_reason = kTcsRebootReason_UnknownError;
       break;
   }
 #endif

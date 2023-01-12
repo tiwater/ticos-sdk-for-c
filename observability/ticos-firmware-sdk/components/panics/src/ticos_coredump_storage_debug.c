@@ -85,7 +85,7 @@ static bool prv_verify_erased(uint8_t byte) {
 }
 
 bool ticos_coredump_storage_debug_test_begin(void) {
-  sMfltCoredumpStorageInfo info = { 0 };
+  sTcsCoredumpStorageInfo info = { 0 };
   ticos_platform_coredump_storage_get_info(&info);
   if (info.size == 0) {
     prv_record_failure(kTicosCoredumpStorageTestOp_GetInfo,

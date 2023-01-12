@@ -37,15 +37,15 @@ extern "C" {
   TICOS_METRICS_KEY_DEFINE(key_name, _)
 
 #define TICOS_METRICS_KEY_DEFINE(key_name, value_type) \
-  kMfltMetricsIndex_##key_name,
+  kTcsMetricsIndex_##key_name,
 
-typedef enum MfltMetricsIndex {
+typedef enum TcsMetricsIndex {
   #include "ticos/metrics/heartbeat_config.def"
   #include TICOS_METRICS_USER_HEARTBEAT_DEFS_FILE
   #undef TICOS_METRICS_KEY_DEFINE
   #undef TICOS_METRICS_KEY_DEFINE_WITH_RANGE
   #undef TICOS_METRICS_STRING_KEY_DEFINE
-} eMfltMetricsIndex;
+} eTcsMetricsIndex;
 
 //! Stub define to detect accidental usage outside of the heartbeat config files
 #define TICOS_METRICS_KEY_DEFINE_TRAP_() \
@@ -62,10 +62,10 @@ typedef struct {
 } TicosMetricId;
 
 #define _TICOS_METRICS_ID_CREATE(id) \
-  { kMfltMetricsIndex_##id }
+  { kTcsMetricsIndex_##id }
 
 #define _TICOS_METRICS_ID(id) \
-  ((TicosMetricId) { kMfltMetricsIndex_##id })
+  ((TicosMetricId) { kTcsMetricsIndex_##id })
 
 #ifdef __cplusplus
 }

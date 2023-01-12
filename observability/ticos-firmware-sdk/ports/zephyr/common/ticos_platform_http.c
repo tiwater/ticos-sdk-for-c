@@ -341,7 +341,7 @@ static bool prv_wait_for_http_response_header(int sock_fd, sTicosHttpResponseCon
     }
   }
 
-  if (ctx->parse_error != kMfltHttpParseStatus_Ok) {
+  if (ctx->parse_error != kTcsHttpParseStatus_Ok) {
     TICOS_LOG_ERROR("Failed to parse response: Parse Status %d", (int)ctx->parse_error);
     return false;
   }

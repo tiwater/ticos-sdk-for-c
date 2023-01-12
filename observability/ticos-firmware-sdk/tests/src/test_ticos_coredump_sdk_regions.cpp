@@ -17,8 +17,8 @@
 #include "ticos/panics/coredump_impl.h"
 
 // fakes for populating heap_stats in coredump regions
-sMfltHeapStats g_ticos_heap_stats;
-sMfltHeapStatEntry g_ticos_heap_stats_pool[TICOS_HEAP_STATS_MAX_COUNT];
+sTcsHeapStats g_ticos_heap_stats;
+sTcsHeapStatEntry g_ticos_heap_stats_pool[TICOS_HEAP_STATS_MAX_COUNT];
 
 TEST_GROUP(TicosSdkRegions){
   void setup() {
@@ -48,14 +48,14 @@ bool ticos_heap_stats_empty(void) {
   return mock().actualCall(__func__).returnBoolValueOrDefault(false);
 }
 
-static void prv_check_heap_stats_region(const sMfltCoredumpRegion *region) {
-  LONGS_EQUAL(kMfltCoredumpRegionType_Memory, region->type);
+static void prv_check_heap_stats_region(const sTcsCoredumpRegion *region) {
+  LONGS_EQUAL(kTcsCoredumpRegionType_Memory, region->type);
   LONGS_EQUAL((uintptr_t)&g_ticos_heap_stats, (uintptr_t)region->region_start);
   LONGS_EQUAL(sizeof(g_ticos_heap_stats), (uint32_t)region->region_size);
 }
 
-static void prv_check_heap_stats_pool_region(const sMfltCoredumpRegion *region) {
-  LONGS_EQUAL(kMfltCoredumpRegionType_Memory, region->type);
+static void prv_check_heap_stats_pool_region(const sTcsCoredumpRegion *region) {
+  LONGS_EQUAL(kTcsCoredumpRegionType_Memory, region->type);
   LONGS_EQUAL((uintptr_t)&g_ticos_heap_stats_pool, (uintptr_t)region->region_start);
   LONGS_EQUAL(sizeof(g_ticos_heap_stats_pool), (uint32_t)region->region_size);
 }
@@ -66,13 +66,13 @@ TEST(TicosSdkRegions, Test_TicosSdkRegions_Enabled) {
   mock().expectOneCall("ticos_log_get_regions");
   mock().expectOneCall("ticos_heap_stats_empty");
   size_t num_regions;
-  const sMfltCoredumpRegion *regions = ticos_coredump_get_sdk_regions(&num_regions);
+  const sTcsCoredumpRegion *regions = ticos_coredump_get_sdk_regions(&num_regions);
   LONGS_EQUAL(4, num_regions);
 
-  const sMfltCoredumpRegion *region = nullptr;
+  const sTcsCoredumpRegion *region = nullptr;
   for (size_t i = 0; i < TICOS_LOG_NUM_RAM_REGIONS; i++) {
     region = &regions[i];
-    LONGS_EQUAL(kMfltCoredumpRegionType_Memory, region->type);
+    LONGS_EQUAL(kTcsCoredumpRegionType_Memory, region->type);
     LONGS_EQUAL(i, (uint32_t)(uintptr_t)region->region_start);
     LONGS_EQUAL(i + 1, (uint32_t)region->region_size);
   }
@@ -87,7 +87,7 @@ TEST(TicosSdkRegions, Test_TicosSdkRegions_Disabled) {
   mock().expectOneCall("ticos_log_get_regions").andReturnValue(false);
   mock().expectOneCall("ticos_heap_stats_empty").andReturnValue(true);
   size_t num_regions;
-  const sMfltCoredumpRegion *regions = ticos_coredump_get_sdk_regions(&num_regions);
+  const sTcsCoredumpRegion *regions = ticos_coredump_get_sdk_regions(&num_regions);
   LONGS_EQUAL(0, num_regions);
   CHECK(regions == NULL);
 }

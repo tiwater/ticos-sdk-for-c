@@ -44,7 +44,7 @@ static sCoredumpWorkingBuffer *prv_get_working_buf(uint32_t offset) {
 }
 
 static bool prv_write_blk(sCoredumpWorkingBuffer *blk) {
-  const uint32_t start_addr = (uint32_t)&__MfltCoredumpsStart;
+  const uint32_t start_addr = (uint32_t)&__TcsCoredumpsStart;
   const uint32_t addr = start_addr + blk->address;
 
   cy_rslt_t result = cyhal_flash_write(&flash_obj, addr, (uint32_t *)blk->data);
@@ -89,9 +89,9 @@ static bool prv_try_flush(void) {
   return true;
 }
 
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
   const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
-  static sMfltCoredumpRegion s_coredump_regions[3];
+  static sTcsCoredumpRegion s_coredump_regions[3];
 
   uint32_t bss_size = &__bss_end__ - &__bss_start__;
   uint32_t data_size = &__data_end__ - &__data_start__;
@@ -106,12 +106,12 @@ const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
   return s_coredump_regions;
 }
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
   /* Size of the coredumps region based on addresses from the linker script. */
-  uint32_t coredumps_sz = (&__MfltCoredumpsEnd - &__MfltCoredumpsStart);
+  uint32_t coredumps_sz = (&__TcsCoredumpsEnd - &__TcsCoredumpsStart);
 
   /* We're in the first block only, so get the page size from the first block. */
-  *info = (sMfltCoredumpStorageInfo){
+  *info = (sTcsCoredumpStorageInfo){
     .size = coredumps_sz,
     .sector_size = flash_obj_info.blocks[0].page_size,
   };
@@ -120,18 +120,18 @@ void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
 bool ticos_platform_coredump_storage_read(uint32_t offset, void *data, size_t read_len) {
   cy_rslt_t result;
 
-  if (&__MfltCoredumpsStart + offset + read_len > &__MfltCoredumpsEnd) {
+  if (&__TcsCoredumpsStart + offset + read_len > &__TcsCoredumpsEnd) {
     return false;
   }
 
-  result = cyhal_flash_read(&flash_obj, (uint32_t)(&__MfltCoredumpsStart) + offset, (uint8_t *)data,
+  result = cyhal_flash_read(&flash_obj, (uint32_t)(&__TcsCoredumpsStart) + offset, (uint8_t *)data,
                             read_len);
 
   return result == CY_RSLT_SUCCESS;
 }
 
 bool ticos_platform_coredump_storage_erase(uint32_t offset, size_t erase_size) {
-  if (&__MfltCoredumpsStart + offset + erase_size > &__MfltCoredumpsEnd) {
+  if (&__TcsCoredumpsStart + offset + erase_size > &__TcsCoredumpsEnd) {
     return false;
   }
 
@@ -142,7 +142,7 @@ bool ticos_platform_coredump_storage_erase(uint32_t offset, size_t erase_size) {
 
 /* Based on buffered_coredump_storage.h */
 bool ticos_platform_coredump_storage_write(uint32_t offset, const void *data, size_t data_len) {
-  if (&__MfltCoredumpsStart + offset + data_len > &__MfltCoredumpsEnd) {
+  if (&__TcsCoredumpsStart + offset + data_len > &__TcsCoredumpsEnd) {
     return false;
   }
 
@@ -186,13 +186,13 @@ bool ticos_platform_coredump_storage_write(uint32_t offset, const void *data, si
 void ticos_platform_coredump_storage_clear(void) {
   uint32_t i;
   uint32_t page_addr;
-  uint32_t coredumps_sz = (&__MfltCoredumpsEnd - &__MfltCoredumpsStart);
+  uint32_t coredumps_sz = (&__TcsCoredumpsEnd - &__TcsCoredumpsStart);
   uint32_t page_sz = TICOS_COREDUMP_STORAGE_WRITE_SIZE;
   uint32_t page_count = coredumps_sz / page_sz;
 
   /* Erase the whole coredumps region. */
   for (i = 0; i < page_count; i++) {
-    page_addr = (uint32_t)(&__MfltCoredumpsStart) + (i * page_sz);
+    page_addr = (uint32_t)(&__TcsCoredumpsStart) + (i * page_sz);
     cyhal_flash_erase(&flash_obj, page_addr);
   }
 }

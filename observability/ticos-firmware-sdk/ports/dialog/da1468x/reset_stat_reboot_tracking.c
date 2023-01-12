@@ -78,27 +78,27 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
   prv_reset_reason_clear(reset_reason_reg);
 
   // Assume "no bits set" implies POR.
-  uint32_t reset_reason = kMfltRebootReason_PowerOnReset;
+  uint32_t reset_reason = kTcsRebootReason_PowerOnReset;
 
   // Note that POR also sets WD, and SWD bits so check order is important.
   if (reset_reason_reg & CRG_TOP_RESET_STAT_REG_PORESET_STAT_Msk) {
     // Important to check PORESET_STAT first.
     TICOS_PRINT_RESET_INFO(" Power on Reset");
-    reset_reason = kMfltRebootReason_PowerOnReset;
+    reset_reason = kTcsRebootReason_PowerOnReset;
   } else if (reset_reason_reg & CRG_TOP_RESET_STAT_REG_SWD_HWRESET_STAT_Msk) {
     // True SWD reset since POR flag was not set. We just map it to SW reset.
     TICOS_PRINT_RESET_INFO(" Debugger (SWD)");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_reason_reg & CRG_TOP_RESET_STAT_REG_WDOGRESET_STAT_Msk) {
     // True WD reset since POR flag was not set.
     TICOS_PRINT_RESET_INFO(" Watchdog");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_reason_reg & CRG_TOP_RESET_STAT_REG_SWRESET_STAT_Msk) {
     TICOS_PRINT_RESET_INFO(" Software");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_reason_reg & CRG_TOP_RESET_STAT_REG_HWRESET_STAT_Msk) {
     TICOS_PRINT_RESET_INFO(" Pin Reset");
-    reset_reason = kMfltRebootReason_PinReset;
+    reset_reason = kTcsRebootReason_PinReset;
   }
 
   *info = (sResetBootupInfo) {

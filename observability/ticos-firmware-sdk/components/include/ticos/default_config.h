@@ -343,7 +343,7 @@ extern "C" {
 #endif
 
 #ifndef TICOS_MPU_REGIONS_TO_COLLECT
-// This is used to define the sMfltMpuRegs structure.
+// This is used to define the sTcsMpuRegs structure.
 #define TICOS_MPU_REGIONS_TO_COLLECT 8
 #endif
 

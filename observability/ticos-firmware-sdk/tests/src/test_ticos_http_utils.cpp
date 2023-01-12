@@ -26,12 +26,12 @@ extern "C" {
     *info = g_device_info;
   }
 
-  sMfltHttpClientConfig g_tcs_http_client_config;
+  sTcsHttpClientConfig g_tcs_http_client_config;
 }
 
-TEST_GROUP(MfltHttpClientUtils){
+TEST_GROUP(TcsHttpClientUtils){
   void setup() {
-    g_tcs_http_client_config = (sMfltHttpClientConfig) {
+    g_tcs_http_client_config = (sTcsHttpClientConfig) {
       .api_key = "00112233445566778899aabbccddeeff",
     };
     g_device_info = g_device_info_default;
@@ -44,14 +44,14 @@ TEST_GROUP(MfltHttpClientUtils){
   }
 };
 
-TEST(MfltHttpClientUtils, Test_MfltHttpClientOverrides) {
+TEST(TcsHttpClientUtils, Test_TcsHttpClientOverrides) {
   STRCMP_EQUAL("chunks.ticos.com", TICOS_HTTP_GET_CHUNKS_API_HOST());
   STRCMP_EQUAL("device.ticos.com", TICOS_HTTP_GET_DEVICE_API_HOST());
 
   LONGS_EQUAL(443, TICOS_HTTP_GET_CHUNKS_API_PORT());
   LONGS_EQUAL(443, TICOS_HTTP_GET_DEVICE_API_PORT());
 
-  g_tcs_http_client_config = (sMfltHttpClientConfig) {
+  g_tcs_http_client_config = (sTcsHttpClientConfig) {
     .api_key = "00112233445566778899aabbccddeeff",
     .disable_tls = false,
     .chunks_api = {
@@ -88,7 +88,7 @@ static bool prv_http_write_cb(const void *data, size_t data_len, void *ctx) {
   return true;
 }
 
-TEST(MfltHttpClientUtils, Test_MfltHttpClientPost) {
+TEST(TcsHttpClientUtils, Test_TcsHttpClientPost) {
   mock().expectNCalls(11, "prv_http_write_cb");
   sHttpWriteCtx ctx = { 0 };
   bool success = ticos_http_start_chunk_post(prv_http_write_cb,
@@ -105,7 +105,7 @@ TEST(MfltHttpClientUtils, Test_MfltHttpClientPost) {
   STRCMP_EQUAL(expected_string, ctx.buf);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltHttpClientPostSendWriteFailure) {
+TEST(TcsHttpClientUtils, Test_TcsHttpClientPostSendWriteFailure) {
   const size_t num_write_calls = 11;
   for (size_t i = 0; i < num_write_calls; i++) {
     if (i > 0) {
@@ -120,7 +120,7 @@ TEST(MfltHttpClientUtils, Test_MfltHttpClientPostSendWriteFailure) {
   }
 }
 
-TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayloadUrl) {
+TEST(TcsHttpClientUtils, Test_TcsHttpClientGetOtaPayloadUrl) {
   mock().expectNCalls(26, "prv_http_write_cb");
   sHttpWriteCtx ctx = { 0 };
   bool success = ticos_http_get_latest_ota_payload_url(prv_http_write_cb, &ctx);
@@ -136,7 +136,7 @@ TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayloadUrl) {
   STRCMP_EQUAL(expected_string, ctx.buf);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayloadUrlWriteFailure) {
+TEST(TcsHttpClientUtils, Test_TcsHttpClientGetOtaPayloadUrlWriteFailure) {
   const size_t num_write_calls = 26;
   for (size_t i = 0; i < num_write_calls; i++) {
     if (i > 0) {
@@ -151,7 +151,7 @@ TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayloadUrlWriteFailure) {
   }
 }
 
-TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayloadUrlEncodeFailure) {
+TEST(TcsHttpClientUtils, Test_TcsHttpClientGetOtaPayloadUrlEncodeFailure) {
   mock().expectNCalls(1, "prv_http_write_cb");
   sHttpWriteCtx ctx = { 0 };
   g_device_info.device_serial = "++++++++++++++++";
@@ -160,7 +160,7 @@ TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayloadUrlEncodeFailure) {
   mock().checkExpectations();
 }
 
-TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayload) {
+TEST(TcsHttpClientUtils, Test_TcsHttpClientGetOtaPayload) {
   mock().expectNCalls(8, "prv_http_write_cb");
   sHttpWriteCtx ctx = { 0 };
 
@@ -178,7 +178,7 @@ TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayload) {
   STRCMP_EQUAL(expected_string, ctx.buf);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayloadNoPath) {
+TEST(TcsHttpClientUtils, Test_TcsHttpClientGetOtaPayloadNoPath) {
   mock().expectNCalls(8, "prv_http_write_cb");
   sHttpWriteCtx ctx = { 0 };
 
@@ -196,7 +196,7 @@ TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayloadNoPath) {
   STRCMP_EQUAL(expected_string, ctx.buf);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayloadBadUrl) {
+TEST(TcsHttpClientUtils, Test_TcsHttpClientGetOtaPayloadBadUrl) {
   sHttpWriteCtx ctx = { 0 };
 
   const char *url = "ftp://";
@@ -205,7 +205,7 @@ TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayloadBadUrl) {
   CHECK(!success);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltHttpClientGetOtaPayloadFailure) {
+TEST(TcsHttpClientUtils, Test_TcsHttpClientGetOtaPayloadFailure) {
   const size_t num_write_calls = 8;
   for (size_t i = 0; i < num_write_calls; i++) {
     if (i > 0) {
@@ -256,7 +256,7 @@ static void prv_expect_parse_success(const char *rsp, size_t rsp_len, int expect
   LONGS_EQUAL(rsp_len, total_rsp_len);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltResponseParser202) {
+TEST(TcsHttpClientUtils, Test_TcsResponseParser202) {
   const char *rsp =
       "HTTP/1.1 202 Accepted\r\n"
       "Content-Type: text/plain; charset=utf-8\r\n"
@@ -276,7 +276,7 @@ TEST(MfltHttpClientUtils, Test_MfltResponseParser202) {
   STRCMP_EQUAL("Accepted", ctx.http_body);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltResponseParserNoContentLength) {
+TEST(TcsHttpClientUtils, Test_TcsResponseParserNoContentLength) {
   const char *rsp =
       "HTTP/1.1 202 Accepted\r\n"
       "Content-Type: text/plain; charset=utf-8\r\n"
@@ -294,7 +294,7 @@ TEST(MfltHttpClientUtils, Test_MfltResponseParserNoContentLength) {
 }
 
 
-TEST(MfltHttpClientUtils, Test_MfltResponseParser411) {
+TEST(TcsHttpClientUtils, Test_TcsResponseParser411) {
   const char *good_response =
       "HTTP/1.1 411 Length Required\r\n"
       "Content-Type: application/json; charset=utf-8\r\n"
@@ -308,7 +308,7 @@ TEST(MfltHttpClientUtils, Test_MfltResponseParser411) {
 }
 
 
-TEST(MfltHttpClientUtils, Test_VeryLongBody) {
+TEST(TcsHttpClientUtils, Test_VeryLongBody) {
   const char *rsp_hdr =
       "HTTP/1.1 202 Accepted\r\n"
       "Content-Type: text/plain; charset=utf-8\r\n"
@@ -323,7 +323,7 @@ TEST(MfltHttpClientUtils, Test_VeryLongBody) {
 }
 
 static void prv_expect_parse_failure(const void *response, size_t response_len,
-                                     eMfltHttpParseStatus expected_parse_error) {
+                                     eTcsHttpParseStatus expected_parse_error) {
   sTicosHttpResponseContext ctx = { };
   bool done = ticos_http_parse_response(
       &ctx, response, response_len);
@@ -338,7 +338,7 @@ static void prv_expect_parse_failure(const void *response, size_t response_len,
   LONGS_EQUAL(expected_parse_error, ctx.parse_error);
 }
 
-TEST(MfltHttpClientUtils, Test_HttpResponseUnexpectedlyLong) {
+TEST(TcsHttpClientUtils, Test_HttpResponseUnexpectedlyLong) {
   // One really long header we don't care about but must tolerate.
   const char *rsp =
       "HTTP/1.1 202 Accepted\r\n"
@@ -353,7 +353,7 @@ TEST(MfltHttpClientUtils, Test_HttpResponseUnexpectedlyLong) {
     prv_expect_parse_success(rsp, strlen(rsp), 202);
 }
 
-TEST(MfltHttpClientUtils, Test_HttpResponseUnexpectedlyLongFirstLine) {
+TEST(TcsHttpClientUtils, Test_HttpResponseUnexpectedlyLongFirstLine) {
   // One really long header as the first line should fail.
   const char *rsp =
       "ReallyLongHeader:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\r\n"
@@ -366,10 +366,10 @@ TEST(MfltHttpClientUtils, Test_HttpResponseUnexpectedlyLongFirstLine) {
       "Accepted"; // Body, 8 bytes
 
     prv_expect_parse_failure(rsp, strlen(rsp),
-                             MfltHttpParseStatus_HeaderTooLongError);
+                             TcsHttpParseStatus_HeaderTooLongError);
 }
 
-TEST(MfltHttpClientUtils, Test_HeaderBeforeStatus) {
+TEST(TcsHttpClientUtils, Test_HeaderBeforeStatus) {
   const char *rsp =
       "Content-Type: text/plain; charset=utf-8\r\n"
       "HTTP/1.1 202 Accepted\r\n"
@@ -378,81 +378,81 @@ TEST(MfltHttpClientUtils, Test_HeaderBeforeStatus) {
       "Connection: keep-alive\r\n"
       "\r\n";
   prv_expect_parse_failure(rsp, strlen(rsp),
-                           MfltHttpParseStatus_ParseStatusLineError);
+                           TcsHttpParseStatus_ParseStatusLineError);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltResponseBadVersion) {
+TEST(TcsHttpClientUtils, Test_TcsResponseBadVersion) {
   const static char *rsp = "HTTZ/1.1 202 Accepted\r\n";
   prv_expect_parse_failure(rsp, strlen(rsp),
-                           MfltHttpParseStatus_ParseStatusLineError);
+                           TcsHttpParseStatus_ParseStatusLineError);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltResponseBadStatusCode) {
+TEST(TcsHttpClientUtils, Test_TcsResponseBadStatusCode) {
   const static char *rsp = "HTTP/1.1 2a2 Accepted\r\n";
   prv_expect_parse_failure(rsp, strlen(rsp),
-                           MfltHttpParseStatus_ParseStatusLineError);
+                           TcsHttpParseStatus_ParseStatusLineError);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltResponseShortStatusCode) {
+TEST(TcsHttpClientUtils, Test_TcsResponseShortStatusCode) {
   const static char *rsp = "HTTP/1.1 22 Accepted\r\n";
   prv_expect_parse_failure(rsp, strlen(rsp),
-                           MfltHttpParseStatus_ParseStatusLineError);
+                           TcsHttpParseStatus_ParseStatusLineError);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltResponseOverLongStatusCode) {
+TEST(TcsHttpClientUtils, Test_TcsResponseOverLongStatusCode) {
   LONGS_EQUAL(2147483647, INT_MAX);  // sanity check
   const static char *rsp = "HTTP/1.1 2147483648\r\n";
   prv_expect_parse_failure(rsp, strlen(rsp),
-                           MfltHttpParseStatus_ParseStatusLineError);
+                           TcsHttpParseStatus_ParseStatusLineError);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltResponseNoSpace) {
+TEST(TcsHttpClientUtils, Test_TcsResponseNoSpace) {
   const static char *rsp = "HTTP/1.1202 Accepted\r\n";
   prv_expect_parse_failure(rsp, strlen(rsp),
-                           MfltHttpParseStatus_ParseStatusLineError);
+                           TcsHttpParseStatus_ParseStatusLineError);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltResponseMalformedMinorVersion) {
+TEST(TcsHttpClientUtils, Test_TcsResponseMalformedMinorVersion) {
   const static char *rsp = "HTTP/1.a 202 Accepted\r\n";
   prv_expect_parse_failure(rsp, strlen(rsp),
-                           MfltHttpParseStatus_ParseStatusLineError);
+                           TcsHttpParseStatus_ParseStatusLineError);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltResponseShort) {
+TEST(TcsHttpClientUtils, Test_TcsResponseShort) {
   const static char *rsp_short = "HTTP/1.1 20\r\n";
   prv_expect_parse_failure(rsp_short, strlen(rsp_short),
-                           MfltHttpParseStatus_ParseStatusLineError);
+                           TcsHttpParseStatus_ParseStatusLineError);
 
   const static char *rsp_short1 = "HTTP/1.1\r\n";
   prv_expect_parse_failure(rsp_short1, strlen(rsp_short1),
-                           MfltHttpParseStatus_ParseStatusLineError);
+                           TcsHttpParseStatus_ParseStatusLineError);
 
   const static char *rsp_short2 = "HTTP/1.\r\n";
   prv_expect_parse_failure(rsp_short2, strlen(rsp_short2),
-                           MfltHttpParseStatus_ParseStatusLineError);
+                           TcsHttpParseStatus_ParseStatusLineError);
 
   const static char *rsp_short3 = "HTTP/1\r\n";
   prv_expect_parse_failure(rsp_short3, strlen(rsp_short3),
-                           MfltHttpParseStatus_ParseStatusLineError);
+                           TcsHttpParseStatus_ParseStatusLineError);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltResponseBadContentLength) {
+TEST(TcsHttpClientUtils, Test_TcsResponseBadContentLength) {
   const static char *rsp_non_base_10_digit = "HTTP/1.1 202 Accepted\r\n"
                                              "Content-Length:1a\r\n\r\n";
   prv_expect_parse_failure(rsp_non_base_10_digit, strlen(rsp_non_base_10_digit),
-                           MfltHttpParseStatus_ParseHeaderError);
+                           TcsHttpParseStatus_ParseHeaderError);
 
   const static char *rsp_value_too_large = "HTTP/1.1 202 Accepted\r\n"
                                            "Content-Length:2147483648\r\n\r\n";
   prv_expect_parse_failure(rsp_value_too_large, strlen(rsp_value_too_large),
-                           MfltHttpParseStatus_ParseHeaderError);
+                           TcsHttpParseStatus_ParseHeaderError);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltResponseNoColonSeparator) {
+TEST(TcsHttpClientUtils, Test_TcsResponseNoColonSeparator) {
   const static char *rsp =
       "HTTP/1.1 202 Accepted\r\n"
       "Content-Length&10\r\n\r\n";
-  prv_expect_parse_failure(rsp, strlen(rsp), MfltHttpParseStatus_ParseHeaderError);
+  prv_expect_parse_failure(rsp, strlen(rsp), TcsHttpParseStatus_ParseHeaderError);
 }
 
 static void prv_check_result(const char *uri, const char *host,
@@ -504,7 +504,7 @@ static void prv_uri_with_port_parse_check(const char *scheme, const char *host, 
   prv_check_result(uri, host, path, expect_success, port);
 }
 
-TEST(MfltHttpClientUtils, Test_MfltParseHttpAndHttpsUris) {
+TEST(TcsHttpClientUtils, Test_TcsParseHttpAndHttpsUris) {
   const char *valid_prefixes[] = { "https://", "http://", "http://username:password@" };
   for (size_t i = 0; i < TICOS_ARRAY_SIZE(valid_prefixes); i++) {
     const bool expect_success = true;
@@ -541,7 +541,7 @@ TEST(MfltHttpClientUtils, Test_MfltParseHttpAndHttpsUris) {
   }
 }
 
-TEST(MfltHttpClientUtils, Test_MfltParseUriWithUnsupportedScheme) {
+TEST(TcsHttpClientUtils, Test_TcsParseUriWithUnsupportedScheme) {
   const char *unsupported_schemes[] = { "https:/", "http//", "http:/", "ftp://" };
   for (size_t i = 0; i < TICOS_ARRAY_SIZE(unsupported_schemes); i++) {
     const bool expect_success = false;
@@ -550,7 +550,7 @@ TEST(MfltHttpClientUtils, Test_MfltParseUriWithUnsupportedScheme) {
   }
 }
 
-TEST(MfltHttpClientUtils, Test_MfltParseUriWithMalformedHost) {
+TEST(TcsHttpClientUtils, Test_TcsParseUriWithMalformedHost) {
   const char *malformed_hosts[] = {
     "[::1",
     "username:password@",
@@ -564,7 +564,7 @@ TEST(MfltHttpClientUtils, Test_MfltParseUriWithMalformedHost) {
   }
 }
 
-TEST(MfltHttpClientUtils, Test_MfltParseUriWithBogusPort) {
+TEST(TcsHttpClientUtils, Test_TcsParseUriWithBogusPort) {
   const char *hosts_with_bogus_ports[] = {
     "[::1]:8abc",
     "www.example.com:80z",
@@ -577,7 +577,7 @@ TEST(MfltHttpClientUtils, Test_MfltParseUriWithBogusPort) {
   }
 }
 
-TEST(MfltHttpClientUtils, Test_MfltParseUriWithOnlyScheme) {
+TEST(TcsHttpClientUtils, Test_TcsParseUriWithOnlyScheme) {
   const bool expect_success = false;
   prv_check_result("http", NULL, NULL, expect_success, 0);
   prv_check_result("http:/", NULL, NULL, expect_success, 0);
@@ -585,7 +585,7 @@ TEST(MfltHttpClientUtils, Test_MfltParseUriWithOnlyScheme) {
   prv_check_result("http:///", NULL, NULL, expect_success, 0);
 }
 
-TEST(MfltHttpClientUtils, Test_UrlEncode) {
+TEST(TcsHttpClientUtils, Test_UrlEncode) {
   const struct inputs {
     const char *instring;
     const char *outstring;
@@ -650,7 +650,7 @@ TEST(MfltHttpClientUtils, Test_UrlEncode) {
   }
 }
 
-TEST(MfltHttpClientUtils, Test_UrlNeedsEscape) {
+TEST(TcsHttpClientUtils, Test_UrlNeedsEscape) {
   const struct inputs {
     const char *instring;
     bool needs_escape;

@@ -17,7 +17,7 @@ extern "C" {
 #endif
 
 // Registers auto-stacked as part of Cortex-M exception entry
-typedef TICOS_PACKED_STRUCT MfltExceptionFrame {
+typedef TICOS_PACKED_STRUCT TcsExceptionFrame {
   uint32_t r0;
   uint32_t r1;
   uint32_t r2;
@@ -26,15 +26,15 @@ typedef TICOS_PACKED_STRUCT MfltExceptionFrame {
   uint32_t lr;
   uint32_t pc;
   uint32_t xpsr;
-} sMfltExceptionFrame;
+} sTcsExceptionFrame;
 
 // Register State collected for Cortex-M at exception entry
-TICOS_PACKED_STRUCT MfltRegState {
+TICOS_PACKED_STRUCT TcsRegState {
   // Exception-entry value of the stack pointer that was active when the fault occurred (i.e msp or
   // psp). This is where the hardware will automatically stack caller-saved register state
   // (https://ticos.io/2rejx7A) as part of the exception entry flow. This address is guaranteed to
-  // match the layout of the "sMfltExceptionFrame".
-  sMfltExceptionFrame *exception_frame;
+  // match the layout of the "sTcsExceptionFrame".
+  sTcsExceptionFrame *exception_frame;
   // callee saved registers
   uint32_t r4;
   uint32_t r5;

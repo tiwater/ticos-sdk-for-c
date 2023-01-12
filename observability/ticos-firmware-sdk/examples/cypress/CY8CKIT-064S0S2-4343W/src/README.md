@@ -10,7 +10,7 @@ Make sure that both `flash_obj` and `flash_obj_info` from
 `ticos_platform_storage.h/c` are initialized before the actual Ticos
 library.
 
-`__MfltCoredumpsStart` and `__MfltCoredumpsEnd` define the memory region for
+`__TcsCoredumpsStart` and `__TcsCoredumpsEnd` define the memory region for
 coredumps. It should be a 512-byte aligned flash memory region, at least 96kB
 size is recommended. The demo application has an example implementation you can
 use.

@@ -129,23 +129,23 @@ eTicosPacketizerStatus ticos_packetizer_get_next(void *buf, size_t *buf_len);
 void ticos_packetizer_abort(void);
 
 typedef enum {
-  kMfltDataSourceMask_None = (1 << 0),
+  kTcsDataSourceMask_None = (1 << 0),
 
   // Coredumps recorded when the system crashes
-  kMfltDataSourceMask_Coredump = (1 << 1),
+  kTcsDataSourceMask_Coredump = (1 << 1),
 
   // All "events" collected by the SDK (reboot, traces, heartbeats)
-  kMfltDataSourceMask_Event = (1 << 2),
+  kTcsDataSourceMask_Event = (1 << 2),
   // Any "triggered" log captures: https://ticos.io/logging
-  kMfltDataSourceMask_Log = (1 << 3),
+  kTcsDataSourceMask_Log = (1 << 3),
 
   // Any Custom Data Recording captured
-  kMfltDataSourceMask_Cdr = (1 << 4),
+  kTcsDataSourceMask_Cdr = (1 << 4),
 
   // A convenience mask which enables all active sources
-  kMfltDataSourceMask_All =
-    (kMfltDataSourceMask_Coredump | kMfltDataSourceMask_Event | kMfltDataSourceMask_Log | kMfltDataSourceMask_Cdr)
-} eMfltDataSourceMask;
+  kTcsDataSourceMask_All =
+    (kTcsDataSourceMask_Coredump | kTcsDataSourceMask_Event | kTcsDataSourceMask_Log | kTcsDataSourceMask_Cdr)
+} eTcsDataSourceMask;
 
 //! Set the data sources which will be drained by the packetizer
 //!
@@ -165,13 +165,13 @@ typedef enum {
 //!    can of just events can be saved as follows:
 //!
 //!     1. Only enable draining of events with the following API call:
-//!        ticos_packetizer_set_active_sources(kMfltDataSourceMask_Event);
+//!        ticos_packetizer_set_active_sources(kTcsDataSourceMask_Event);
 //!     2. Using ticos_packetizer_get_chunk() API, now read out events and
 //!        save to flash or a filesystem (https://ticos.io/data-to-cloud)
 //!     3. When a connection becomes available
 //!       a) send pre-saved chunks from flash over your transport
 //!       b) call ticos_packetizer_get_chunk() and send data until no more data is available
-//!       c) re-enable all sources with ticos_packetizer_get_chunk(kMfltDataSourceMask_All) and
+//!       c) re-enable all sources with ticos_packetizer_get_chunk(kTcsDataSourceMask_All) and
 //!          then call ticos_packetizer_get_chunk() to drain and send any data from other
 //!          sources that is now available (i.e coredumps)
 //!

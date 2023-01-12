@@ -1,8 +1,8 @@
 SRC_FILES = \
-  $(MFLT_COMPONENTS_DIR)/util/src/ticos_rle.c \
-  $(MFLT_COMPONENTS_DIR)/util/src/ticos_varint.c
+  $(Tcs_COMPONENTS_DIR)/util/src/ticos_rle.c \
+  $(Tcs_COMPONENTS_DIR)/util/src/ticos_varint.c
 
 TEST_SRC_FILES = \
-  $(MFLT_TEST_SRC_DIR)/test_ticos_rle.cpp
+  $(Tcs_TEST_SRC_DIR)/test_ticos_rle.cpp
 
 include $(CPPUTEST_MAKFILE_INFRA)

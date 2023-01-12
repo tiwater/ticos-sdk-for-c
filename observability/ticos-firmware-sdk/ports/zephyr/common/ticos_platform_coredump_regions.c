@@ -26,7 +26,7 @@
 #include "ticos/core/math.h"
 #include "ticos/ports/zephyr/coredump.h"
 
-static sMfltCoredumpRegion s_coredump_regions[
+static sTcsCoredumpRegion s_coredump_regions[
     TICOS_COREDUMP_MAX_TASK_REGIONS
     + 2 /* active stack(s) */
     + 1 /* _kernel variable */
@@ -39,7 +39,7 @@ static sMfltCoredumpRegion s_coredump_regions[
     ];
 
 TICOS_WEAK
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
     const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
 
   const bool msp_was_active = (crash_info->exception_reg_state->exc_return & (1 << 2)) == 0;

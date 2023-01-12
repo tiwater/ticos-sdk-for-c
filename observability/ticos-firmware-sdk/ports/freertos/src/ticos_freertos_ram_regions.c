@@ -44,7 +44,7 @@
 //! 4) Update ticos_platform_coredump_get_regions() to include FreeRTOS state
 //!    and new regions:
 //!
-//!   const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+//!   const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
 //!       const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
 //!     int region_idx = 0;
 //!
@@ -145,7 +145,7 @@ void ticos_freertos_trace_task_delete(void *tcb) {
   s_task_tcbs[idx] = EMPTY_SLOT;
 }
 
-size_t ticos_freertos_get_task_regions(sMfltCoredumpRegion *regions, size_t num_regions) {
+size_t ticos_freertos_get_task_regions(sTcsCoredumpRegion *regions, size_t num_regions) {
   if (regions == NULL || num_regions == 0) {
     return 0;
   }

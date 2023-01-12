@@ -25,10 +25,10 @@ extern "C" {
 //! Value used to indicate entry is the end of the list
 #define TICOS_HEAP_STATS_LIST_END UINT16_MAX
 
-typedef struct MfltHeapStatEntry sMfltHeapStatEntry;
+typedef struct TcsHeapStatEntry sTcsHeapStatEntry;
 
 //! The heap stats data structure, which is exported when capturing a core.
-typedef struct MfltHeapStatEntry {
+typedef struct TcsHeapStatEntry {
   // LR at time of allocation
   const void *lr;
 
@@ -44,9 +44,9 @@ typedef struct MfltHeapStatEntry {
     // Index to next oldest entry in heap stats entry array,
     uint16_t next_entry_index;
   } info;
-} sMfltHeapStatEntry;
+} sTcsHeapStatEntry;
 
-typedef struct MfltHeapStats {
+typedef struct TcsHeapStats {
   uint8_t version;
 
   // Number of blocks currently allocated and not freed
@@ -57,10 +57,10 @@ typedef struct MfltHeapStats {
 
   // Allocation entry list pointer
   uint16_t stats_pool_head;
-} sMfltHeapStats;
+} sTcsHeapStats;
 
-extern sMfltHeapStats g_ticos_heap_stats;
-extern sMfltHeapStatEntry g_ticos_heap_stats_pool[TICOS_HEAP_STATS_MAX_COUNT];
+extern sTcsHeapStats g_ticos_heap_stats;
+extern sTcsHeapStatEntry g_ticos_heap_stats_pool[TICOS_HEAP_STATS_MAX_COUNT];
 
 //! Reset the tracked stats.
 void ticos_heap_stats_reset(void);

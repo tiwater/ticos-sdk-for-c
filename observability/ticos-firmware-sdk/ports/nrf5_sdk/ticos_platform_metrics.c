@@ -32,9 +32,9 @@ typedef struct {
   // 2^64 / (32768 * 86400 * 365 * 1000) = 17851 years ... so
   // not practical tick count overflow concern
   uint64_t time_since_boot_ticks;
-} sMfltPlatformUptimeCtx;
+} sTcsPlatformUptimeCtx;
 
-static sMfltPlatformUptimeCtx s_uptime_ctx;
+static sTcsPlatformUptimeCtx s_uptime_ctx;
 
 uint64_t ticos_platform_get_time_since_boot_ms(void) {
   uint32_t ticks_current = app_timer_cnt_get();

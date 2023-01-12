@@ -35,7 +35,7 @@ TICOS_STATIC_ASSERT(sizeof(CONFIG_TICOS_PROJECT_KEY) > 1,
                        "Ticos Project Key not configured. Please visit https://ticos.io/project-key "
                        "and add CONFIG_TICOS_PROJECT_KEY=\"YOUR_KEY\" to sdkconfig.defaults");
 static char _buff[1024];
-sMfltHttpClientConfig g_tcs_http_client_config = {
+sTcsHttpClientConfig g_tcs_http_client_config = {
   .api_key = CONFIG_TICOS_PROJECT_KEY,
   // .chunks_api = { .host = "api.ticos.cn", .port = 80 },
   .chunks_api = { .host = "api.dev.ticos.cc", .port = 80 },
@@ -108,7 +108,7 @@ static int prv_post_chunks(esp_http_client_handle_t client, void *buffer, size_t
 
 static char s_tcs_base_url_buffer[TICOS_HTTP_URL_BUFFER_SIZE];
 
-sMfltHttpClient *ticos_platform_http_client_create(void) {
+sTcsHttpClient *ticos_platform_http_client_create(void) {
   ticos_http_build_url(s_tcs_base_url_buffer, "");
   const esp_http_client_config_t config = {
 #if TICOS_HTTP_DEBUG
@@ -122,10 +122,10 @@ sMfltHttpClient *ticos_platform_http_client_create(void) {
   esp_http_client_handle_t client = esp_http_client_init(&config);
   esp_http_client_set_header(client, TICOS_HTTP_PROJECT_KEY_HEADER,
                              g_tcs_http_client_config.api_key);
-  return (sMfltHttpClient *)client;
+  return (sTcsHttpClient *)client;
 }
 
-int ticos_platform_http_client_destroy(sMfltHttpClient *_client) {
+int ticos_platform_http_client_destroy(sTcsHttpClient *_client) {
   esp_http_client_handle_t client = (esp_http_client_handle_t)_client;
   esp_err_t err = esp_http_client_cleanup(client);
   if (err == ESP_OK) {
@@ -135,11 +135,11 @@ int ticos_platform_http_client_destroy(sMfltHttpClient *_client) {
   return TICOS_PLATFORM_SPECIFIC_ERROR(err);
 }
 
-typedef struct MfltHttpResponse {
+typedef struct TcsHttpResponse {
   uint16_t status;
-} sMfltHttpResponse;
+} sTcsHttpResponse;
 
-int ticos_platform_http_response_get_status(const sMfltHttpResponse *response,
+int ticos_platform_http_response_get_status(const sTcsHttpResponse *response,
                                                uint32_t *status_out) {
   TICOS_ASSERT(response);
   if (status_out) {
@@ -210,7 +210,7 @@ static int prv_build_latest_release_url(char *buf, size_t buf_len) {
 }
 
 static int prv_get_ota_update_url(char **download_url_out) {
-  sMfltHttpClient *http_client = ticos_http_client_create();
+  sTcsHttpClient *http_client = ticos_http_client_create();
   char *url = NULL;
   char *download_url = NULL;
   int status_code = -1;
@@ -359,7 +359,7 @@ cleanup:
   return rv;
 }
 
-int ticos_platform_http_client_post_data(sMfltHttpClient *_client,
+int ticos_platform_http_client_post_data(sTcsHttpClient *_client,
                                             TicosHttpClientResponseCallback callback,
                                             void *ctx) {
   if (!ticos_esp_port_data_available()) {
@@ -390,7 +390,7 @@ int ticos_platform_http_client_post_data(sMfltHttpClient *_client,
     return rv;
   }
 
-  const sMfltHttpResponse response = {
+  const sTcsHttpResponse response = {
     .status = (uint32_t)esp_http_client_get_status_code(client),
   };
   if (callback) {
@@ -404,7 +404,7 @@ int ticos_platform_http_client_post_data(sMfltHttpClient *_client,
   return 0;
 }
 
-int ticos_platform_http_client_wait_until_requests_completed(sMfltHttpClient *client,
+int ticos_platform_http_client_wait_until_requests_completed(sTcsHttpClient *client,
                                                                 uint32_t timeout_ms) {
   // No-op because ticos_platform_http_client_post_data() is synchronous
   return 0;
@@ -429,13 +429,13 @@ int ticos_esp_port_http_client_post_data(void) {
     return 0;
   }
 
-  sMfltHttpClient *http_client = ticos_http_client_create();
+  sTcsHttpClient *http_client = ticos_http_client_create();
   if (!http_client) {
     TICOS_LOG_ERROR("Failed to create HTTP client");
     return TicosInternalReturnCode_Error;
   }
-  const eMfltPostDataStatus rv = (eMfltPostDataStatus)ticos_http_client_post_data(http_client);
-  if (rv == kMfltPostDataStatus_NoDataFound) {
+  const eTcsPostDataStatus rv = (eTcsPostDataStatus)ticos_http_client_post_data(http_client);
+  if (rv == kTcsPostDataStatus_NoDataFound) {
     TICOS_LOG_INFO("No new data found");
   } else {
     TICOS_LOG_INFO("Result: %d", (int)rv);

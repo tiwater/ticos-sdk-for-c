@@ -36,36 +36,36 @@ static eTicosRebootReason prv_decode_power_resetreas(uint32_t reset_cause) {
   eTicosRebootReason reset_reason;
   if (reset_cause & NRF_POWER_RESETREAS_RESETPIN_MASK) {
     TICOS_PRINT_RESET_INFO(" Pin Reset");
-    reset_reason = kMfltRebootReason_PinReset;
+    reset_reason = kTcsRebootReason_PinReset;
   } else if (reset_cause & NRF_POWER_RESETREAS_DOG_MASK) {
     TICOS_PRINT_RESET_INFO(" Watchdog");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & NRF_POWER_RESETREAS_SREQ_MASK) {
     TICOS_PRINT_RESET_INFO(" Software");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & NRF_POWER_RESETREAS_LOCKUP_MASK) {
     TICOS_PRINT_RESET_INFO(" Lockup");
-    reset_reason = kMfltRebootReason_Lockup;
+    reset_reason = kTcsRebootReason_Lockup;
 #if defined (POWER_RESETREAS_LPCOMP_Msk)
   } else if (reset_cause & NRF_POWER_RESETREAS_LPCOMP_MASK) {
     TICOS_PRINT_RESET_INFO(" LPCOMP Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
 #endif
   } else if (reset_cause & NRF_POWER_RESETREAS_DIF_MASK) {
     TICOS_PRINT_RESET_INFO(" Debug Interface Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
 #if defined (NRF_POWER_RESETREAS_VBUS_MASK)
   } else if (reset_cause & NRF_POWER_RESETREAS_VBUS_MASK) {
     TICOS_PRINT_RESET_INFO(" VBUS Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
 #endif
   } else if (reset_cause == 0) {
     // absence of a value, means a power on reset took place
     TICOS_PRINT_RESET_INFO(" Power on Reset");
-    reset_reason = kMfltRebootReason_PowerOnReset;
+    reset_reason = kTcsRebootReason_PowerOnReset;
   } else {
     TICOS_PRINT_RESET_INFO(" Unknown");
-    reset_reason = kMfltRebootReason_Unknown;
+    reset_reason = kTcsRebootReason_Unknown;
   }
   return reset_reason;
 }
@@ -74,61 +74,61 @@ static eTicosRebootReason prv_decode_reset_resetreas(uint32_t reset_cause) {
   eTicosRebootReason reset_reason;
   if (reset_cause & NRF_RESET_RESETREAS_RESETPIN_MASK) {
     TICOS_PRINT_RESET_INFO(" Pin Reset");
-    reset_reason = kMfltRebootReason_PinReset;
+    reset_reason = kTcsRebootReason_PinReset;
   } else if (reset_cause & NRF_RESET_RESETREAS_DOG0_MASK) {
     TICOS_PRINT_RESET_INFO(" Watchdog 0");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & NRF_RESET_RESETREAS_CTRLAP_MASK) {
     TICOS_PRINT_RESET_INFO(" Debugger");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & NRF_RESET_RESETREAS_SREQ_MASK) {
     TICOS_PRINT_RESET_INFO(" Software");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & NRF_RESET_RESETREAS_LOCKUP_MASK) {
     TICOS_PRINT_RESET_INFO(" Lockup");
-    reset_reason = kMfltRebootReason_Lockup;
+    reset_reason = kTcsRebootReason_Lockup;
   } else if (reset_cause & NRF_RESET_RESETREAS_OFF_MASK) {
     TICOS_PRINT_RESET_INFO(" GPIO Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
   } else if (reset_cause & NRF_RESET_RESETREAS_LPCOMP_MASK) {
     TICOS_PRINT_RESET_INFO(" LPCOMP Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
   } else if (reset_cause & NRF_RESET_RESETREAS_DIF_MASK) {
     TICOS_PRINT_RESET_INFO(" Debug Interface Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
 #if NRF_RESET_HAS_NETWORK
   } else if (reset_cause & NRF_RESET_RESETREAS_LSREQ_MASK) {
     TICOS_PRINT_RESET_INFO(" Software (Network)");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & NRF_RESET_RESETREAS_LLOCKUP_MASK) {
     TICOS_PRINT_RESET_INFO(" Lockup (Network)");
-    reset_reason = kMfltRebootReason_Lockup;
+    reset_reason = kTcsRebootReason_Lockup;
   } else if (reset_cause & NRF_RESET_RESETREAS_LDOG_MASK) {
     TICOS_PRINT_RESET_INFO(" Watchdog (Network)");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & NRF_RESET_RESETREAS_MFORCEOFF_MASK) {
     TICOS_PRINT_RESET_INFO(" Force off (Network)");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & NRF_RESET_RESETREAS_LCTRLAP_MASK) {
     TICOS_PRINT_RESET_INFO(" Debugger (Network)");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
 #endif
   } else if (reset_cause & NRF_RESET_RESETREAS_VBUS_MASK) {
     TICOS_PRINT_RESET_INFO(" VBUS Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
   } else if (reset_cause & NRF_RESET_RESETREAS_DOG1_MASK) {
     TICOS_PRINT_RESET_INFO(" Watchdog 1");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & NRF_RESET_RESETREAS_NFC_MASK) {
     TICOS_PRINT_RESET_INFO(" NFC Wakeup");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
   } else if (reset_cause == 0) {
     // absence of a value, means a power on reset took place
     TICOS_PRINT_RESET_INFO(" Power on Reset");
-    reset_reason = kMfltRebootReason_PowerOnReset;
+    reset_reason = kTcsRebootReason_PowerOnReset;
   } else {
     TICOS_PRINT_RESET_INFO(" Unknown");
-    reset_reason = kMfltRebootReason_Unknown;
+    reset_reason = kTcsRebootReason_Unknown;
   }
 
   return reset_reason;

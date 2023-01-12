@@ -11,16 +11,16 @@
 
 #include "ticos/panics/platform/coredump.h"
 
-typedef struct FakeMfltStorage {
+typedef struct FakeTcsStorage {
   uint8_t *buf;
   size_t size;
   size_t sector_size;
-} sFakeMfltStorage;
+} sFakeTcsStorage;
 
-static sFakeMfltStorage s_fake_tcs_storage_ctx;
+static sFakeTcsStorage s_fake_tcs_storage_ctx;
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
-  *info = (sMfltCoredumpStorageInfo) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
+  *info = (sTcsCoredumpStorageInfo) {
     .size = s_fake_tcs_storage_ctx.size,
     .sector_size = s_fake_tcs_storage_ctx.sector_size,
   };
@@ -29,7 +29,7 @@ void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
 
 void fake_ticos_platform_coredump_storage_setup(
   void *storage_buf, size_t storage_size, size_t sector_size) {
-  s_fake_tcs_storage_ctx = (sFakeMfltStorage) {
+  s_fake_tcs_storage_ctx = (sFakeTcsStorage) {
     .buf = storage_buf,
     .size =  storage_size,
     .sector_size = sector_size,

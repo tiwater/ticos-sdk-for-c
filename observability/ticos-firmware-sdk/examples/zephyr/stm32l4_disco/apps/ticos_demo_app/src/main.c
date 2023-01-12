@@ -13,7 +13,7 @@ LOG_MODULE_REGISTER(tcs_app, LOG_LEVEL_DBG);
 
 #include "ticos/ports/zephyr/http.h"
 
-sMfltHttpClientConfig g_tcs_http_client_config = {
+sTcsHttpClientConfig g_tcs_http_client_config = {
   .api_key = "<YOUR PROJECT KEY HERE>",
 };
 

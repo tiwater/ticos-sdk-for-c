@@ -39,12 +39,12 @@ TEST_GROUP(Assert) {
 TEST(Assert, Test_AssertMacrosOK) {
   mock().expectOneCall("ticos_fault_handling_assert_extra");
   p_assert_info.extra = 0x12345678;
-  p_assert_info.assert_reason = kMfltRebootReason_BusFault;
-  TICOS_ASSERT_EXTRA_AND_REASON(p_assert_info.extra, kMfltRebootReason_BusFault);
+  p_assert_info.assert_reason = kTcsRebootReason_BusFault;
+  TICOS_ASSERT_EXTRA_AND_REASON(p_assert_info.extra, kTcsRebootReason_BusFault);
 
   mock().expectOneCall("ticos_fault_handling_assert_extra");
   p_assert_info.extra++;
-  p_assert_info.assert_reason = kMfltRebootReason_Assert;
+  p_assert_info.assert_reason = kTcsRebootReason_Assert;
   TICOS_ASSERT_RECORD(p_assert_info.extra);
 
   mock().expectOneCall("ticos_fault_handling_assert_extra");
@@ -53,7 +53,7 @@ TEST(Assert, Test_AssertMacrosOK) {
 
   mock().expectOneCall("ticos_fault_handling_assert_extra");
   p_assert_info.extra = 0;
-  p_assert_info.assert_reason = kMfltRebootReason_SoftwareWatchdog;
+  p_assert_info.assert_reason = kTcsRebootReason_SoftwareWatchdog;
   TICOS_SOFTWARE_WATCHDOG();
 
   mock().expectOneCall("ticos_fault_handling_assert");

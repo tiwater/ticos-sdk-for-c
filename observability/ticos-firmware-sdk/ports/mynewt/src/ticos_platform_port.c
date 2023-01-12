@@ -131,24 +131,24 @@ int ticos_platform_boot(void) {
 static eTicosRebootReason prv_get_reboot_reason(enum hal_reset_reason reset_cause) {
   switch (reset_cause) {
     case HAL_RESET_POR:
-      return kMfltRebootReason_PowerOnReset;
+      return kTcsRebootReason_PowerOnReset;
     case HAL_RESET_PIN:
-      return kMfltRebootReason_PinReset;
+      return kTcsRebootReason_PinReset;
     case HAL_RESET_WATCHDOG:
-      return kMfltRebootReason_HardwareWatchdog;
+      return kTcsRebootReason_HardwareWatchdog;
     case HAL_RESET_SOFT:
-      return kMfltRebootReason_SoftwareReset;
+      return kTcsRebootReason_SoftwareReset;
 
     case HAL_RESET_BROWNOUT:
-      return kMfltRebootReason_BrownOutReset;
+      return kTcsRebootReason_BrownOutReset;
     case HAL_RESET_REQUESTED:
-      return kMfltRebootReason_UserReset;
+      return kTcsRebootReason_UserReset;
     case HAL_RESET_SYS_OFF_INT:
-      return kMfltRebootReason_DeepSleep;
+      return kTcsRebootReason_DeepSleep;
     case HAL_RESET_DFU:
-      return kMfltRebootReason_FirmwareUpdate;
+      return kTcsRebootReason_FirmwareUpdate;
     default:
-      return kMfltRebootReason_Unknown;
+      return kTcsRebootReason_Unknown;
   }
 }
 
@@ -173,11 +173,11 @@ void ticos_platform_reboot_tracking_boot(void) {
 #if MYNEWT_VAL(TICOS_COREDUMP_CB)
 
 
-static eTicosRebootReason s_reboot_reason = kMfltRebootReason_UnknownError;
+static eTicosRebootReason s_reboot_reason = kTcsRebootReason_UnknownError;
 
 #if MYNEWT_VAL(TICOS_ASSERT_CB)
 void os_assert_cb(void) {
-  s_reboot_reason = kMfltRebootReason_Assert;
+  s_reboot_reason = kTcsRebootReason_Assert;
 }
 #endif
 
@@ -189,22 +189,22 @@ static eTicosRebootReason prv_resolve_reason_from_active_isr(void) {
   uint32_t vect_active = __get_xPSR() & 0xff;
   switch (vect_active) {
     case 2:
-      return kMfltRebootReason_Nmi;
+      return kTcsRebootReason_Nmi;
     case 3:
-      return kMfltRebootReason_HardFault;
+      return kTcsRebootReason_HardFault;
     case 4:
-      return kMfltRebootReason_MemFault;
+      return kTcsRebootReason_MemFault;
     case 5:
-      return kMfltRebootReason_BusFault;
+      return kTcsRebootReason_BusFault;
     case 6:
-      return kMfltRebootReason_UsageFault;
+      return kTcsRebootReason_UsageFault;
     default:
-      return kMfltRebootReason_HardFault;
+      return kTcsRebootReason_HardFault;
   }
 }
 
 void os_coredump_cb(void *tf) {
-  if (s_reboot_reason == kMfltRebootReason_UnknownError) {
+  if (s_reboot_reason == kTcsRebootReason_UnknownError) {
     s_reboot_reason = prv_resolve_reason_from_active_isr();
   }
 

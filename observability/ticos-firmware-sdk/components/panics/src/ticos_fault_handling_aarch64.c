@@ -16,22 +16,22 @@
 #include "ticos/panics/fault_handling.h"
 
 TICOS_WEAK
-void ticos_platform_fault_handler(TICOS_UNUSED const sMfltRegState *regs,
+void ticos_platform_fault_handler(TICOS_UNUSED const sTcsRegState *regs,
                                      TICOS_UNUSED eTicosRebootReason reason) {}
 
-const sMfltCoredumpRegion *ticos_coredump_get_arch_regions(size_t *num_regions) {
+const sTcsCoredumpRegion *ticos_coredump_get_arch_regions(size_t *num_regions) {
   *num_regions = 0;
   return NULL;
 }
 
-static eTicosRebootReason s_crash_reason = kMfltRebootReason_Unknown;
+static eTicosRebootReason s_crash_reason = kTcsRebootReason_Unknown;
 
 TICOS_NORETURN
-void ticos_fault_handler(const sMfltRegState *regs, eTicosRebootReason reason) {
+void ticos_fault_handler(const sTcsRegState *regs, eTicosRebootReason reason) {
   ticos_platform_fault_handler(regs, reason);
 
-  if (s_crash_reason == kMfltRebootReason_Unknown) {
-    sMfltRebootTrackingRegInfo info = {
+  if (s_crash_reason == kTcsRebootReason_Unknown) {
+    sTcsRebootTrackingRegInfo info = {
       .pc = regs->pc,
       .lr = regs->x[30],
     };
@@ -63,7 +63,7 @@ void ticos_fault_handler(const sMfltRegState *regs, eTicosRebootReason reason) {
 
 TICOS_NORETURN
 static void prv_fault_handling_assert(void *pc, void *lr, eTicosRebootReason reason) {
-  sMfltRebootTrackingRegInfo info = {
+  sTcsRebootTrackingRegInfo info = {
     .pc = (uint32_t)(uintptr_t)pc,
     .lr = (uint32_t)(uintptr_t)lr,
   };
@@ -75,7 +75,7 @@ static void prv_fault_handling_assert(void *pc, void *lr, eTicosRebootReason rea
 }
 
 void ticos_fault_handling_assert(void *pc, void *lr) {
-  prv_fault_handling_assert(pc, lr, kMfltRebootReason_Assert);
+  prv_fault_handling_assert(pc, lr, kTcsRebootReason_Assert);
 }
 
 void ticos_fault_handling_assert_extra(void *pc, void *lr, sTicosAssertInfo *extra_info) {
@@ -84,11 +84,11 @@ void ticos_fault_handling_assert_extra(void *pc, void *lr, sTicosAssertInfo *ext
 
 size_t ticos_coredump_storage_compute_size_required(void) {
   // actual values don't matter since we are just computing the size
-  sMfltRegState core_regs = {0};
+  sTcsRegState core_regs = {0};
   sTicosCoredumpSaveInfo save_info = {
     .regs = &core_regs,
     .regs_size = sizeof(core_regs),
-    .trace_reason = kMfltRebootReason_UnknownError,
+    .trace_reason = kTcsRebootReason_UnknownError,
   };
 
   sCoredumpCrashInfo info = {

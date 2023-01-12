@@ -126,7 +126,7 @@ def register_value_to_bytes(gdb_scalar_value, little_endian=True):
     # of the unsigned representation
     #
 
-    # We represent all registers in the kMfltCoredumpBlockType_CurrentRegisters section of the coredump as 32 bit values (MfltCortexMRegs) so try
+    # We represent all registers in the kTcsCoredumpBlockType_CurrentRegisters section of the coredump as 32 bit values (TcsCortexMRegs) so try
     # to convert to a 4 byte representation regardless of the width reported by the gdb-server
     fmt = "i" if value_as_int < 0 else "I"
     return pack(fmt, value_as_int)
@@ -1414,7 +1414,7 @@ Proceed? [y/n]
             print("Coredump uploaded successfully!")
             print("Once it has been processed, it will appear here:")
             # FIXME: Print direct link to trace
-            # https://ticos.myjetbrains.com/youtrack/issue/MFLT-461
+            # https://ticos.myjetbrains.com/youtrack/issue/Tcs-461
             print(_infer_issues_html_url(parsed_args.ingress_uri, config))
         else:
             print("Error occurred... HTTP Status {} {}".format(status, reason))
@@ -1721,7 +1721,7 @@ def _track_script_sourced():
 
     ANALYTICS.track(
         "Script sourced",
-        # FIXME: MFLT-497 -- properly version this
+        # FIXME: Tcs-497 -- properly version this
         {
             "version": "1",
             "python": platform.python_version(),

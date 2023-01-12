@@ -46,12 +46,12 @@ typedef struct BootupInfo {
   //! passes additional state about reset to main app).
   //!
   //! @note If there is not additional info available about the reset, this should be set to 0
-  //! (kMfltRebootReason_Unknown).
+  //! (kTcsRebootReason_Unknown).
   eTicosRebootReason reset_reason;
 } sResetBootupInfo;
 
 //! Helper structure for storing/retrieving the device's reboot reason
-typedef struct MfltRebootType {
+typedef struct TcsRebootType {
   //! Stores the reboot reason determined from hardware during the current boot
   eTicosRebootReason reboot_reg_reason;
   //! Stores the reboot reason as read from s_tcs_reboot_info. This could be set in
@@ -60,7 +60,7 @@ typedef struct MfltRebootType {
   //! update, etc)
   //! * a reason determined from the reboot register at bootup
   eTicosRebootReason prior_stored_reason;
-} sMfltRebootReason;
+} sTcsRebootReason;
 
 //! Value used to determine state of reboot tracking data
 #define TICOS_REBOOT_REASON_NOT_SET 0xffffffff
@@ -91,10 +91,10 @@ typedef struct MfltRebootType {
 //!  to provide
 void ticos_reboot_tracking_boot(void *start_addr, const sResetBootupInfo *bootup_info);
 
-typedef struct MfltRebootTrackingRegInfo {
+typedef struct TcsRebootTrackingRegInfo {
   uint32_t pc;
   uint32_t lr;
-} sMfltRebootTrackingRegInfo;
+} sTcsRebootTrackingRegInfo;
 
 //! Flag that a reboot is about to take place
 //!
@@ -107,7 +107,7 @@ typedef struct MfltRebootTrackingRegInfo {
 //! @param reboot_reason The reason for the reboot. See eTicosRebootReason for options
 //! @param reg Register state at the time the reboot was initiated or NULL if no state is available
 void ticos_reboot_tracking_mark_reset_imminent(eTicosRebootReason reboot_reason,
-                                                  const sMfltRebootTrackingRegInfo *reg);
+                                                  const sTcsRebootTrackingRegInfo *reg);
 
 //! Collects recent reset info and pushes it to ticos_event_storage so that the data can
 //! can be sent out using the Ticos data packetizer
@@ -149,7 +149,7 @@ void ticos_reboot_tracking_mark_coredump_saved(void);
 //! @return 0 on success or 1 if the reboot reason is invalid
 //! or the input parameter is NULL
 
-int ticos_reboot_tracking_get_reboot_reason(sMfltRebootReason *reboot_reason);
+int ticos_reboot_tracking_get_reboot_reason(sTcsRebootReason *reboot_reason);
 
 //! Returns a boolean representing whether an unexpected reboot occurred from boot
 //!

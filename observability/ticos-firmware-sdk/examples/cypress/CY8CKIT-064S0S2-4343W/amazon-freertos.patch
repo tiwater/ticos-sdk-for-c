@@ -138,13 +138,13 @@ index 2af75a607..232e3d98e 100644
 +    .tcs_coredumps ORIGIN(flash) + LENGTH(flash) - (COREDUMPS_SIZE + CY_SIGNATURE_SIZE + CY_SIGNATURE_PADDING) :
 +    {
 +        . = ALIGN(512); /* Should be aligned, but make sure it is. */
-+        __MfltCoredumpsStart = .;
++        __TcsCoredumpsStart = .;
 +         KEEP(*(.tcs_coredumps))
 +         . = ORIGIN(flash) + LENGTH(flash) - (CY_SIGNATURE_SIZE + CY_SIGNATURE_PADDING);
-+        __MfltCoredumpsEnd = .;
++        __TcsCoredumpsEnd = .;
 +    } > flash
 +
-+    ASSERT(__MfltCoredumpsStart >= __etext, "Text overflows ticos coredumps region")
++    ASSERT(__TcsCoredumpsStart >= __etext, "Text overflows ticos coredumps region")
  
      /* Used for the digital signature of the secure application and the Bootloader SDK application.
      * The size of the section depends on the required data size. */

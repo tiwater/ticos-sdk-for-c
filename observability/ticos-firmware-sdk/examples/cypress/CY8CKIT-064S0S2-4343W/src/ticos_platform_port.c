@@ -88,41 +88,41 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
   TICOS_SDK_ASSERT(info != NULL);
 
   const uint32_t reset_cause = Cy_SysLib_GetResetReason();
-  eTicosRebootReason reset_reason = kMfltRebootReason_Unknown;
+  eTicosRebootReason reset_reason = kTcsRebootReason_Unknown;
 
   TICOS_LOG_INFO("Reset Reason, GetResetReason=0x%" PRIx32, reset_cause);
   TICOS_PRINT_RESET_INFO("Reset Causes: ");
 
   if (reset_cause & CY_SYSLIB_RESET_HWWDT) {
     TICOS_PRINT_RESET_INFO(" Watchdog Timer Reset");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & CY_SYSLIB_RESET_ACT_FAULT) {
     TICOS_PRINT_RESET_INFO(" Fault Logging System Active Reset Request");
-    reset_reason = kMfltRebootReason_UnknownError;
+    reset_reason = kTcsRebootReason_UnknownError;
   } else if (reset_cause & CY_SYSLIB_RESET_DPSLP_FAULT) {
     TICOS_PRINT_RESET_INFO(" Fault Logging System Deep-Sleep Reset Request");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
   } else if (reset_cause & CY_SYSLIB_RESET_SOFT) {
     TICOS_PRINT_RESET_INFO(" Software Reset");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & CY_SYSLIB_RESET_SWWDT0) {
     TICOS_PRINT_RESET_INFO(" MCWDT0 Reset");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & CY_SYSLIB_RESET_SWWDT1) {
     TICOS_PRINT_RESET_INFO(" MCWDT1 Reset");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & CY_SYSLIB_RESET_SWWDT2) {
     TICOS_PRINT_RESET_INFO(" MCWDT2 Reset");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & CY_SYSLIB_RESET_SWWDT3) {
     TICOS_PRINT_RESET_INFO(" MCWDT3 Reset");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & CY_SYSLIB_RESET_HIB_WAKEUP) {
     TICOS_PRINT_RESET_INFO(" Hibernation Exit Reset");
-    reset_reason = kMfltRebootReason_DeepSleep;
+    reset_reason = kTcsRebootReason_DeepSleep;
   } else {
     TICOS_PRINT_RESET_INFO(" Other Error");
-    reset_reason = kMfltRebootReason_Unknown;
+    reset_reason = kTcsRebootReason_Unknown;
   }
 
   Cy_SysLib_ClearResetReason();
@@ -165,7 +165,7 @@ void ticos_platform_log(eTicosPlatformLogLevel level, const char *fmt, ...) {
 
   vsnprintf(log_buf, sizeof(log_buf), fmt, args);
 
-  printf("[%s] MFLT: %s\n", lvl_str, log_buf);
+  printf("[%s] Tcs: %s\n", lvl_str, log_buf);
 }
 
 TICOS_PUT_IN_SECTION(".noinit.tcs_reboot_info")

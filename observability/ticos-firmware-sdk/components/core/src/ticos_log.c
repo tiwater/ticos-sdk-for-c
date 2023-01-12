@@ -34,11 +34,11 @@
 
 #define TICOS_RAM_LOGGER_VERSION 1
 
-typedef struct MfltLogStorageInfo {
+typedef struct TcsLogStorageInfo {
   void *storage;
   size_t len;
   uint16_t crc16;
-} sMfltLogStorageRegionInfo;
+} sTcsLogStorageRegionInfo;
 
 typedef struct {
   uint8_t version;
@@ -51,21 +51,21 @@ typedef struct {
   // not used by a platform, this will be equivalent to the number of messages logged since boot
   // that are no longer in the log buffer.
   uint32_t dropped_msg_count;
-  sMfltCircularBuffer circ_buffer;
+  sTcsCircularBuffer circ_buffer;
   // When initialized we keep track of the user provided storage buffer and crc the location +
   // size. When the system crashes we can check to see if this info has been corrupted in any way
   // before trying to collect the region.
-  sMfltLogStorageRegionInfo region_info;
-} sMfltRamLogger;
+  sTcsLogStorageRegionInfo region_info;
+} sTcsRamLogger;
 
-static sMfltRamLogger s_ticos_ram_logger = {
+static sTcsRamLogger s_ticos_ram_logger = {
   .enabled = false,
 };
 
 static uint16_t prv_compute_log_region_crc16(void) {
   return ticos_crc16_ccitt_compute(
       TICOS_CRC16_CCITT_INITIAL_VALUE, &s_ticos_ram_logger.region_info,
-      offsetof(sMfltLogStorageRegionInfo, crc16));
+      offsetof(sTcsLogStorageRegionInfo, crc16));
 }
 
 bool ticos_log_get_regions(sTicosLogRegions *regions) {
@@ -73,7 +73,7 @@ bool ticos_log_get_regions(sTicosLogRegions *regions) {
     return false;
   }
 
-  const sMfltLogStorageRegionInfo *region_info = &s_ticos_ram_logger.region_info;
+  const sTcsLogStorageRegionInfo *region_info = &s_ticos_ram_logger.region_info;
   const uint16_t current_crc16 = prv_compute_log_region_crc16();
   if (current_crc16 != region_info->crc16) {
     return false;
@@ -109,7 +109,7 @@ void ticos_log_set_min_save_level(eTicosPlatformLogLevel min_log_level) {
   s_ticos_ram_logger.min_log_level = min_log_level;
 }
 
-static bool prv_try_free_space(sMfltCircularBuffer *circ_bufp, int bytes_needed) {
+static bool prv_try_free_space(sTcsCircularBuffer *circ_bufp, int bytes_needed) {
   const size_t bytes_free = ticos_circular_buffer_get_write_size(circ_bufp);
   bytes_needed -= bytes_free;
   if (bytes_needed <= 0) {
@@ -134,7 +134,7 @@ static bool prv_try_free_space(sMfltCircularBuffer *circ_bufp, int bytes_needed)
 
   // Expire oldest logs until there is enough room available
   while (tot_read_space != 0) {
-    sMfltRamLogEntry curr_entry = { 0 };
+    sTcsRamLogEntry curr_entry = { 0 };
     ticos_circular_buffer_read(circ_bufp, 0, &curr_entry, sizeof(curr_entry));
     const size_t space_to_free = curr_entry.len + sizeof(curr_entry);
 
@@ -156,8 +156,8 @@ static bool prv_try_free_space(sMfltCircularBuffer *circ_bufp, int bytes_needed)
   return false; // should be unreachable
 }
 
-static void prv_iterate(TicosLogIteratorCallback callback, sMfltLogIterator *iter) {
-  sMfltCircularBuffer *const circ_bufp = &s_ticos_ram_logger.circ_buffer;
+static void prv_iterate(TicosLogIteratorCallback callback, sTcsLogIterator *iter) {
+  sTcsCircularBuffer *const circ_bufp = &s_ticos_ram_logger.circ_buffer;
   bool should_continue = true;
   while (should_continue) {
     if (!ticos_circular_buffer_read(
@@ -175,22 +175,22 @@ static void prv_iterate(TicosLogIteratorCallback callback, sMfltLogIterator *ite
   }
 }
 
-void ticos_log_iterate(TicosLogIteratorCallback callback, sMfltLogIterator *iter) {
+void ticos_log_iterate(TicosLogIteratorCallback callback, sTcsLogIterator *iter) {
   ticos_lock();
   prv_iterate(callback, iter);
   ticos_unlock();
 }
 
-bool ticos_log_iter_update_entry(sMfltLogIterator *iter) {
-  sMfltCircularBuffer *const circ_bufp = &s_ticos_ram_logger.circ_buffer;
+bool ticos_log_iter_update_entry(sTcsLogIterator *iter) {
+  sTcsCircularBuffer *const circ_bufp = &s_ticos_ram_logger.circ_buffer;
   const size_t offset_from_end =
       ticos_circular_buffer_get_read_size(circ_bufp) - iter->read_offset;
   return ticos_circular_buffer_write_at_offset(
       circ_bufp, offset_from_end, &iter->entry, sizeof(iter->entry));
 }
 
-bool ticos_log_iter_copy_msg(sMfltLogIterator *iter, TicosLogMsgCopyCallback callback) {
-  sMfltCircularBuffer *const circ_bufp = &s_ticos_ram_logger.circ_buffer;
+bool ticos_log_iter_copy_msg(sTcsLogIterator *iter, TicosLogMsgCopyCallback callback) {
+  sTcsCircularBuffer *const circ_bufp = &s_ticos_ram_logger.circ_buffer;
   return ticos_circular_buffer_read_with_callback(
     circ_bufp, iter->read_offset + sizeof(iter->entry), iter->entry.len, iter,
     (TicosCircularBufferReadCallback)callback);
@@ -199,11 +199,11 @@ bool ticos_log_iter_copy_msg(sMfltLogIterator *iter, TicosLogMsgCopyCallback cal
 typedef struct {
   sTicosLog *log;
   bool has_log;
-} sMfltReadLogCtx;
+} sTcsReadLogCtx;
 
-static bool prv_read_log_iter_callback(sMfltLogIterator *iter) {
-  sMfltReadLogCtx *const ctx = (sMfltReadLogCtx *)iter->user_ctx;
-  sMfltCircularBuffer *const circ_bufp = &s_ticos_ram_logger.circ_buffer;
+static bool prv_read_log_iter_callback(sTcsLogIterator *iter) {
+  sTcsReadLogCtx *const ctx = (sTcsReadLogCtx *)iter->user_ctx;
+  sTcsCircularBuffer *const circ_bufp = &s_ticos_ram_logger.circ_buffer;
 
   // mark the message as read
   iter->entry.hdr |= TICOS_LOG_HDR_READ_MASK;
@@ -235,11 +235,11 @@ static bool prv_read_log(sTicosLog *log) {
     return true;
   }
 
-  sMfltReadLogCtx user_ctx = {
+  sTcsReadLogCtx user_ctx = {
     .log = log
   };
 
-  sMfltLogIterator iter = {
+  sTcsLogIterator iter = {
     .read_offset = s_ticos_ram_logger.log_read_offset,
 
     .user_ctx = &user_ctx
@@ -318,13 +318,13 @@ static void prv_log_save(eTicosPlatformLogLevel level,
 
   bool log_written = false;
   const size_t truncated_log_len = TICOS_MIN(log_len, TICOS_LOG_MAX_LINE_SAVE_LEN);
-  const size_t bytes_needed = sizeof(sMfltRamLogEntry) + truncated_log_len;
+  const size_t bytes_needed = sizeof(sTcsRamLogEntry) + truncated_log_len;
   ticos_lock();
   {
-    sMfltCircularBuffer *circ_bufp = &s_ticos_ram_logger.circ_buffer;
+    sTcsCircularBuffer *circ_bufp = &s_ticos_ram_logger.circ_buffer;
     const bool space_free = prv_try_free_space(circ_bufp, (int)bytes_needed);
     if (space_free) {
-        sMfltRamLogEntry entry = {
+        sTcsRamLogEntry entry = {
           .len = (uint8_t)truncated_log_len,
           .hdr = prv_build_header(level, log_type),
         };
@@ -380,7 +380,7 @@ bool ticos_log_boot(void *storage_buffer, size_t buffer_len) {
     return false;
   }
 
-  s_ticos_ram_logger = (sMfltRamLogger) {
+  s_ticos_ram_logger = (sTcsRamLogger) {
     .version = TICOS_RAM_LOGGER_VERSION,
     .min_log_level = TICOS_RAM_LOGGER_DEFAULT_MIN_LOG_LEVEL,
     .region_info = {
@@ -399,7 +399,7 @@ bool ticos_log_boot(void *storage_buffer, size_t buffer_len) {
 }
 
 void ticos_log_reset(void) {
-  s_ticos_ram_logger = (sMfltRamLogger) {
+  s_ticos_ram_logger = (sTcsRamLogger) {
     .enabled = false,
   };
 }

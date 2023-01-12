@@ -40,8 +40,8 @@
 // compiler warnings
 #define NUM_REGIONS_TO_COLLECT TICOS_MAX(CONFIGURED_NUM_REGIONS_TO_COLLECT, 1)
 
-const sMfltCoredumpRegion *ticos_coredump_get_sdk_regions(size_t *num_regions) {
-  static sMfltCoredumpRegion s_sdk_coredump_regions[NUM_REGIONS_TO_COLLECT];
+const sTcsCoredumpRegion *ticos_coredump_get_sdk_regions(size_t *num_regions) {
+  static sTcsCoredumpRegion s_sdk_coredump_regions[NUM_REGIONS_TO_COLLECT];
 
   size_t total_regions = 0;
 

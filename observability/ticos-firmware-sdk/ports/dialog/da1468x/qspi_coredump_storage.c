@@ -170,18 +170,18 @@ bool ticos_platform_coredump_save_begin(void) {
   return true;
 }
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
   TICOS_ASSERT(info);
 
   // we are about to perform a sequence of operations on coredump storage
   // sanity check that the memory holding the info is populated and not corrupted
   const nvms_partition_t *core_part = prv_validate_and_get_core_partition();
   if (core_part == NULL) {
-    *info = (sMfltCoredumpStorageInfo) {0};
+    *info = (sTcsCoredumpStorageInfo) {0};
     return;
   }
 
-  *info = (sMfltCoredumpStorageInfo) {
+  *info = (sTcsCoredumpStorageInfo) {
     .size = s_qspi_coredump_partition_info.partition.size,
     .sector_size = 0, // No longer used
   };

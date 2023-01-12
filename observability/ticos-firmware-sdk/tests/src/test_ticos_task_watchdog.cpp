@@ -24,7 +24,7 @@ uint64_t ticos_platform_get_time_since_boot_ms(void) { return s_fake_time_ms; }
 
 void ticos_task_watchdog_platform_refresh_callback(void) { mock().actualCall(__func__); }
 
-static Mflt_sTicosAssertInfo_Comparator s_assert_info_comparator;
+static Tcs_sTicosAssertInfo_Comparator s_assert_info_comparator;
 
 TEST_GROUP(TicosTaskWatchdog){void setup(){mock().strictOrder();
 mock().installComparator("sTicosAssertInfo", s_assert_info_comparator);
@@ -70,7 +70,7 @@ TEST(TicosTaskWatchdog, Test_Expire) {
   s_fake_time_ms = TICOS_TASK_WATCHDOG_TIMEOUT_INTERVAL_MS + 1;
 
   sTicosAssertInfo extra_info = {
-    .assert_reason = kMfltRebootReason_SoftwareWatchdog,
+    .assert_reason = kTcsRebootReason_SoftwareWatchdog,
   };
   mock()
     .expectOneCall("ticos_fault_handling_assert_extra")
@@ -128,7 +128,7 @@ TEST(TicosTaskWatchdog, Test_ExpireWrapAround) {
     s_fake_time_ms += 1;
 
     sTicosAssertInfo extra_info = {
-      .assert_reason = kMfltRebootReason_SoftwareWatchdog,
+      .assert_reason = kTcsRebootReason_SoftwareWatchdog,
     };
     mock()
       .expectOneCall("ticos_fault_handling_assert_extra")

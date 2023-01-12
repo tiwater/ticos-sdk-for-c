@@ -31,7 +31,7 @@ static const sTicosEventStorageImpl *s_fake_event_storage_impl;
 
 #define TICOS_TRACE_EVENT_WORST_CASE_SIZE_BYTES (59)
 
-TEST_GROUP(MfltTraceEvent) {
+TEST_GROUP(TcsTraceEvent) {
   void setup() {
     static uint8_t s_storage[100];
     fake_ticos_event_storage_clear();
@@ -48,20 +48,20 @@ TEST_GROUP(MfltTraceEvent) {
   }
 };
 
-TEST(MfltTraceEvent, Test_BootNullStorage) {
+TEST(TcsTraceEvent, Test_BootNullStorage) {
   const int rv = ticos_trace_event_boot(NULL);
   CHECK_EQUAL(rv, -4);
 }
 
-TEST(MfltTraceEvent, Test_BootStorageTooSmall) {
+TEST(TcsTraceEvent, Test_BootStorageTooSmall) {
   fake_ticos_event_storage_set_available_space(TICOS_TRACE_EVENT_WORST_CASE_SIZE_BYTES - 1);
   const int rv = ticos_trace_event_boot(s_fake_event_storage_impl);
   CHECK_EQUAL(rv, -3);
 }
 
 
-TEST(MfltTraceEvent, Test_CaptureButStorageUninitialized) {
-  const int rv = ticos_trace_event_capture(kMfltTraceReasonUser_Unknown, NULL, NULL);
+TEST(TcsTraceEvent, Test_CaptureButStorageUninitialized) {
+  const int rv = ticos_trace_event_capture(kTcsTraceReasonUser_Unknown, NULL, NULL);
   CHECK_EQUAL(rv, -1);
 }
 
@@ -77,14 +77,14 @@ static void prv_run_capture_test(
   mock().expectOneCall("prv_finish_write").withParameter("rollback", expect_rollback);
 
   const int rv = (status_code == NULL) ?
-      ticos_trace_event_capture(kMfltTraceReasonUser_test, pc, lr) :
-      ticos_trace_event_with_status_capture(kMfltTraceReasonUser_test, pc, lr, *status_code);
+      ticos_trace_event_capture(kTcsTraceReasonUser_test, pc, lr) :
+      ticos_trace_event_with_status_capture(kTcsTraceReasonUser_test, pc, lr, *status_code);
 
   CHECK_EQUAL(expect_rollback ? -2 : 0, rv);
   mock().checkExpectations();
 }
 
-TEST(MfltTraceEvent, Test_CaptureOk_PcAndLr) {
+TEST(TcsTraceEvent, Test_CaptureOk_PcAndLr) {
   fake_ticos_event_storage_clear();
   const int rv = ticos_trace_event_boot(s_fake_event_storage_impl);
   CHECK_EQUAL(0, rv);
@@ -109,7 +109,7 @@ TEST(MfltTraceEvent, Test_CaptureOk_PcAndLr) {
   fake_event_storage_assert_contents_match(expected_data, sizeof(expected_data));
 }
 
-TEST(MfltTraceEvent, Test_CaptureOk_PcAndLrAndStatus) {
+TEST(TcsTraceEvent, Test_CaptureOk_PcAndLrAndStatus) {
   fake_ticos_event_storage_clear();
   const int rv = ticos_trace_event_boot(s_fake_event_storage_impl);
   CHECK_EQUAL(0, rv);
@@ -143,7 +143,7 @@ TEST(MfltTraceEvent, Test_CaptureOk_PcAndLrAndStatus) {
 
 #if !TICOS_COMPACT_LOG_ENABLE
 
-TEST(MfltTraceEvent, Test_CaptureOk_PcAndLrAndLog) {
+TEST(TcsTraceEvent, Test_CaptureOk_PcAndLrAndLog) {
   fake_ticos_event_storage_clear();
   int rv = ticos_trace_event_boot(s_fake_event_storage_impl);
   CHECK_EQUAL(0, rv);
@@ -184,7 +184,7 @@ TEST(MfltTraceEvent, Test_CaptureOk_PcAndLrAndLog) {
     mock().expectOneCall("prv_finish_write").withParameter("rollback", expect_rollback);
 
     rv = ticos_trace_event_with_log_capture(
-        kMfltTraceReasonUser_test, pc, lr, "%d%d%d%d%d%d789abcdetruncated", 1, 2, 3, 4, 5, 6);
+        kTcsTraceReasonUser_test, pc, lr, "%d%d%d%d%d%d789abcdetruncated", 1, 2, 3, 4, 5, 6);
 
     CHECK_EQUAL(expect_rollback ? -2 : 0, rv);
     mock().checkExpectations();
@@ -193,7 +193,7 @@ TEST(MfltTraceEvent, Test_CaptureOk_PcAndLrAndLog) {
   fake_event_storage_assert_contents_match(expected_data, sizeof(expected_data));
 }
 
-TEST(MfltTraceEvent, Test_CaptureOk_PcAndLrAndLogFromIsr) {
+TEST(TcsTraceEvent, Test_CaptureOk_PcAndLrAndLogFromIsr) {
   const uint8_t expected_data[] = {
     0xA7,
     0x02, 0x02,
@@ -227,7 +227,7 @@ TEST(MfltTraceEvent, Test_CaptureOk_PcAndLrAndLogFromIsr) {
 
   mock().expectNCalls(expected_check_isr_calls, "ticos_arch_is_inside_isr").andReturnValue(true);
   rv = ticos_trace_event_with_log_capture(
-      kMfltTraceReasonUser_test, pc, lr, "%d%d%d%d%d%d789abcdetruncated", 1, 2, 3, 4, 5, 6);
+      kTcsTraceReasonUser_test, pc, lr, "%d%d%d%d%d%d789abcdetruncated", 1, 2, 3, 4, 5, 6);
   CHECK_EQUAL(0, rv);
 
   mock().expectOneCall("prv_begin_write");
@@ -252,7 +252,7 @@ TEST(MfltTraceEvent, Test_CaptureOk_PcAndLrAndLogFromIsr) {
 
 #else
 
-TEST(MfltTraceEvent, Test_CaptureOk_PcAndLrAndCompactLog) {
+TEST(TcsTraceEvent, Test_CaptureOk_PcAndLrAndCompactLog) {
   fake_ticos_event_storage_clear();
   int rv = ticos_trace_event_boot(s_fake_event_storage_impl);
   CHECK_EQUAL(0, rv);
@@ -291,7 +291,7 @@ TEST(MfltTraceEvent, Test_CaptureOk_PcAndLrAndCompactLog) {
     mock().expectOneCall("prv_finish_write").withParameter("rollback", expect_rollback);
 
     rv = ticos_trace_event_with_compact_log_capture(
-        kMfltTraceReasonUser_test, lr, 0x40, 8, 1, 2, 3);
+        kTcsTraceReasonUser_test, lr, 0x40, 8, 1, 2, 3);
 
     CHECK_EQUAL(expect_rollback ? -2 : 0, rv);
     mock().checkExpectations();
@@ -310,19 +310,19 @@ static void prv_setup_isr_test(void) {
   mock().expectOneCall("ticos_arch_is_inside_isr").andReturnValue(true);
   void *pc = (void *)0x12345678;
   void *lr = (void *)0xaabbccdd;
-  rv = ticos_trace_event_capture(kMfltTraceReasonUser_test, pc, lr);
+  rv = ticos_trace_event_capture(kTcsTraceReasonUser_test, pc, lr);
   CHECK_EQUAL(0, rv);
   mock().checkExpectations();
 
   mock().expectOneCall("ticos_arch_is_inside_isr").andReturnValue(true);
   void *pc2 = (void *)2;
   void *lr2 = (void *)1;
-  rv = ticos_trace_event_capture(kMfltTraceReasonUser_test, pc2, lr2);
+  rv = ticos_trace_event_capture(kTcsTraceReasonUser_test, pc2, lr2);
   CHECK_EQUAL(-2, rv);
   mock().checkExpectations();
 }
 
-TEST(MfltTraceEvent, Test_CaptureOk_FromIsrWithForceFlush) {
+TEST(TcsTraceEvent, Test_CaptureOk_FromIsrWithForceFlush) {
   prv_setup_isr_test();
 
   mock().expectOneCall("prv_begin_write");
@@ -345,7 +345,7 @@ TEST(MfltTraceEvent, Test_CaptureOk_FromIsrWithForceFlush) {
   fake_event_storage_assert_contents_match(expected_data, sizeof(expected_data));
 }
 
-TEST(MfltTraceEvent, Test_CaptureOk_FromIsrWithLazyFlush) {
+TEST(TcsTraceEvent, Test_CaptureOk_FromIsrWithLazyFlush) {
   prv_setup_isr_test();
 
   bool expect_rollback = true;
@@ -355,7 +355,7 @@ TEST(MfltTraceEvent, Test_CaptureOk_FromIsrWithLazyFlush) {
   mock().expectOneCall("prv_finish_write").withParameter("rollback", expect_rollback);
   void *pc2 = (void *)NULL;
   void *lr2 = (void *)1;
-  int rv = ticos_trace_event_capture(kMfltTraceReasonUser_test, pc2, lr2);
+  int rv = ticos_trace_event_capture(kTcsTraceReasonUser_test, pc2, lr2);
   CHECK_EQUAL(-2, rv);
   mock().checkExpectations();
 
@@ -389,13 +389,13 @@ TEST(MfltTraceEvent, Test_CaptureOk_FromIsrWithLazyFlush) {
   // then the second event we want to record should be stored
   mock().expectOneCall("prv_begin_write");
   mock().expectOneCall("prv_finish_write").withParameter("rollback", expect_rollback);
-  rv = ticos_trace_event_capture(kMfltTraceReasonUser_test, pc2, lr2);
+  rv = ticos_trace_event_capture(kTcsTraceReasonUser_test, pc2, lr2);
   CHECK_EQUAL(0, rv);
 
   fake_event_storage_assert_contents_match(expected_data, sizeof(expected_data));
 }
 
-TEST(MfltTraceEvent, Test_CaptureOk_LrOnly) {
+TEST(TcsTraceEvent, Test_CaptureOk_LrOnly) {
   fake_ticos_event_storage_clear();
   const int rv = ticos_trace_event_boot(s_fake_event_storage_impl);
   CHECK_EQUAL(0, rv);
@@ -419,7 +419,7 @@ TEST(MfltTraceEvent, Test_CaptureOk_LrOnly) {
   fake_event_storage_assert_contents_match(expected_data, sizeof(expected_data));
 }
 
-TEST(MfltTraceEvent, Test_CaptureStorageFull) {
+TEST(TcsTraceEvent, Test_CaptureStorageFull) {
   fake_ticos_event_storage_clear();
   fake_ticos_event_storage_set_available_space(TICOS_TRACE_EVENT_WORST_CASE_SIZE_BYTES);
 
@@ -431,11 +431,11 @@ TEST(MfltTraceEvent, Test_CaptureStorageFull) {
   // Expect rollback!
   mock().expectOneCall("prv_finish_write").withParameter("rollback", true);
 
-  const int rv = ticos_trace_event_capture(kMfltTraceReasonUser_test, 0, 0);
+  const int rv = ticos_trace_event_capture(kTcsTraceReasonUser_test, 0, 0);
   CHECK_EQUAL(-2, rv);
 }
 
-TEST(MfltTraceEvent, Test_GetWorstCaseSerializeSize) {
+TEST(TcsTraceEvent, Test_GetWorstCaseSerializeSize) {
   const size_t worst_case_size = ticos_trace_event_compute_worst_case_storage_size();
   LONGS_EQUAL(TICOS_TRACE_EVENT_WORST_CASE_SIZE_BYTES, worst_case_size);
 }

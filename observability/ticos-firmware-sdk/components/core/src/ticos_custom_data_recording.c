@@ -39,11 +39,11 @@ typedef struct {
   size_t total_encode_len;
   sTicosCdrMetadata active_metadata;
   sTicosCdrEncodedMetadata encoded_metadata;
-} sMfltCdrSourceCtx;
+} sTcsCdrSourceCtx;
 
-static sMfltCdrSourceCtx s_ticos_cdr_source_ctx;
+static sTcsCdrSourceCtx s_ticos_cdr_source_ctx;
 
-static bool prv_encode_cdr_metadata(sTicosCborEncoder *encoder, sMfltCdrSourceCtx *cdr_ctx) {
+static bool prv_encode_cdr_metadata(sTicosCborEncoder *encoder, sTcsCdrSourceCtx *cdr_ctx) {
   const sTicosCdrMetadata *metadata = &cdr_ctx->active_metadata;
 
   if (!ticos_serializer_helper_encode_metadata_with_time(
@@ -95,7 +95,7 @@ static bool prv_encode_cdr_metadata(sTicosCborEncoder *encoder, sMfltCdrSourceCt
   return true;
 }
 
-static void prv_try_get_cdr_source_with_data(sMfltCdrSourceCtx *ctx) {
+static void prv_try_get_cdr_source_with_data(sTcsCdrSourceCtx *ctx) {
   if (ctx->active_source != NULL) {
     // a source is already active
     return;
@@ -120,7 +120,7 @@ static void prv_fill_header_cb(void *ctx, uint32_t offset, const void *buf, size
 }
 
 static bool prv_has_cdr(size_t *total_size) {
-  sMfltCdrSourceCtx *cdr_ctx = &s_ticos_cdr_source_ctx;
+  sTcsCdrSourceCtx *cdr_ctx = &s_ticos_cdr_source_ctx;
 
   prv_try_get_cdr_source_with_data(cdr_ctx);
   if (cdr_ctx->active_source == NULL) {
@@ -143,7 +143,7 @@ static bool prv_has_cdr(size_t *total_size) {
 }
 
 static bool prv_cdr_read(uint32_t offset, void *buf, size_t buf_len) {
-  sMfltCdrSourceCtx *cdr_ctx = &s_ticos_cdr_source_ctx;
+  sTcsCdrSourceCtx *cdr_ctx = &s_ticos_cdr_source_ctx;
   if (cdr_ctx->active_source == NULL) {
     return false;
   }
@@ -177,14 +177,14 @@ static bool prv_cdr_read(uint32_t offset, void *buf, size_t buf_len) {
 }
 
 static void prv_cdr_mark_sent(void) {
-  sMfltCdrSourceCtx *cdr_ctx = &s_ticos_cdr_source_ctx;
+  sTcsCdrSourceCtx *cdr_ctx = &s_ticos_cdr_source_ctx;
   if (cdr_ctx->active_source == NULL) {
     return;
   }
 
   cdr_ctx->active_source->mark_cdr_read_cb();
 
-  *cdr_ctx = (sMfltCdrSourceCtx) { 0 };
+  *cdr_ctx = (sTcsCdrSourceCtx) { 0 };
 }
 
 bool ticos_cdr_register_source(const sTicosCdrSourceImpl *impl) {
@@ -208,7 +208,7 @@ bool ticos_cdr_register_source(const sTicosCdrSourceImpl *impl) {
 
 void ticos_cdr_source_reset(void) {
   memset(s_cdr_sources, 0x0, sizeof(s_cdr_sources));
-  s_ticos_cdr_source_ctx = (sMfltCdrSourceCtx) { 0x0 };
+  s_ticos_cdr_source_ctx = (sTcsCdrSourceCtx) { 0x0 };
 }
 
 //! Expose a data source for use by the Ticos Packetizer

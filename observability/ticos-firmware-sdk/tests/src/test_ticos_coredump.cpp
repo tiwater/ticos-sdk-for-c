@@ -17,13 +17,13 @@ extern "C" {
 
   TICOS_ALIGNED(0x8) static uint8_t s_storage_buf[4 * 1024];
 
-  static sMfltCoredumpRegion s_fake_memory_region[2];
+  static sTcsCoredumpRegion s_fake_memory_region[2];
   static size_t s_num_fake_regions;
 
-  static sMfltCoredumpRegion s_fake_arch_region[3];
+  static sTcsCoredumpRegion s_fake_arch_region[3];
   static size_t s_num_fake_arch_regions;
 
-  static sMfltCoredumpRegion s_fake_sdk_region[2];
+  static sTcsCoredumpRegion s_fake_sdk_region[2];
   static size_t s_num_fake_sdk_regions;
 
   static const uint8_t s_fake_ticos_build_id[] = {
@@ -60,24 +60,24 @@ extern "C" {
   }
 }
 
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
     TICOS_UNUSED const sCoredumpCrashInfo *crash_info,
     size_t *num_regions) {
   *num_regions = s_num_fake_regions;
   return &s_fake_memory_region[0];
 }
 
-const sMfltCoredumpRegion *ticos_coredump_get_arch_regions(size_t *num_regions) {
+const sTcsCoredumpRegion *ticos_coredump_get_arch_regions(size_t *num_regions) {
   *num_regions = s_num_fake_arch_regions;
   return &s_fake_arch_region[0];
 }
 
-const sMfltCoredumpRegion *ticos_coredump_get_sdk_regions(size_t *num_regions) {
+const sTcsCoredumpRegion *ticos_coredump_get_sdk_regions(size_t *num_regions) {
   *num_regions = s_num_fake_sdk_regions;
   return &s_fake_sdk_region[0];
 }
 
-TEST_GROUP(MfltCoredumpTestGroup) {
+TEST_GROUP(TcsCoredumpTestGroup) {
   void setup() {
     mock().enable();
     fake_ticos_platform_coredump_storage_setup(s_storage_buf, sizeof(s_storage_buf), 1024);
@@ -85,58 +85,58 @@ TEST_GROUP(MfltCoredumpTestGroup) {
 
     static uint8_t s_fake_core_region0[] = { 'h', 'e', 'l', 'l', 'o','!','!','!' };
     static uint32_t s_fake_core_region1 = 0x61626364;
-    s_fake_memory_region[0].type = kMfltCoredumpRegionType_Memory;
+    s_fake_memory_region[0].type = kTcsCoredumpRegionType_Memory;
     s_fake_memory_region[0].region_start = &s_fake_core_region0;
     s_fake_memory_region[0].region_size = sizeof(s_fake_core_region0);
 
-    s_fake_memory_region[1].type = kMfltCoredumpRegionType_MemoryWordAccessOnly;
+    s_fake_memory_region[1].type = kTcsCoredumpRegionType_MemoryWordAccessOnly;
     s_fake_memory_region[1].region_start = &s_fake_core_region1;
     s_fake_memory_region[1].region_size = sizeof(s_fake_core_region1);
 
     s_num_fake_regions = 2;
 
     static uint8_t s_fake_arch_region1[] = { 'e', 'f', 'g' };
-    s_fake_arch_region[0].type = kMfltCoredumpRegionType_Memory;
+    s_fake_arch_region[0].type = kTcsCoredumpRegionType_Memory;
     s_fake_arch_region[0].region_start = &s_fake_arch_region1;
     s_fake_arch_region[0].region_size = sizeof(s_fake_arch_region1);
 
     // Valid cache of "registers" starting at 0xE0000000.
-    static uint32_t s_fake_arch_cached_block_region[(sizeof(sMfltCachedBlock) + 3*4)/4];
-    sMfltCachedBlock *blk = (sMfltCachedBlock *)&s_fake_arch_cached_block_region[0];
-    blk->blk_size = sizeof(s_fake_arch_cached_block_region) - sizeof(sMfltCachedBlock);
+    static uint32_t s_fake_arch_cached_block_region[(sizeof(sTcsCachedBlock) + 3*4)/4];
+    sTcsCachedBlock *blk = (sTcsCachedBlock *)&s_fake_arch_cached_block_region[0];
+    blk->blk_size = sizeof(s_fake_arch_cached_block_region) - sizeof(sTcsCachedBlock);
     blk->cached_address = 0xE0000000;
     blk->blk[0] = 0x12345678;
     blk->blk[1] = 0xAABBCCDD;
     blk->blk[2] = 0x9999EEEE;
     blk->valid_cache = 1;
 
-    s_fake_arch_region[1].type = kMfltCoredumpRegionType_CachedMemory;
+    s_fake_arch_region[1].type = kTcsCoredumpRegionType_CachedMemory;
     s_fake_arch_region[1].region_start = &s_fake_arch_cached_block_region;
     s_fake_arch_region[1].region_size = sizeof(s_fake_arch_cached_block_region);
 
     // Invalid cache of "registers" starting at 0xE000E000.
-    static uint32_t s_fake_arch_cached_block_region_invalid[(sizeof(sMfltCachedBlock) + 3*4)/4];
-    blk = (sMfltCachedBlock *)&s_fake_arch_cached_block_region_invalid[0];
-    blk->blk_size = sizeof(s_fake_arch_cached_block_region_invalid) - sizeof(sMfltCachedBlock);
+    static uint32_t s_fake_arch_cached_block_region_invalid[(sizeof(sTcsCachedBlock) + 3*4)/4];
+    blk = (sTcsCachedBlock *)&s_fake_arch_cached_block_region_invalid[0];
+    blk->blk_size = sizeof(s_fake_arch_cached_block_region_invalid) - sizeof(sTcsCachedBlock);
     blk->cached_address = 0xE000E000;
     blk->blk[0] = 0x77777777;
     blk->blk[1] = 0x88888888;
     blk->blk[2] = 0xFEEDFACE;
     blk->valid_cache = 0;
 
-    s_fake_arch_region[2].type = kMfltCoredumpRegionType_CachedMemory;
+    s_fake_arch_region[2].type = kTcsCoredumpRegionType_CachedMemory;
     s_fake_arch_region[2].region_start = &s_fake_arch_cached_block_region_invalid;
     s_fake_arch_region[2].region_size = sizeof(s_fake_arch_cached_block_region_invalid);
 
     s_num_fake_arch_regions = 3;
 
     static uint8_t s_fake_sdk_region1[] = { 'a', 'b', 'c' };
-    s_fake_sdk_region[0].type = kMfltCoredumpRegionType_Memory;
+    s_fake_sdk_region[0].type = kTcsCoredumpRegionType_Memory;
     s_fake_sdk_region[0].region_start = &s_fake_sdk_region1;
     s_fake_sdk_region[0].region_size = sizeof(s_fake_sdk_region1);
 
     static uint8_t s_fake_sdk_region2[] = { 'd', 'e', 'f' };
-    s_fake_sdk_region[1].type = kMfltCoredumpRegionType_Memory;
+    s_fake_sdk_region[1].type = kTcsCoredumpRegionType_Memory;
     s_fake_sdk_region[1].region_start = &s_fake_sdk_region2;
     s_fake_sdk_region[1].region_size = sizeof(s_fake_sdk_region2);
 
@@ -172,7 +172,7 @@ static void prv_assert_storage_empty(void) {
 static bool prv_collect_regions_and_save(void *regs, size_t size,
                                          uint32_t trace_reason) {
   size_t num_regions = 0;
-  const sMfltCoredumpRegion *regions =
+  const sTcsCoredumpRegion *regions =
       ticos_platform_coredump_get_regions(NULL, &num_regions);
 
   if (num_regions != 0) {
@@ -206,7 +206,7 @@ static size_t prv_compute_space_needed_with_build_id(void *regs, size_t size, ui
     mock().expectOneCall("ticos_build_info_read").andReturnValue(include_build_id);
   }
   size_t num_regions = 0;
-  const sMfltCoredumpRegion *regions =
+  const sTcsCoredumpRegion *regions =
       ticos_platform_coredump_get_regions(NULL, &num_regions);
   sTicosCoredumpSaveInfo info = {
     .regs = regs,
@@ -227,7 +227,7 @@ static size_t prv_compute_space_needed(void *regs, size_t size,
   return prv_compute_space_needed_with_build_id(regs, size, trace_reason, include_build_id);
 }
 
-TEST(MfltCoredumpTestGroup, Test_MfltCoredumpNoRegions) {
+TEST(TcsCoredumpTestGroup, Test_TcsCoredumpNoRegions) {
   s_num_fake_regions = 0;
   s_num_fake_arch_regions = 0;
   s_num_fake_sdk_regions = 0;
@@ -239,7 +239,7 @@ TEST(MfltCoredumpTestGroup, Test_MfltCoredumpNoRegions) {
   prv_assert_storage_empty();
 }
 
-TEST(MfltCoredumpTestGroup, Test_MfltCoredumpEmptyStorage) {
+TEST(TcsCoredumpTestGroup, Test_TcsCoredumpEmptyStorage) {
   fake_ticos_platform_coredump_storage_setup(NULL, 0, 1024);
 
   size_t total_size;
@@ -248,17 +248,17 @@ TEST(MfltCoredumpTestGroup, Test_MfltCoredumpEmptyStorage) {
 }
 
 
-TEST(MfltCoredumpTestGroup, Test_MfltCoredumpNothinWritten) {
+TEST(TcsCoredumpTestGroup, Test_TcsCoredumpNothinWritten) {
   prv_assert_storage_empty();
 }
 
-TEST(MfltCoredumpTestGroup, Test_MfltCoredumpStorageTooSmall) {
+TEST(TcsCoredumpTestGroup, Test_TcsCoredumpStorageTooSmall) {
   const uint32_t regs[] = { 0x10111213, 0x20212223, 0x30313233, 0x40414243, 0x50515253 };
   const uint32_t trace_reason = 0xdeadbeef;
 
   // update coredump_size_without_build_id if you add/remove regions.
   const size_t coredump_size_without_build_id = 308;
-  const size_t coredump_size_with_build_id = coredump_size_without_build_id + 20 /* sha1 */ + 12 /* sMfltCoredumpBlock */;
+  const size_t coredump_size_with_build_id = coredump_size_without_build_id + 20 /* sha1 */ + 12 /* sTcsCoredumpBlock */;
   for (size_t i = 1; i <= coredump_size_with_build_id; i++) {
     uint8_t storage[i];
     memset(storage, 0x0, sizeof(storage));
@@ -290,7 +290,7 @@ TEST(MfltCoredumpTestGroup, Test_MfltCoredumpStorageTooSmall) {
   }
 }
 
-TEST(MfltCoredumpTestGroup, Test_MfltCoredumpTruncated) {
+TEST(TcsCoredumpTestGroup, Test_TcsCoredumpTruncated) {
   const uint32_t regs[] = { 0xabababab };
   const uint32_t trace_reason = 0xdeadbeef;
 
@@ -303,13 +303,13 @@ TEST(MfltCoredumpTestGroup, Test_MfltCoredumpTruncated) {
   LONGS_EQUAL(292, space_needed);
 
   size_t num_regions;
-  const sMfltCoredumpRegion *regions =
+  const sTcsCoredumpRegion *regions =
       ticos_platform_coredump_get_regions(NULL, &num_regions);
   // this should match the number of fake regions we have in s_num_fake_regions
   LONGS_EQUAL(2, num_regions);
 
 
-  const sMfltCoredumpRegion *last_region = &regions[num_regions - 1];
+  const sTcsCoredumpRegion *last_region = &regions[num_regions - 1];
   const size_t block_hdr_len = 12;
 
   uint8_t storage[space_needed];
@@ -356,7 +356,7 @@ TEST(MfltCoredumpTestGroup, Test_MfltCoredumpTruncated) {
   ticos_platform_coredump_storage_clear();
 }
 
-TEST(MfltCoredumpTestGroup, Test_MfltCoredumpNoOverwrite) {
+TEST(TcsCoredumpTestGroup, Test_TcsCoredumpNoOverwrite) {
   const uint32_t regs[] = { 0x10111213, 0x20212223, 0x30313233, 0x40414243, 0x50515253 };
   const uint32_t trace_reason = 0xdeadbeef;
 
@@ -368,7 +368,7 @@ TEST(MfltCoredumpTestGroup, Test_MfltCoredumpNoOverwrite) {
   CHECK(!success);
 }
 
-TEST(MfltCoredumpTestGroup, Test_BadMagic) {
+TEST(TcsCoredumpTestGroup, Test_BadMagic) {
   const uint32_t regs[] = { 0x10111213, 0x20212223, 0x30313233, 0x40414243, 0x50515253 };
   const uint32_t trace_reason = 0xdeadbeef;
 
@@ -385,7 +385,7 @@ TEST(MfltCoredumpTestGroup, Test_BadMagic) {
   CHECK(!has_coredump);
 }
 
-TEST(MfltCoredumpTestGroup, Test_InvalidHeader) {
+TEST(TcsCoredumpTestGroup, Test_InvalidHeader) {
   const uint32_t regs[] = { 0x10111213, 0x20212223, 0x30313233, 0x40414243, 0x50515253 };
   const uint32_t trace_reason = 0xdeadbeef;
 
@@ -401,7 +401,7 @@ TEST(MfltCoredumpTestGroup, Test_InvalidHeader) {
   CHECK(!has_coredump);
 }
 
-TEST(MfltCoredumpTestGroup, Test_ShortHeaderRead) {
+TEST(TcsCoredumpTestGroup, Test_ShortHeaderRead) {
   uint8_t storage;
   fake_ticos_platform_coredump_storage_setup(&storage, sizeof(storage), sizeof(storage));
 
@@ -411,7 +411,7 @@ TEST(MfltCoredumpTestGroup, Test_ShortHeaderRead) {
   CHECK(!has_coredump);
 }
 
-TEST(MfltCoredumpTestGroup, Test_CoredumpReadHeaderMagic) {
+TEST(TcsCoredumpTestGroup, Test_CoredumpReadHeaderMagic) {
   const uint32_t regs[] = { 0x1, 0x2, 0x3, 0x4, 0x5 };
   const uint32_t trace_reason = 0xdead;
 
@@ -425,22 +425,22 @@ TEST(MfltCoredumpTestGroup, Test_CoredumpReadHeaderMagic) {
 
 // Returns correct region size for any region even if cached. Invalid
 // cached blocks result in zero length so they are properly ignored.
-static size_t prv_get_region_size(const sMfltCoredumpRegion *const region) {
-  if (region->type != kMfltCoredumpRegionType_CachedMemory) {
+static size_t prv_get_region_size(const sTcsCoredumpRegion *const region) {
+  if (region->type != kTcsCoredumpRegionType_CachedMemory) {
     return region->region_size;
   }
 
-  const sMfltCachedBlock *cached_block = (const sMfltCachedBlock *)region->region_start;
+  const sTcsCachedBlock *cached_block = (const sTcsCachedBlock *)region->region_start;
   return cached_block->valid_cache ? cached_block->blk_size : 0;
 }
 
 // Returns correct region start for any region even if cached.
-static const void *prv_get_region_start(const sMfltCoredumpRegion *const region) {
-  if (region->type != kMfltCoredumpRegionType_CachedMemory) {
+static const void *prv_get_region_start(const sTcsCoredumpRegion *const region) {
+  if (region->type != kTcsCoredumpRegionType_CachedMemory) {
     return region->region_start;
   }
 
-  const sMfltCachedBlock *cached_block = (const sMfltCachedBlock *)region->region_start;
+  const sTcsCachedBlock *cached_block = (const sTcsCachedBlock *)region->region_start;
   return cached_block->blk;
 }
 
@@ -449,7 +449,7 @@ static size_t prv_compute_padding_needed(uint64_t const offset) {
 }
 
 // Test the basics ... make sure the coredump is flushed out in the order we expect
-TEST(MfltCoredumpTestGroup, Test_MfltCoredumpSaveCore) {
+TEST(TcsCoredumpTestGroup, Test_TcsCoredumpSaveCore) {
   const uint32_t regs[] = { 0x1, 0x2, 0x3, 0x4, 0x5 };
   const uint32_t trace_reason = 0xdead;
 

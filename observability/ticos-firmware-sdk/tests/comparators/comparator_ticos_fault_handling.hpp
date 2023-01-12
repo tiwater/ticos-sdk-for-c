@@ -10,7 +10,7 @@ extern "C" {
 #include "ticos/panics/fault_handling.h"
 }
 
-class Mflt_sTicosAssertInfo_Comparator : public MockNamedValueComparator {
+class Tcs_sTicosAssertInfo_Comparator : public MockNamedValueComparator {
  public:
   virtual bool isEqual(const void *object1, const void *object2) {
     const sTicosAssertInfo *a = (const sTicosAssertInfo *)object1;

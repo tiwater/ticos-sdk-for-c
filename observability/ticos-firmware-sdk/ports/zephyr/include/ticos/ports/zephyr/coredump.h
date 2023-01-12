@@ -25,19 +25,19 @@ extern "C" {
 //!
 //! @return The number of entries that were populated in the 'regions' argument. Will always
 //!  be <= num_regions
-size_t ticos_zephyr_get_task_regions(sMfltCoredumpRegion *regions, size_t num_regions);
+size_t ticos_zephyr_get_task_regions(sTcsCoredumpRegion *regions, size_t num_regions);
 
 //! Helper to collect regions of RAM used for BSS variables
 //!
 //! @return The number of entries that were populated in the 'regions' argument. Will always
 //!  be <= num_regions
-size_t ticos_zephyr_get_bss_regions(sMfltCoredumpRegion *regions, size_t num_regions);
+size_t ticos_zephyr_get_bss_regions(sTcsCoredumpRegion *regions, size_t num_regions);
 
 //! Helper to collect regions of RAM used for DATA variables
 //!
 //! @return The number of entries that were populated in the 'regions' argument. Will always
 //!  be <= num_regions
-size_t ticos_zephyr_get_data_regions(sMfltCoredumpRegion *regions, size_t num_regions);
+size_t ticos_zephyr_get_data_regions(sTcsCoredumpRegion *regions, size_t num_regions);
 
 //! Run the Zephyr z_fatal_error function. This is used to execute the Zephyr
 //! error console prints, which are suppressed due to the Ticos fault handler

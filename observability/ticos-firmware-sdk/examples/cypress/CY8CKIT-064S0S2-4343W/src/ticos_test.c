@@ -27,7 +27,7 @@ int ticos_test_trace(int argc, char *argv[]) {
 
 //! Trigger a user initiated reboot and confirm reason is persisted
 int ticos_test_reboot(int argc, char *argv[]) {
-  ticos_reboot_tracking_mark_reset_imminent(kMfltRebootReason_UserReset, NULL);
+  ticos_reboot_tracking_mark_reset_imminent(kTcsRebootReason_UserReset, NULL);
   ticos_platform_reboot();
 }
 

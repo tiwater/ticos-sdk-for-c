@@ -36,7 +36,7 @@ void ticos_platform_log(eTicosPlatformLogLevel level, const char *fmt, ...) {
   va_start(args, fmt);
 
   char log_buf[128];
-  strcpy(log_buf, "MFLT: ");
+  strcpy(log_buf, "Tcs: ");
   char *write_ptr = &log_buf[0] + strlen(log_buf);
   vsnprintf(write_ptr, sizeof(log_buf) - strlen(log_buf), fmt, args);
 

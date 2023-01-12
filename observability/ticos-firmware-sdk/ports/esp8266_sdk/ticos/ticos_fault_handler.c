@@ -73,7 +73,7 @@ void __wrap_panicHandler(void *frame, int wdt) {
     // more reflective of the state of the register prior to the "panicHandler" being invoked
     const uint32_t corrected_ps = fp->ps & ~(PS_EXCM_MASK);
 
-    sMfltRegState regs = {
+    sTcsRegState regs = {
       .collection_type = (uint32_t)kTicosEsp32RegCollectionType_Lx106,
       .pc = fp->pc,
       .ps = corrected_ps,
@@ -104,7 +104,7 @@ void __wrap_panicHandler(void *frame, int wdt) {
       .exccause = fp->exccause,
       .excvaddr = 0,
     };
-    ticos_fault_handler(&regs, kMfltRebootReason_HardFault);
+    ticos_fault_handler(&regs, kTcsRebootReason_HardFault);
   } else {
     TICOS_ESP_PANIC_PRINTF("Exception while saving coredump!");
   }

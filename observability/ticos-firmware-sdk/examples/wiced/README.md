@@ -276,7 +276,7 @@ has been tested with WICED SDK v6.2.0.
 // main.c
 
 // Find your key on https://app.ticos.com/ under 'Settings':
-sMfltHttpClientConfig g_tcs_http_client_config = {
+sTcsHttpClientConfig g_tcs_http_client_config = {
     .api_key = "<YOUR PROJECT KEY HERE>",
 };
 

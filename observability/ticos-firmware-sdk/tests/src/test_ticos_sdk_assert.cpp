@@ -21,7 +21,7 @@ void ticos_sdk_assert_func_noreturn(void) {
   longjmp(s_assert_jmp_buf, -1);
 }
 
-TEST_GROUP(MfltSdkAssert) {
+TEST_GROUP(TcsSdkAssert) {
   void setup() { }
 
   void teardown() {
@@ -30,7 +30,7 @@ TEST_GROUP(MfltSdkAssert) {
   }
 };
 
-TEST(MfltSdkAssert, Test_MfltCircularBufferInit) {
+TEST(TcsSdkAssert, Test_TcsCircularBufferInit) {
   mock().expectOneCall("ticos_platform_halt_if_debugging");
   if (setjmp(s_assert_jmp_buf) == 0) {
     ticos_sdk_assert_func();

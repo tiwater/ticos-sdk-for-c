@@ -24,7 +24,7 @@ extern "C" {
   }
 }
 
-TEST_GROUP(MfltCompactLog) {
+TEST_GROUP(TcsCompactLog) {
   void setup() {
   }
 
@@ -54,7 +54,7 @@ static void prv_check_result(sTicosCborEncoder *encoder, char *result,
   free(result);
 }
 
-TEST(MfltCompactLog, Test_MfltCompactLog_NoArg) {
+TEST(TcsCompactLog, Test_TcsCompactLog_NoArg) {
   sTicosCborEncoder encoder;
 
   uint8_t expected_seq[] = {0x81, 0x0A};
@@ -67,7 +67,7 @@ TEST(MfltCompactLog, Test_MfltCompactLog_NoArg) {
   prv_check_result(&encoder, result_buf, expected_seq, expected_seq_len);
 }
 
-TEST(MfltCompactLog, Test_MfltCompactLog_Int32) {
+TEST(TcsCompactLog, Test_TcsCompactLog_Int32) {
   sTicosCborEncoder encoder;
 
   uint8_t expected_seq[] = {0x82, 0x0A, 0xB};
@@ -81,7 +81,7 @@ TEST(MfltCompactLog, Test_MfltCompactLog_Int32) {
   prv_check_result(&encoder, result_buf, expected_seq, expected_seq_len);
 }
 
-TEST(MfltCompactLog, Test_MfltCompactLog_Int64) {
+TEST(TcsCompactLog, Test_TcsCompactLog_Int64) {
   sTicosCborEncoder encoder;
 
   uint8_t expected_seq[] = {0x82, 0x0A, 0x81, 0x1b, 0x00, 0x00, 0x00, 0xe8, 0xd4, 0xa5, 0x10, 0x00};
@@ -96,7 +96,7 @@ TEST(MfltCompactLog, Test_MfltCompactLog_Int64) {
   prv_check_result(&encoder, result_buf, expected_seq, expected_seq_len);
 }
 
-TEST(MfltCompactLog, Test_MfltCompactLog_Double) {
+TEST(TcsCompactLog, Test_TcsCompactLog_Double) {
   sTicosCborEncoder encoder;
 
   uint8_t expected_seq[] = {0x82, 0x0A, 0xfb, 0x7e, 0x37, 0xe4, 0x3c, 0x88, 0x00, 0x75, 0x9c};
@@ -111,7 +111,7 @@ TEST(MfltCompactLog, Test_MfltCompactLog_Double) {
   prv_check_result(&encoder, result_buf, expected_seq, expected_seq_len);
 }
 
-TEST(MfltCompactLog, Test_MfltCompactLog_String) {
+TEST(TcsCompactLog, Test_TcsCompactLog_String) {
   sTicosCborEncoder encoder;
 
   uint8_t expected_seq[] = {0x82, 0x0A, 0x65, 'h', 'e', 'l', 'l', 'o'};
@@ -127,7 +127,7 @@ TEST(MfltCompactLog, Test_MfltCompactLog_String) {
 }
 
 
-TEST(MfltCompactLog, Test_MfltCompactLog_MultiArg) {
+TEST(TcsCompactLog, Test_TcsCompactLog_MultiArg) {
   sTicosCborEncoder encoder;
 
   uint8_t expected_seq[] = {

@@ -17,13 +17,13 @@
 extern "C" {
 #endif
 
-typedef struct MfltResetReasonInfo {
+typedef struct TcsResetReasonInfo {
   eTicosRebootReason reason;
   uint32_t pc;
   uint32_t lr;
   uint32_t reset_reason_reg0;
   bool coredump_saved;
-} sMfltResetReasonInfo;
+} sTcsResetReasonInfo;
 
 //! Clears any crash information which was stored
 void ticos_reboot_tracking_clear_reset_info(void);
@@ -31,7 +31,7 @@ void ticos_reboot_tracking_clear_reset_info(void);
 //! Clears stored reboot reason stored at bootup
 void ticos_reboot_tracking_clear_reboot_reason(void);
 
-bool ticos_reboot_tracking_read_reset_info(sMfltResetReasonInfo *info);
+bool ticos_reboot_tracking_read_reset_info(sTcsResetReasonInfo *info);
 
 #ifdef __cplusplus
 }

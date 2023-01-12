@@ -79,7 +79,7 @@ void ticos_log_set_min_save_level(eTicosPlatformLogLevel min_log_level);
     TICOS_LOG_FMT_ELF_SECTION_ENTRY(format, ## __VA_ARGS__);         \
     ticos_compact_log_save(level,                                    \
                               TICOS_LOG_FMT_ELF_SECTION_ENTRY_PTR,   \
-                              MFLT_GET_COMPRESSED_LOG_FMT(__VA_ARGS__), \
+                              Tcs_GET_COMPRESSED_LOG_FMT(__VA_ARGS__), \
                               ## __VA_ARGS__);                          \
   } while (0)
 

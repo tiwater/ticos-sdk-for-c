@@ -18,17 +18,17 @@ int ticos_http_client_post_chunk(void) {
   bool more_data = ticos_packetizer_data_available();
   if (!more_data) {
     // no new data to post
-    return kMfltPostDataStatus_NoDataFound;
+    return kTcsPostDataStatus_NoDataFound;
   }
 
-  sMfltHttpClient *http_client = ticos_http_client_create();
+  sTcsHttpClient *http_client = ticos_http_client_create();
   if (!http_client) {
     TICOS_LOG_ERROR("Failed to create HTTP client");
     return TicosInternalReturnCode_Error;
   }
 
   const int rv = ticos_http_client_post_data(http_client);
-  if ((eMfltPostDataStatus)rv !=  kMfltPostDataStatus_Success) {
+  if ((eTcsPostDataStatus)rv !=  kTcsPostDataStatus_Success) {
     TICOS_LOG_ERROR("Failed to post chunk: rv=%d", rv);
   }
   const uint32_t timeout_ms = 30 * 1000;

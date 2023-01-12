@@ -51,7 +51,7 @@ void ticos_platform_log(eTicosPlatformLogLevel level, const char *fmt, ...) {
   }
 
   if (lvl_str) {
-    arch_printf("[%s] MFLT: %s\r\n", lvl_str, log_buf);
+    arch_printf("[%s] Tcs: %s\r\n", lvl_str, log_buf);
   }
   va_end(args);
 #endif

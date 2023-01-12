@@ -93,7 +93,7 @@ size_t ticos_platform_sanitize_address_range(void *start_addr, size_t desired_si
   return 0;
 }
 
-size_t ticos_zephyr_get_task_regions(sMfltCoredumpRegion *regions, size_t num_regions) {
+size_t ticos_zephyr_get_task_regions(sTcsCoredumpRegion *regions, size_t num_regions) {
   if (regions == NULL || num_regions == 0) {
     return 0;
   }
@@ -158,7 +158,7 @@ size_t ticos_zephyr_get_task_regions(sMfltCoredumpRegion *regions, size_t num_re
   return region_idx;
 }
 
-size_t ticos_zephyr_get_data_regions(sMfltCoredumpRegion *regions, size_t num_regions) {
+size_t ticos_zephyr_get_data_regions(sTcsCoredumpRegion *regions, size_t num_regions) {
   if (num_regions == 0) {
     return 0;
   }
@@ -189,7 +189,7 @@ size_t ticos_zephyr_get_data_regions(sMfltCoredumpRegion *regions, size_t num_re
   return 1;
 }
 
-size_t ticos_zephyr_get_bss_regions(sMfltCoredumpRegion *regions, size_t num_regions) {
+size_t ticos_zephyr_get_bss_regions(sTcsCoredumpRegion *regions, size_t num_regions) {
   if (num_regions == 0) {
     return 0;
   }

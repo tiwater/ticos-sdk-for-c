@@ -1,12 +1,12 @@
 SRC_FILES = \
-  $(MFLT_TEST_SRC_DIR)/test_ticos_compact_log_c.c
+  $(Tcs_TEST_SRC_DIR)/test_ticos_compact_log_c.c
 
 
 MOCK_AND_FAKE_SRC_FILES += \
-  $(MFLT_COMPONENTS_DIR)/util/src/ticos_minimal_cbor.c \
+  $(Tcs_COMPONENTS_DIR)/util/src/ticos_minimal_cbor.c \
 
 TEST_SRC_FILES = \
-  $(MFLT_TEST_SRC_DIR)/test_ticos_compact_log_macros.cpp \
+  $(Tcs_TEST_SRC_DIR)/test_ticos_compact_log_macros.cpp \
   $(MOCK_AND_FAKE_SRC_FILES)
 
 CPPUTEST_CPPFLAGS += -DTICOS_COMPACT_LOG_ENABLE=1

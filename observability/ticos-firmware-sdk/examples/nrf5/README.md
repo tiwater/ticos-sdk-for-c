@@ -157,10 +157,10 @@ As a sanity check, let's request the device info from the debug console, enter
 
 ```
 > get_device_info
-<info> app: MFLT: S/N: C9DB1227DEAE6A52
-<info> app: MFLT: SW type: nrf-main
-<info> app: MFLT: SW version: 1.0.0
-<info> app: MFLT: HW version: nrf-proto
+<info> app: Tcs: S/N: C9DB1227DEAE6A52
+<info> app: Tcs: SW type: nrf-main
+<info> app: Tcs: SW version: 1.0.0
+<info> app: Tcs: HW version: nrf-proto
 ```
 
 In the platform reference implementation for nRF, the hardware version is
@@ -199,7 +199,7 @@ command:
 
 ```
 rtt_cli:~$ get_core
-<info> app: MFLT: Has coredump with size: 8448
+<info> app: Tcs: Has coredump with size: 8448
 ```
 
 This confirms that a coredump of 8448 bytes (the entire space allocated for the
@@ -231,7 +231,7 @@ cli using the `export` command. It should look something like:
 
 ```
 rtt_cli:~$ export
-<info> app: MFLT: MC:CAKmAgIDAQpobnJmLW1haW4JbDEuMC4wKzU1ZmMxMwZocGNhMTAwNTYEowEIBAQFAH/0:
+<info> app: Tcs: MC:CAKmAgIDAQpobnJmLW1haW4JbDEuMC4wKzU1ZmMxMwZocGNhMTAwNTYEowEIBAQFAH/0:
 ```
 
 You can copy & paste this output into the "Chunks Debug" view in the Ticos UI

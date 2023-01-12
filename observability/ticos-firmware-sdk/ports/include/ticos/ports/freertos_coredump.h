@@ -26,7 +26,7 @@ extern "C" {
 //!
 //! @return The number of entries that were populated in the 'regions' argument. Will always
 //!  be <= num_regions
-size_t ticos_freertos_get_task_regions(sMfltCoredumpRegion *regions, size_t num_regions);
+size_t ticos_freertos_get_task_regions(sTcsCoredumpRegion *regions, size_t num_regions);
 
 #ifdef __cplusplus
 }

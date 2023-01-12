@@ -30,17 +30,17 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
                       CRG_TOP_RESET_STAT_REG_SWRESET_STAT_Msk        |
                       CRG_TOP_RESET_STAT_REG_HWRESET_STAT_Msk        |
                       CRG_TOP_RESET_STAT_REG_PORESET_STAT_Msk)) {
-    reset_reason = kMfltRebootReason_PowerOnReset;
+    reset_reason = kTcsRebootReason_PowerOnReset;
   } else if (reset_cause && CRG_TOP_RESET_STAT_REG_CMAC_WDOGRESET_STAT_Msk) {
-    reset_reason = kMfltRebootReason_SoftwareWatchdog;
+    reset_reason = kTcsRebootReason_SoftwareWatchdog;
   } else if (reset_cause && CRG_TOP_RESET_STAT_REG_SWD_HWRESET_STAT_Msk) {
-    reset_reason = kMfltRebootReason_DebuggerHalted;
+    reset_reason = kTcsRebootReason_DebuggerHalted;
   } else if (reset_cause && CRG_TOP_RESET_STAT_REG_SWRESET_STAT_Msk) {
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if(reset_cause && CRG_TOP_RESET_STAT_REG_HWRESET_STAT_Msk) {
-    reset_reason = kMfltRebootReason_ButtonReset;
+    reset_reason = kTcsRebootReason_ButtonReset;
   } else {
-    reset_reason = kMfltRebootReason_Unknown;
+    reset_reason = kTcsRebootReason_Unknown;
   }
 
   *info = (sResetBootupInfo) {

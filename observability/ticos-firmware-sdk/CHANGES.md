@@ -23,7 +23,7 @@
 - Built-in Metrics
   - The built-in metric, `TicosSdkMetric_UnexpectedRebootDidOccur`,
     classifies all reboot reasons greater than or equal to
-    `kMfltRebootReason_UnknownError` **or** equal to `kMfltRebootReason_Unknown`
+    `kTcsRebootReason_UnknownError` **or** equal to `kTcsRebootReason_Unknown`
     as "unexpected reboots". It is recommended to ensure your platform's
     implementation of `ticos_reboot_reason_get` classifies the reboot
     register values as accurately and precisely as possible to avoid incorrect
@@ -559,9 +559,9 @@ Added clarifications around licensing in ports and examples folders. See
   [`ports/particle/README.md`](ports/particle/README.md).
 - Added several more
   [reboot reason options](components/include/ticos/core/reboot_reason_types.h#L16):
-  - `kMfltRebootReason_KernelPanic` for explicitly tracking fatal resets from
+  - `kTcsRebootReason_KernelPanic` for explicitly tracking fatal resets from
     within a OS or RTOS
-  - `kMfltRebootReason_FirmwareUpdateError` for explicitly tracking resets due
+  - `kTcsRebootReason_FirmwareUpdateError` for explicitly tracking resets due
     to firmware update failures or rollbacks
 
 #### :chart_with_upwards_trend: Improvements
@@ -1338,7 +1338,7 @@ path needs to be updated to `examples`:
     - Update`__CoreStart` & `__TicosCoreStorageEnd` to
       `__TicosCoreStorageStart` & `__TicosCoreStorageEnd` in linker
       script.
-    - Update `__MfltCoredumpRamStart` & `__MfltCoredumpRamEnd` to
+    - Update `__TcsCoredumpRamStart` & `__TcsCoredumpRamEnd` to
       `__TicosCoredumpRamStart` & `__TicosCoredumpRamEnd`
 
 ### Changes between Ticos SDK 0.12.0 and SDK 0.11.4 - Feb 14, 2021
@@ -1518,14 +1518,14 @@ path needs to be updated to `examples`:
 
 - Added several more
   [reboot reason options](components/include/ticos/core/reboot_reason_types.h#L16):
-  - `kMfltRebootReason_PinReset` for explicitly tracking external pin resets.
-  - `kMfltRebootReason_SoftwareWatchdog` & `kMfltRebootReason_HardwareWatchdog`
+  - `kTcsRebootReason_PinReset` for explicitly tracking external pin resets.
+  - `kTcsRebootReason_SoftwareWatchdog` & `kTcsRebootReason_HardwareWatchdog`
     for easier disambiguation between watchdog resets where a coredump was
     captured versus ones where no software handler ran and hardware reset the
     device.
-  - `kMfltRebootReason_ClockFailure` for explicit tracking of resets due to loss
+  - `kTcsRebootReason_ClockFailure` for explicit tracking of resets due to loss
     of a clock signal or PLL lock.
-  - `kMfltRebootReason_Lockup` for explicit tracking of faults from within the
+  - `kTcsRebootReason_Lockup` for explicit tracking of faults from within the
     Hardfault or NMI exceptions on ARM Cortex-M MCUs.
 - Added a utility which can be used to verify a platform coredump storage
   implementation is working as corrected. For more details about how to use, see
@@ -1668,7 +1668,7 @@ void record_temperature(void) {
 
 - Added several more
   [reboot reason options](components/include/ticos/core/reboot_reason_types.h#L16):
-  `kMfltRebootReason_SoftwareReset` & `kMfltRebootReason_DeepSleep`.
+  `kTcsRebootReason_SoftwareReset` & `kTcsRebootReason_DeepSleep`.
 - Extended [ESP32 port](https://ticos.io/esp-tutorial) to include integrations
   for [reboot reason tracking](https://ticos.io/reboot-reasons) and
   [log collection](https://ticos.io/logging).
@@ -1733,8 +1733,8 @@ void record_temperature(void) {
   user's environment.
 - Added several more
   [reboot reason options](components/include/ticos/core/reboot_reason_types.h#L16):
-  `kMfltRebootReason_PowerOnReset`, `kMfltRebootReason_BrownOutReset`, &
-  `kMfltRebootReason_Nmi`.
+  `kTcsRebootReason_PowerOnReset`, `kTcsRebootReason_BrownOutReset`, &
+  `kTcsRebootReason_Nmi`.
 
 ### Changes between Ticos SDK 0.7.0 and SDK 0.6.1 - Aug 6, 2020
 
@@ -1887,7 +1887,7 @@ void record_temperature(void) {
   - `$(TICOS_SDK_ROOT)/components/{panics => core}/src/ticos_ram_reboot_info_tracking.c`
   - `$(TICOS_SDK_ROOT)/components/{panics => core}/src/ticos_reboot_tracking_serializer.c`
 
-- `eMfltResetReason` was renamed to `eTicosRebootReason`.
+- `eTcsResetReason` was renamed to `eTicosRebootReason`.
 
 ### Changes between Ticos SDK 0.4.1 and SDK 0.4.0 - May 20, 2020
 
@@ -2015,7 +2015,7 @@ void record_temperature(void) {
 - A reboot reason event will now _always_ be generated when
   `ticos_reboot_tracking_boot()` is called even if no information about the
   reboot has been provided. In this scenario, the reset reason will be
-  [`kMfltRebootReason_Unknown`](components/include/ticos/core/reboot_reason_types.h#L16)
+  [`kTcsRebootReason_Unknown`](components/include/ticos/core/reboot_reason_types.h#L16)
 
 #### :house: Internal
 
@@ -2190,7 +2190,7 @@ void record_temperature(void) {
 
 - Add convenience API, `ticos_packetizer_get_chunk()`, to
   [data_packetizer](components/include/ticos/core/data_packetizer.h) module.
-- Add a new eMfltCoredumpRegionType, `MemoryWordAccessOnly` which can be used to
+- Add a new eTcsCoredumpRegionType, `MemoryWordAccessOnly` which can be used to
   force the region to be read 32 bits at a time. This can be useful for
   accessing certain peripheral register ranges which are not byte addressable.
 - Automatically collect Exception / ISR state for Cortex-M based targets. NOTE
@@ -2264,8 +2264,8 @@ void record_temperature(void) {
   This will require an update that looks like the following to your port:
 
 ```diff
--const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(size_t *num_regions) {
-+const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+-const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(size_t *num_regions) {
++const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
 +    const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
 ```
 
@@ -2274,7 +2274,7 @@ void record_temperature(void) {
   enough to hold a coredump. For example:
 
 ```
-  sMfltCoredumpStorageInfo storage_info = { 0 };
+  sTcsCoredumpStorageInfo storage_info = { 0 };
   ticos_platform_coredump_storage_get_info(&storage_info);
   const size_t size_needed = ticos_coredump_storage_compute_size_required();
   if (size_needed > storage_info.size) {

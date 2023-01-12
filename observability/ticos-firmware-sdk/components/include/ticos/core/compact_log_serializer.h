@@ -23,7 +23,7 @@ extern "C" {
 //!
 //! @param encoder The cbor encoder to write into
 //! @param log_id A unique identifier for the log being serialized
-//! @param compressed_fmt The formatters for the log. See MFLT_GET_COMPRESSED_LOG_FMT in
+//! @param compressed_fmt The formatters for the log. See Tcs_GET_COMPRESSED_LOG_FMT in
 //!  "ticos/core/compact_log_helpers.h" for more context
 //! @param args The list of arguments to encode
 //!

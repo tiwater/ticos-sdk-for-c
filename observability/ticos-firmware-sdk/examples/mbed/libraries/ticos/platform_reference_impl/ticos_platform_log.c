@@ -14,7 +14,7 @@
 #  define TICOS_DEBUG_LOG_BUFFER_SIZE_BYTES (128)
 #endif
 
-static const char *s_log_prefix = "MFLT:";
+static const char *s_log_prefix = "Tcs:";
 
 static const char *prv_level_to_str(eTicosPlatformLogLevel level) {
   switch (level) {

@@ -95,7 +95,7 @@ bool ticos_stm32cubel4_flash_clear_ecc_error(
   return res == HAL_OK ? 0 : res;
 }
 
-void ticos_platform_fault_handler(const sMfltRegState *regs, eTicosRebootReason reason) {
+void ticos_platform_fault_handler(const sTcsRegState *regs, eTicosRebootReason reason) {
   ticos_stm32cubel4_flash_clear_ecc_error(
       TICOS_COREDUMP_STORAGE_START_ADDR, TICOS_COREDUMP_STORAGE_END_ADDR, NULL);
 
@@ -110,16 +110,16 @@ static void prv_coredump_writer_assert_and_reboot(int error_code) {
 }
 
 static bool prv_op_within_flash_bounds(uint32_t offset, size_t data_len) {
-  sMfltCoredumpStorageInfo info = { 0 };
+  sTcsCoredumpStorageInfo info = { 0 };
   ticos_platform_coredump_storage_get_info(&info);
   return (offset + data_len) <= info.size;
 }
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
   const size_t size =
       TICOS_COREDUMP_STORAGE_END_ADDR - TICOS_COREDUMP_STORAGE_START_ADDR;
 
-  *info  = (sMfltCoredumpStorageInfo) {
+  *info  = (sTcsCoredumpStorageInfo) {
     .size = size,
     // The STM32L4 series has a fixed page size and a contiguous address layout
     .sector_size = FLASH_PAGE_SIZE,

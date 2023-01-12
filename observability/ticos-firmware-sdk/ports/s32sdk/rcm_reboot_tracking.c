@@ -34,7 +34,7 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
 
   const uint32_t reset_cause = RCM->SRS;
 
-  eTicosRebootReason reset_reason = kMfltRebootReason_Unknown;
+  eTicosRebootReason reset_reason = kTcsRebootReason_Unknown;
 
   TICOS_LOG_INFO("Reset Reason, SRS=0x%" PRIx32, reset_cause);
   TICOS_PRINT_RESET_INFO("Reset Causes: ");
@@ -48,34 +48,34 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
 
   if ((reset_cause & RCM_SRS_LVD(1)) && (reset_cause & RCM_SRS_POR(1))) {
     TICOS_PRINT_RESET_INFO(" Low or High Voltage");
-    reset_reason = kMfltRebootReason_BrownOutReset;
+    reset_reason = kTcsRebootReason_BrownOutReset;
   } else if (reset_cause & RCM_SRS_POR(1)) {
     TICOS_PRINT_RESET_INFO(" POR");
-    reset_reason = kMfltRebootReason_PowerOnReset;
+    reset_reason = kTcsRebootReason_PowerOnReset;
   } else if (reset_cause & RCM_SRS_MDM_AP(1)) {
     TICOS_PRINT_RESET_INFO(" Debugger (AP)");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & RCM_SRS_SW(1)) {
     TICOS_PRINT_RESET_INFO(" Software");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & RCM_SRS_JTAG(1)) {
     TICOS_PRINT_RESET_INFO(" Debugger (JTAG)");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & RCM_SRS_PIN(1)) {
     TICOS_PRINT_RESET_INFO(" Reset Pin");
-    reset_reason = kMfltRebootReason_ButtonReset;
+    reset_reason = kTcsRebootReason_ButtonReset;
   } else if (reset_cause & RCM_SRS_LOCKUP(1)) {
     TICOS_PRINT_RESET_INFO(" Lockup");
-    reset_reason = kMfltRebootReason_Lockup;
+    reset_reason = kTcsRebootReason_Lockup;
   } else if (reset_cause & RCM_SRS_WDOG(1)) {
     TICOS_PRINT_RESET_INFO(" Hardware Watchdog");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & RCM_SRS_LOL(1)) {
     TICOS_PRINT_RESET_INFO(" Loss of Lock in PLL/FLL");
-    reset_reason = kMfltRebootReason_ClockFailure;
+    reset_reason = kTcsRebootReason_ClockFailure;
   } else if (reset_cause & RCM_SRS_LOC(1)) {
     TICOS_PRINT_RESET_INFO(" Loss of Clock");
-    reset_reason = kMfltRebootReason_ClockFailure;
+    reset_reason = kTcsRebootReason_ClockFailure;
   }
 
   *info = (sResetBootupInfo) {

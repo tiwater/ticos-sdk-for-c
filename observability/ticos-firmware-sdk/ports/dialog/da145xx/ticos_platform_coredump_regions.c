@@ -14,10 +14,10 @@
 #endif
 
 #if !TICOS_PLATFORM_COREDUMP_STORAGE_REGIONS_CUSTOM
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
     const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
   // Let's collect the callstack at the time of crash
-  static sMfltCoredumpRegion s_coredump_regions[1];
+  static sTcsCoredumpRegion s_coredump_regions[1];
 
 #if (TICOS_PLATFORM_COREDUMP_CAPTURE_STACK_ONLY == 1)
   const void *stack_start_addr = crash_info->stack_address;

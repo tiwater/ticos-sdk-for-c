@@ -30,7 +30,7 @@
 
 #define TICOS_MAX_REGIONS (TICOS_PLATFORM_MAX_TASK_REGIONS + TICOS_MAX_EXTRA_REGIONS)
 
-static sMfltCoredumpRegion s_coredump_regions[TICOS_MAX_REGIONS];
+static sTcsCoredumpRegion s_coredump_regions[TICOS_MAX_REGIONS];
 
 typedef struct RamRegions {
   uint32_t start_addr;
@@ -59,7 +59,7 @@ size_t ticos_platform_sanitize_address_range(void *start_addr, size_t desired_si
 }
 
 #if !CONFIG_TICOS_COREDUMP_REGIONS_CUSTOM
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
     const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
    int region_idx = 0;
    const size_t stack_size_to_collect =

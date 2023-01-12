@@ -30,28 +30,28 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
 
   const uint32_t reset_cause = RCC->CSR;
 
-  eTicosRebootReason reset_reason = kMfltRebootReason_Unknown;
+  eTicosRebootReason reset_reason = kTcsRebootReason_Unknown;
 
   TICOS_LOG_INFO("Reset Reason, RCC_CSR=0x%" PRIx32, reset_cause);
   TICOS_PRINT_RESET_INFO("Reset Causes: ");
 
   if (reset_cause & LL_RCC_CSR_SFTRSTF) {
     TICOS_PRINT_RESET_INFO(" Software");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & LL_RCC_CSR_IWDGRSTF) {
     TICOS_PRINT_RESET_INFO(" Independent Watchdog");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & LL_RCC_CSR_WWDGRSTF) {
     TICOS_PRINT_RESET_INFO(" Window Watchdog");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & LL_RCC_CSR_BORRSTF) {
     TICOS_PRINT_RESET_INFO(" Brown out / POR");
     // The STM32WB doesn't have a way to disambiguate a BOR vs POR. In this scenario both BOR & PIN
     // RSTF bits will be set
-    reset_reason = kMfltRebootReason_PowerOnReset;
+    reset_reason = kTcsRebootReason_PowerOnReset;
   } else if (reset_cause & LL_RCC_CSR_PINRSTF) {
     TICOS_PRINT_RESET_INFO(" Pin Reset");
-    reset_reason = kMfltRebootReason_PinReset;
+    reset_reason = kTcsRebootReason_PinReset;
   } else if (reset_cause & LL_RCC_CSR_OBLRSTF) {
     TICOS_PRINT_RESET_INFO(" Option Byte Loader");
     // Unexpected reset type, we'll just classify as Unknown

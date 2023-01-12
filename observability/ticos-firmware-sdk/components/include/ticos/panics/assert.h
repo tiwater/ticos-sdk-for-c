@@ -22,7 +22,7 @@ extern "C" {
 //! - TICOS_ASSERT : normal assert
 //! - TICOS_ASSERT_EXTRA : assert with a single arbitrary uint32_t context value included
 //! - TICOS_ASSERT_EXTRA_AND_REASON : assert with arbitrary uint32_t value and reason code
-//! - TICOS_SOFTWARE_WATCHDOG : assert with kMfltRebootReason_SoftwareWatchdog reason set
+//! - TICOS_SOFTWARE_WATCHDOG : assert with kTcsRebootReason_SoftwareWatchdog reason set
 //!
 //! NB: We may also want to think about whether we should save off something like __LINE__ (or use a
 //! compiler flag) that blocks the compiler from coalescing asserts (since that could be confusing
@@ -42,7 +42,7 @@ extern "C" {
   } while (0)
 
 #define TICOS_ASSERT_RECORD(_extra) \
-  TICOS_ASSERT_EXTRA_AND_REASON(_extra, kMfltRebootReason_Assert)
+  TICOS_ASSERT_EXTRA_AND_REASON(_extra, kTcsRebootReason_Assert)
 
 #define TICOS_ASSERT_EXTRA(exp, _extra) \
   do {                                     \
@@ -64,7 +64,7 @@ extern "C" {
 
 //! Assert subclass to be used when a software watchdog trips.
 #define TICOS_SOFTWARE_WATCHDOG() \
-  TICOS_ASSERT_EXTRA_AND_REASON(0, kMfltRebootReason_SoftwareWatchdog)
+  TICOS_ASSERT_EXTRA_AND_REASON(0, kTcsRebootReason_SoftwareWatchdog)
 
 #ifdef __cplusplus
 }

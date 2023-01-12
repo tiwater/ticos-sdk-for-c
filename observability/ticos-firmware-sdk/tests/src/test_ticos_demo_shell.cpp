@@ -52,7 +52,7 @@ static void prv_reset_sent_buffer(void) {
   memset(s_chars_sent_buffer, 0, sizeof(s_chars_sent_buffer));
 }
 
-TEST_GROUP(MfltDemoShell){
+TEST_GROUP(TcsDemoShell){
   void setup() {
     const sTicosShellImpl impl = {
         .send_char = prv_send_char,
@@ -69,32 +69,32 @@ TEST_GROUP(MfltDemoShell){
   }
 };
 
-TEST(MfltDemoShell, Test_MfltDemoShellEcho) {
+TEST(TcsDemoShell, Test_TcsDemoShellEcho) {
   ticos_demo_shell_receive_char('h');
   ticos_demo_shell_receive_char('i');
   CHECK_EQUAL(2, s_num_chars_sent);
   STRCMP_EQUAL("hi", s_chars_sent_buffer);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellEchoBackspace) {
+TEST(TcsDemoShell, Test_TcsDemoShellEchoBackspace) {
   mock().expectOneCall("prv_test_handler")
         .withParameter("0", "test");
   prv_receive_str("x\x08test\n");
   STRCMP_EQUAL("x\x08\x20\x08test\r\ntcs> ", s_chars_sent_buffer);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellEnter) {
+TEST(TcsDemoShell, Test_TcsDemoShellEnter) {
   ticos_demo_shell_receive_char('\n');
   STRCMP_EQUAL("\r\ntcs> ", s_chars_sent_buffer);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellEnterCR) {
+TEST(TcsDemoShell, Test_TcsDemoShellEnterCR) {
   ticos_demo_shell_receive_char('\r');
   ticos_demo_shell_receive_char('\r');
   STRCMP_EQUAL("\r\ntcs> \r\ntcs> ", s_chars_sent_buffer);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellEnterCRLF) {
+TEST(TcsDemoShell, Test_TcsDemoShellEnterCRLF) {
   ticos_demo_shell_receive_char('\r');
   ticos_demo_shell_receive_char('\n');
   ticos_demo_shell_receive_char('\r');
@@ -102,13 +102,13 @@ TEST(MfltDemoShell, Test_MfltDemoShellEnterCRLF) {
   STRCMP_EQUAL("\r\ntcs> \r\ntcs> ", s_chars_sent_buffer);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellEnterLF) {
+TEST(TcsDemoShell, Test_TcsDemoShellEnterLF) {
   ticos_demo_shell_receive_char('\n');
   ticos_demo_shell_receive_char('\n');
   STRCMP_EQUAL("\r\ntcs> \r\ntcs> ", s_chars_sent_buffer);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellEnterLFCR) {
+TEST(TcsDemoShell, Test_TcsDemoShellEnterLFCR) {
   ticos_demo_shell_receive_char('\n');
   ticos_demo_shell_receive_char('\r');
   ticos_demo_shell_receive_char('\n');
@@ -116,12 +116,12 @@ TEST(MfltDemoShell, Test_MfltDemoShellEnterLFCR) {
   STRCMP_EQUAL("\r\ntcs> \r\ntcs> ", s_chars_sent_buffer);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellUnknownCmd) {
+TEST(TcsDemoShell, Test_TcsDemoShellUnknownCmd) {
   prv_receive_str("foo\n");
   STRCMP_EQUAL("foo\r\nUnknown command: foo\r\nType 'help' to list all commands\r\ntcs> ", s_chars_sent_buffer);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellTestCmd) {
+TEST(TcsDemoShell, Test_TcsDemoShellTestCmd) {
   mock().expectOneCall("prv_test_handler")
     .withParameter("0", "test")
     .withParameter("1", "123")
@@ -132,19 +132,19 @@ TEST(MfltDemoShell, Test_MfltDemoShellTestCmd) {
   STRCMP_EQUAL("test 123 abc    def g\r\ntcs> ", s_chars_sent_buffer);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellStripLeadingSpaces) {
+TEST(TcsDemoShell, Test_TcsDemoShellStripLeadingSpaces) {
   mock().expectOneCall("prv_test_handler")
         .withParameter("0", "test");
   prv_receive_str("    test\n");
   STRCMP_EQUAL("    test\r\ntcs> ", s_chars_sent_buffer);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellHelpCmd) {
+TEST(TcsDemoShell, Test_TcsDemoShellHelpCmd) {
   prv_receive_str("help\n");
   STRCMP_EQUAL("help\r\ntest: test command\r\nhelp: Lists all commands\r\ntcs> ", s_chars_sent_buffer);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellRxBufferFull) {
+TEST(TcsDemoShell, Test_TcsDemoShellRxBufferFull) {
   for (size_t i = 0; i < TICOS_DEMO_SHELL_RX_BUFFER_SIZE; ++i) {
     ticos_demo_shell_receive_char('X');
   }
@@ -156,7 +156,7 @@ TEST(MfltDemoShell, Test_MfltDemoShellRxBufferFull) {
       s_chars_sent_buffer);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellBackspaces) {
+TEST(TcsDemoShell, Test_TcsDemoShellBackspaces) {
   mock().expectOneCall("prv_test_handler")
       .withParameter("0", "test")
       .withParameter("1", "1");
@@ -167,7 +167,7 @@ TEST(MfltDemoShell, Test_MfltDemoShellBackspaces) {
   MEMCMP_EQUAL("nop\b \b\b \b\b \btest 1\r\ntcs> ", s_chars_sent_buffer, s_num_chars_sent);
 }
 
-TEST(MfltDemoShell, Test_MfltDemoShellNotBooted) {
+TEST(TcsDemoShell, Test_TcsDemoShellNotBooted) {
    const sTicosShellImpl impl = {
      .send_char = NULL,
    };

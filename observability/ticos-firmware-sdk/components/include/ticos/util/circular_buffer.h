@@ -26,7 +26,7 @@ typedef struct {
   size_t read_size;
   size_t total_space;
   uint8_t *storage;
-} sMfltCircularBuffer;
+} sTcsCircularBuffer;
 
 //! Called to initialize circular buffer context
 //!
@@ -35,7 +35,7 @@ typedef struct {
 //! @param storage_len Size of storage area
 //!
 //! @return true if successfully configured, else false
-bool ticos_circular_buffer_init(sMfltCircularBuffer *circular_buf, void *storage_buf,
+bool ticos_circular_buffer_init(sTcsCircularBuffer *circular_buf, void *storage_buf,
                                    size_t storage_len);
 
 //! Read the requested number of bytes
@@ -48,7 +48,7 @@ bool ticos_circular_buffer_init(sMfltCircularBuffer *circular_buf, void *storage
 //!
 //! @return true if the requested data_len was read, false otherwise (i.e trying to read more bytes
 //! than are available or past the end of available bytes)
-bool ticos_circular_buffer_read(sMfltCircularBuffer *circular_buf, size_t offset,
+bool ticos_circular_buffer_read(sTcsCircularBuffer *circular_buf, size_t offset,
                                    void *data, size_t data_len);
 
 //! Populates the read_ptr with a set of contigous bytes which can be read.
@@ -62,7 +62,7 @@ bool ticos_circular_buffer_read(sMfltCircularBuffer *circular_buf, size_t offset
 //! @param data_len The length which can be read
 //!
 //! @return true if a read pointer was successfully populated
-bool ticos_circular_buffer_get_read_pointer(sMfltCircularBuffer *circular_buf, size_t offset,
+bool ticos_circular_buffer_get_read_pointer(sTcsCircularBuffer *circular_buf, size_t offset,
                                                uint8_t **read_ptr, size_t *read_ptr_len);
 
 //! Callback invoked when "ticos_circular_buffer_read_with_callback" is called.
@@ -89,7 +89,7 @@ typedef bool (*TicosCircularBufferReadCallback)(void *ctx, size_t offset,
 //! is data in the buffer and it is stored in a contiguous block of memory, the callback argument
 //! gets invoked once. If the data is stored in non-contiguous blocks of memory, the callback will
 //! be called for each block.
-bool ticos_circular_buffer_read_with_callback(sMfltCircularBuffer *circular_buf,
+bool ticos_circular_buffer_read_with_callback(sTcsCircularBuffer *circular_buf,
                                                  size_t offset, size_t data_len, void *ctx,
                                                  TicosCircularBufferReadCallback callback);
 
@@ -101,7 +101,7 @@ bool ticos_circular_buffer_read_with_callback(sMfltCircularBuffer *circular_buf,
 //!
 //! @return true if the bytes were consumed, false otherwise (i.e trying to consume more bytes than
 //!   exist)
-bool ticos_circular_buffer_consume(sMfltCircularBuffer *circular_buf, size_t consume_len);
+bool ticos_circular_buffer_consume(sTcsCircularBuffer *circular_buf, size_t consume_len);
 
 
 //! Same as "ticos_circular_buffer_consume" but flush the requested number of bytes from
@@ -109,7 +109,7 @@ bool ticos_circular_buffer_consume(sMfltCircularBuffer *circular_buf, size_t con
 //!
 //! This can be useful for lazily aborting a write that spans multiple write calls
 //! where the entire size of the write is not known upfront
-bool ticos_circular_buffer_consume_from_end(sMfltCircularBuffer *circular_buf,
+bool ticos_circular_buffer_consume_from_end(sTcsCircularBuffer *circular_buf,
                                                size_t consume_len);
 
 //! Copy data into the circular buffer
@@ -120,7 +120,7 @@ bool ticos_circular_buffer_consume_from_end(sMfltCircularBuffer *circular_buf,
 //!
 //! @return true if there was enough space and the _entire_ buffer was copied, false otherwise.
 //! Note if there is not enough space, _no_ data will be written.
-bool ticos_circular_buffer_write(sMfltCircularBuffer *circular_buf, const void *data,
+bool ticos_circular_buffer_write(sTcsCircularBuffer *circular_buf, const void *data,
                                     size_t data_len);
 
 //! Copy data into the circular buffer starting at the provided offset from the end
@@ -134,13 +134,13 @@ bool ticos_circular_buffer_write(sMfltCircularBuffer *circular_buf, const void *
 //!
 //! @return true if there was enough space and the _entire_ buffer was copied, false otherwise
 bool ticos_circular_buffer_write_at_offset(
-    sMfltCircularBuffer *circular_buf, size_t offset_from_end, const void *data, size_t data_len);
+    sTcsCircularBuffer *circular_buf, size_t offset_from_end, const void *data, size_t data_len);
 
 //! @return Amount of bytes available to read
-size_t ticos_circular_buffer_get_read_size(const sMfltCircularBuffer *circular_buf);
+size_t ticos_circular_buffer_get_read_size(const sTcsCircularBuffer *circular_buf);
 
 //! @return Amount of bytes available for writing
-size_t ticos_circular_buffer_get_write_size(const sMfltCircularBuffer *circular_buf);
+size_t ticos_circular_buffer_get_write_size(const sTcsCircularBuffer *circular_buf);
 
 #ifdef __cplusplus
 }

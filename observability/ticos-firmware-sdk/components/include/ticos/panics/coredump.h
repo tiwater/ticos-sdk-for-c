@@ -25,7 +25,7 @@ typedef struct TicosCoredumpSaveInfo {
   const void *regs;
   size_t regs_size;
   eTicosRebootReason trace_reason;
-  const sMfltCoredumpRegion *regions;
+  const sTcsCoredumpRegion *regions;
   size_t num_regions;
 } sTicosCoredumpSaveInfo;
 
@@ -44,7 +44,7 @@ bool ticos_coredump_save(const sTicosCoredumpSaveInfo *save_info);
 //!
 //! @param regs The register state at the time of the fault occurred
 //! @param reason The reason the fault occurred
-void ticos_fault_handler(const sMfltRegState *regs, eTicosRebootReason reason);
+void ticos_fault_handler(const sTcsRegState *regs, eTicosRebootReason reason);
 
 //! First function called in "ticos_fault_handler".
 //!
@@ -52,7 +52,7 @@ void ticos_fault_handler(const sMfltRegState *regs, eTicosRebootReason reason);
 //! or print metadata about the fault which occurred
 //!
 //! @note By default this is a weak function which behaves as a no-op.
-extern void ticos_platform_fault_handler(const sMfltRegState *regs, eTicosRebootReason reason);
+extern void ticos_platform_fault_handler(const sTcsRegState *regs, eTicosRebootReason reason);
 
 //! Checks that a coredump can fit in the platform storage allocated
 //!

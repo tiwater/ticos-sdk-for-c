@@ -46,7 +46,7 @@ static void prv_run_header_check(uint8_t *log_entry,
                                  eTicosPlatformLogLevel expected_level,
                                  const char *expected_log,
                                  size_t expected_log_len) {
-  // NOTE: Since sMfltRamLogEntry is serialized out, we manually check the header here instead of
+  // NOTE: Since sTcsRamLogEntry is serialized out, we manually check the header here instead of
   // sharing the struct definition to catch unexpected changes in the layout.
   LONGS_EQUAL(expected_level & 0x7, log_entry[0]);
   LONGS_EQUAL(expected_log_len & 0xff, log_entry[1]);
@@ -114,7 +114,7 @@ TEST(TicosLog, Test_TicosLogBasic) {
 }
 
 TEST(TicosLog, Test_TicosLogOversize) {
-  uint8_t s_ram_log_store[TICOS_LOG_MAX_LINE_SAVE_LEN + sizeof(sMfltRamLogEntry)];
+  uint8_t s_ram_log_store[TICOS_LOG_MAX_LINE_SAVE_LEN + sizeof(sTcsRamLogEntry)];
   memset(s_ram_log_store, 0, sizeof(s_ram_log_store));
   ticos_log_boot(s_ram_log_store, sizeof(s_ram_log_store));
 
@@ -149,7 +149,7 @@ TEST(TicosLog, Test_TicosLog_GetRegions) {
   LONGS_EQUAL(s_ram_log_store, regions.region[1].region_start);
   LONGS_EQUAL(sizeof(s_ram_log_store), regions.region[1].region_size);
 
-  // sanity check - first region should be sMfltRamLogger
+  // sanity check - first region should be sTcsRamLogger
   const uint8_t *tcs_ram_logger = (const uint8_t *)regions.region[0].region_start;
   LONGS_EQUAL(1, tcs_ram_logger[0]); // version == 1
   LONGS_EQUAL(1, tcs_ram_logger[1]); // enabled == 1
@@ -298,7 +298,7 @@ TEST(TicosLog, Test_DroppedLogs) {
   prv_read_log_and_check(level, type, expected_msg5, strlen(expected_msg5));
 }
 
-static bool prv_log_entry_copy_callback(sMfltLogIterator *iter, size_t offset,
+static bool prv_log_entry_copy_callback(sTcsLogIterator *iter, size_t offset,
                                         const char *buf, size_t buf_len) {
   return mock()
     .actualCall(__func__)
@@ -309,7 +309,7 @@ static bool prv_log_entry_copy_callback(sMfltLogIterator *iter, size_t offset,
     .returnBoolValueOrDefault(true);
 }
 
-static bool prv_iterate_callback(sMfltLogIterator *iter){
+static bool prv_iterate_callback(sTcsLogIterator *iter){
   mock().actualCall("prv_iterate_callback")
     .withUnsignedLongIntParameter("read_offset", iter->read_offset);
   ticos_log_iter_copy_msg(iter, prv_log_entry_copy_callback);
@@ -329,7 +329,7 @@ TEST(TicosLog, Test_Iterate) {
   const size_t log1_len = strlen(log1);
   ticos_log_save_preformatted(level, log1, log1_len);
 
-  sMfltLogIterator iterator = (sMfltLogIterator) {0};
+  sTcsLogIterator iterator = (sTcsLogIterator) {0};
 
   mock().enable();
 

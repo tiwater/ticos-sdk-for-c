@@ -5,7 +5,7 @@
 #include "CppUTestExt/MockSupport.h"
 #include "ticos/core/reboot_tracking.h"
 
-int ticos_reboot_tracking_get_reboot_reason(sMfltRebootReason *reboot_reason) {
+int ticos_reboot_tracking_get_reboot_reason(sTcsRebootReason *reboot_reason) {
   return mock()
     .actualCall(__func__)
     .withOutputParameter("reboot_reason", reboot_reason)

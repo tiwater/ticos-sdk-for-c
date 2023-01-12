@@ -18,14 +18,14 @@ extern "C" {
 
   static const uint8_t s_test_msg[] = { 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0xa };
   static const uint8_t *s_active_msg = NULL;
-  static sMfltChunkTransportCtx s_chunk_ctx;
+  static sTcsChunkTransportCtx s_chunk_ctx;
 
   typedef struct {
     size_t total_bytes_read;
     size_t last_offset;
-  } sMfltChunkReadStats;
+  } sTcsChunkReadStats;
 
-  static sMfltChunkReadStats s_chunk_read_stats;
+  static sTcsChunkReadStats s_chunk_read_stats;
 
   static void prv_chunk_msg(uint32_t offset, void *out_buf, size_t out_buf_len) {
     // One property enforced on the chunker is that all the reads are performed sequentially. This
@@ -60,7 +60,7 @@ TEST_GROUP(TicosChunkTransport){
   }
 };
 
-static void prv_check_chunk(sMfltChunkTransportCtx *ctx, bool expect_md, size_t receive_buf_len,
+static void prv_check_chunk(sTcsChunkTransportCtx *ctx, bool expect_md, size_t receive_buf_len,
                             const void *expected_chunk, size_t expected_chunk_len) {
   uint8_t actual_chunk[receive_buf_len];
   memset(actual_chunk, 0x0, receive_buf_len);

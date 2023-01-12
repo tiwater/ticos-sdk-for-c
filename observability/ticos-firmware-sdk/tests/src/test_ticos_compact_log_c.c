@@ -28,7 +28,7 @@ static void prv_expect_compact_log_call(uint32_t compressed_fmt) {
 #define TICOS_COMPACT_LOG_CHECK(format, ...)                       \
   do {                                                                \
     TICOS_LOGGING_RUN_COMPILE_TIME_CHECKS(format, ## __VA_ARGS__); \
-    prv_compact_log_mock(MFLT_GET_COMPRESSED_LOG_FMT(__VA_ARGS__),    \
+    prv_compact_log_mock(Tcs_GET_COMPRESSED_LOG_FMT(__VA_ARGS__),    \
                                ## __VA_ARGS__);                       \
   } while (0)
 

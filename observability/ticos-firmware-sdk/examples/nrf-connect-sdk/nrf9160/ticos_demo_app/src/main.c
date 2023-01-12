@@ -99,7 +99,7 @@ static char s_fw_version[16] = "1.0.0-dev";
 #define TICOS_NCS_PROJECT_KEY "<YOUR PROJECT KEY HERE>"
 #endif
 
-sMfltHttpClientConfig g_tcs_http_client_config = {
+sTcsHttpClientConfig g_tcs_http_client_config = {
   .api_key = TICOS_NCS_PROJECT_KEY,
 };
 

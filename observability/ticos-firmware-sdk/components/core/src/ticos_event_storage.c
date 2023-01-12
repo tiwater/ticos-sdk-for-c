@@ -75,7 +75,7 @@ typedef TICOS_PACKED_STRUCT {
   uint16_t total_size;
 } sTicosEventStorageHeader;
 
-static sMfltCircularBuffer s_event_storage;
+static sTcsCircularBuffer s_event_storage;
 static sTicosEventStorageWriteState s_event_storage_write_state;
 static sTicosEventStorageReadState s_event_storage_read_state;
 

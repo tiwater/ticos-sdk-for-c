@@ -40,7 +40,7 @@ typedef struct {
   uint8_t short_len;
   uint8_t rsvd;
   const void *storage;
-  const sMfltSdkVersion sdk_version;
+  const sTcsSdkVersion sdk_version;
 } sTicosBuildIdStorage;
 
 TICOS_STATIC_ASSERT(((offsetof(sTicosBuildIdStorage, type) == 0) &&

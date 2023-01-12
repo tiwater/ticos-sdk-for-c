@@ -43,7 +43,7 @@ static void log_init(void) {
 static void prv_wdt_event_handler(void) {
   // Note: This handler should be entirely unreachable as the software watchdog should kick in
   // first but just in case let's reboot if it is invoked.
-  ticos_reboot_tracking_mark_reset_imminent(kMfltRebootReason_HardwareWatchdog, NULL);
+  ticos_reboot_tracking_mark_reset_imminent(kTcsRebootReason_HardwareWatchdog, NULL);
   ticos_platform_reboot();
   TICOS_UNREACHABLE;
 }

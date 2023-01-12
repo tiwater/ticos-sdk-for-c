@@ -4,7 +4,7 @@
 system to integrate the reference port into a stm32h7 device. It expects two
 variables to be defined prior to including the makefile
 
-- `EMBEDDED_MFLT_SDK_ROOT` - The location for the root directory of this
+- `EMBEDDED_Tcs_SDK_ROOT` - The location for the root directory of this
   repository
 - `STM32_CUBE_DIR` - The location of the root directory for the STM32 Cube HAL.
   This demo was tested with the V1.5.0 STM32H7CUBE HAL available

@@ -51,7 +51,7 @@ void ticos_platform_get_device_info(sTicosDeviceInfo *info) {
 ```
 
 ```
-sMfltHttpClientConfig g_tcs_http_client_config = {
+sTcsHttpClientConfig g_tcs_http_client_config = {
   .api_key = "<YOUR PROJECT KEY HERE>",
 };
 ```

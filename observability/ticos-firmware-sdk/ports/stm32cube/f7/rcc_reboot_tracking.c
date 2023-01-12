@@ -24,7 +24,7 @@
 void ticos_reboot_reason_get(sResetBootupInfo *info) {
   const uint32_t reset_cause = RCC->CSR;
 
-  eTicosRebootReason reset_reason = kMfltRebootReason_Unknown;
+  eTicosRebootReason reset_reason = kTcsRebootReason_Unknown;
 
   TICOS_PRINT_RESET_INFO("Reset Reason, RCC_CSR=0x%" PRIx32, reset_cause);
   TICOS_PRINT_RESET_INFO("Reset Causes: ");
@@ -35,28 +35,28 @@ void ticos_reboot_reason_get(sResetBootupInfo *info) {
   // to the reset pin, see section 5.1.2 of the Reference Manual.
   if (reset_cause & RCC_CSR_SFTRSTF_Msk) {
     TICOS_PRINT_RESET_INFO(" Software");
-    reset_reason = kMfltRebootReason_SoftwareReset;
+    reset_reason = kTcsRebootReason_SoftwareReset;
   } else if (reset_cause & RCC_CSR_PORRSTF_Msk) {
     TICOS_PRINT_RESET_INFO(" Power on Reset");
-    reset_reason = kMfltRebootReason_PowerOnReset;
+    reset_reason = kTcsRebootReason_PowerOnReset;
   } else if (reset_cause & RCC_CSR_BORRSTF_Msk) {
     TICOS_PRINT_RESET_INFO(" Brown out");
-    reset_reason = kMfltRebootReason_BrownOutReset;
+    reset_reason = kTcsRebootReason_BrownOutReset;
   } else if (reset_cause & RCC_CSR_WWDGRSTF_Msk) {
     TICOS_PRINT_RESET_INFO(" Window Watchdog");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & RCC_CSR_IWDGRSTF_Msk) {
     TICOS_PRINT_RESET_INFO(" Independent Watchdog");
-    reset_reason = kMfltRebootReason_HardwareWatchdog;
+    reset_reason = kTcsRebootReason_HardwareWatchdog;
   } else if (reset_cause & RCC_CSR_LPWRRSTF_Msk) {
     TICOS_PRINT_RESET_INFO(" Low Power");
-    reset_reason = kMfltRebootReason_LowPower;
+    reset_reason = kTcsRebootReason_LowPower;
   } else if (reset_cause & RCC_CSR_PINRSTF_Msk) {
     TICOS_PRINT_RESET_INFO(" Pin Reset");
-    reset_reason = kMfltRebootReason_PinReset;
+    reset_reason = kTcsRebootReason_PinReset;
   } else {
     TICOS_PRINT_RESET_INFO(" Unknown");
-    reset_reason = kMfltRebootReason_Unknown;
+    reset_reason = kTcsRebootReason_Unknown;
   }
 
 #if TICOS_REBOOT_REASON_CLEAR

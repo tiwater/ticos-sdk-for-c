@@ -18,9 +18,9 @@
 #include "ticos/panics/coredump.h"
 #include "ticos/panics/coredump_impl.h"
 
-static eTicosRebootReason s_crash_reason = kMfltRebootReason_Unknown;
+static eTicosRebootReason s_crash_reason = kTcsRebootReason_Unknown;
 
-typedef TICOS_PACKED_STRUCT MfltCortexMRegs {
+typedef TICOS_PACKED_STRUCT TcsCortexMRegs {
   uint32_t r0;
   uint32_t r1;
   uint32_t r2;
@@ -40,15 +40,15 @@ typedef TICOS_PACKED_STRUCT MfltCortexMRegs {
   uint32_t psr;
   uint32_t msp;
   uint32_t psp;
-} sMfltCortexMRegs;
+} sTcsCortexMRegs;
 
 size_t ticos_coredump_storage_compute_size_required(void) {
   // actual values don't matter since we are just computing the size
-  sMfltCortexMRegs core_regs = { 0 };
+  sTcsCortexMRegs core_regs = { 0 };
   sTicosCoredumpSaveInfo save_info = {
     .regs = &core_regs,
     .regs_size = sizeof(core_regs),
-    .trace_reason = kMfltRebootReason_UnknownError,
+    .trace_reason = kTcsRebootReason_UnknownError,
   };
 
   sCoredumpCrashInfo info = {
@@ -104,17 +104,17 @@ static uint32_t prv_read_msp_reg(void) {
 
 #if !TICOS_PLATFORM_FAULT_HANDLER_CUSTOM
 TICOS_WEAK
-void ticos_platform_fault_handler(TICOS_UNUSED const sMfltRegState *regs,
+void ticos_platform_fault_handler(TICOS_UNUSED const sTcsRegState *regs,
                                      TICOS_UNUSED eTicosRebootReason reason) {
 }
 #endif /* TICOS_PLATFORM_FAULT_HANDLER_CUSTOM */
 
 TICOS_USED
-void ticos_fault_handler(const sMfltRegState *regs, eTicosRebootReason reason) {
+void ticos_fault_handler(const sTcsRegState *regs, eTicosRebootReason reason) {
   ticos_platform_fault_handler(regs, reason);
 
-  if (s_crash_reason == kMfltRebootReason_Unknown) {
-    sMfltRebootTrackingRegInfo info = {
+  if (s_crash_reason == kTcsRebootReason_Unknown) {
+    sTcsRebootTrackingRegInfo info = {
       .pc = regs->exception_frame->pc,
       .lr = regs->exception_frame->lr,
     };
@@ -137,7 +137,7 @@ void ticos_fault_handler(const sMfltRegState *regs, eTicosRebootReason reason) {
   //  1 = Process Stack Pointer in use prior to exception
   const bool msp_was_active = (regs->exc_return & (1 << 2)) == 0;
 
-  sMfltCortexMRegs core_regs = {
+  sTcsCortexMRegs core_regs = {
     .r0 = regs->exception_frame->r0,
     .r1 = regs->exception_frame->r1,
     .r2 = regs->exception_frame->r2,
@@ -184,7 +184,7 @@ void ticos_fault_handler(const sMfltRegState *regs, eTicosRebootReason reason) {
 
 
 // The fault handling shims below figure out what stack was being used leading up to the exception,
-// build the sMfltRegState argument and pass that as well as the reboot reason to ticos_fault_handler
+// build the sTcsRegState argument and pass that as well as the reboot reason to ticos_fault_handler
 
 
 #if defined(__CC_ARM)
@@ -244,7 +244,7 @@ msp_active_at_crash mov r3, r11
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_HARD_FAULT(void) {
-  ldr r0, =0x9400 // kMfltRebootReason_HardFault
+  ldr r0, =0x9400 // kTcsRebootReason_HardFault
   ldr r1, =ticos_fault_handling_shim
   bx r1
   ALIGN
@@ -252,7 +252,7 @@ void TICOS_EXC_HANDLER_HARD_FAULT(void) {
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_MEMORY_MANAGEMENT(void) {
-  ldr r0, =0x9200 // kMfltRebootReason_MemFault
+  ldr r0, =0x9200 // kTcsRebootReason_MemFault
   ldr r1, =ticos_fault_handling_shim
   bx r1
   ALIGN
@@ -260,7 +260,7 @@ void TICOS_EXC_HANDLER_MEMORY_MANAGEMENT(void) {
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_BUS_FAULT(void) {
-  ldr r0, =0x9100 // kMfltRebootReason_BusFault
+  ldr r0, =0x9100 // kTcsRebootReason_BusFault
   ldr r1, =ticos_fault_handling_shim
   bx r1
   ALIGN
@@ -268,7 +268,7 @@ void TICOS_EXC_HANDLER_BUS_FAULT(void) {
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_USAGE_FAULT(void) {
-  ldr r0, =0x9300 // kMfltRebootReason_UsageFault
+  ldr r0, =0x9300 // kTcsRebootReason_UsageFault
   ldr r1, =ticos_fault_handling_shim
   bx r1
   ALIGN
@@ -276,7 +276,7 @@ void TICOS_EXC_HANDLER_USAGE_FAULT(void) {
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_NMI(void) {
-  ldr r0, =0x8004 // kMfltRebootReason_Nmi
+  ldr r0, =0x8004 // kTcsRebootReason_Nmi
   ldr r1, =ticos_fault_handling_shim
   bx r1
   ALIGN
@@ -284,7 +284,7 @@ void TICOS_EXC_HANDLER_NMI(void) {
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_WATCHDOG(void) {
-  ldr r0, =0x8006 // kMfltRebootReason_SoftwareWatchdog
+  ldr r0, =0x8006 // kTcsRebootReason_SoftwareWatchdog
   ldr r1, =ticos_fault_handling_shim
   bx r1
   ALIGN
@@ -309,37 +309,37 @@ void ticos_fault_handling_shim(void /* int reason */) {
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_HARD_FAULT(void) {
-  __asm(" mov r0, #0x9400 \n" // kMfltRebootReason_HardFault
+  __asm(" mov r0, #0x9400 \n" // kTcsRebootReason_HardFault
         " b ticos_fault_handling_shim \n");
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_MEMORY_MANAGEMENT(void) {
-  __asm(" mov r0, #0x9200 \n" // kMfltRebootReason_MemFault
+  __asm(" mov r0, #0x9200 \n" // kTcsRebootReason_MemFault
         " b ticos_fault_handling_shim \n");
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_BUS_FAULT(void) {
-  __asm(" mov r0, #0x9100 \n" // kMfltRebootReason_BusFault
+  __asm(" mov r0, #0x9100 \n" // kTcsRebootReason_BusFault
         " b ticos_fault_handling_shim \n");
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_USAGE_FAULT(void) {
-  __asm(" mov r0, #0x9300 \n" // kMfltRebootReason_UsageFault
+  __asm(" mov r0, #0x9300 \n" // kTcsRebootReason_UsageFault
         " b ticos_fault_handling_shim \n");
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_NMI(void) {
-  __asm(" mov r0, #0x8004 \n" // kMfltRebootReason_Nmi
+  __asm(" mov r0, #0x8004 \n" // kTcsRebootReason_Nmi
         " b ticos_fault_handling_shim \n");
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_WATCHDOG(void) {
-  __asm(" mov r0, #0x8006 \n" // kMfltRebootReason_SoftwareWatchdog
+  __asm(" mov r0, #0x8006 \n" // kTcsRebootReason_SoftwareWatchdog
         " b ticos_fault_handling_shim \n");
 }
 
@@ -398,32 +398,32 @@ void TICOS_EXC_HANDLER_WATCHDOG(void) {
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_HARD_FAULT(void) {
-  TICOS_HARDFAULT_HANDLING_ASM(kMfltRebootReason_HardFault);
+  TICOS_HARDFAULT_HANDLING_ASM(kTcsRebootReason_HardFault);
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_MEMORY_MANAGEMENT(void) {
-  TICOS_HARDFAULT_HANDLING_ASM(kMfltRebootReason_MemFault);
+  TICOS_HARDFAULT_HANDLING_ASM(kTcsRebootReason_MemFault);
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_BUS_FAULT(void) {
-  TICOS_HARDFAULT_HANDLING_ASM(kMfltRebootReason_BusFault);
+  TICOS_HARDFAULT_HANDLING_ASM(kTcsRebootReason_BusFault);
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_USAGE_FAULT(void) {
-  TICOS_HARDFAULT_HANDLING_ASM(kMfltRebootReason_UsageFault);
+  TICOS_HARDFAULT_HANDLING_ASM(kTcsRebootReason_UsageFault);
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_NMI(void) {
-  TICOS_HARDFAULT_HANDLING_ASM(kMfltRebootReason_Nmi);
+  TICOS_HARDFAULT_HANDLING_ASM(kTcsRebootReason_Nmi);
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_WATCHDOG(void) {
-  TICOS_HARDFAULT_HANDLING_ASM(kMfltRebootReason_SoftwareWatchdog);
+  TICOS_HARDFAULT_HANDLING_ASM(kTcsRebootReason_SoftwareWatchdog);
 }
 
 #elif defined(__ICCARM__)
@@ -481,32 +481,32 @@ void TICOS_EXC_HANDLER_WATCHDOG(void) {
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_HARD_FAULT(void) {
-  TICOS_HARDFAULT_HANDLING_ASM(kMfltRebootReason_HardFault);
+  TICOS_HARDFAULT_HANDLING_ASM(kTcsRebootReason_HardFault);
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_MEMORY_MANAGEMENT(void) {
-  TICOS_HARDFAULT_HANDLING_ASM(kMfltRebootReason_MemFault);
+  TICOS_HARDFAULT_HANDLING_ASM(kTcsRebootReason_MemFault);
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_BUS_FAULT(void) {
-  TICOS_HARDFAULT_HANDLING_ASM(kMfltRebootReason_BusFault);
+  TICOS_HARDFAULT_HANDLING_ASM(kTcsRebootReason_BusFault);
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_USAGE_FAULT(void) {
-  TICOS_HARDFAULT_HANDLING_ASM(kMfltRebootReason_UsageFault);
+  TICOS_HARDFAULT_HANDLING_ASM(kTcsRebootReason_UsageFault);
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_NMI(void) {
-  TICOS_HARDFAULT_HANDLING_ASM(kMfltRebootReason_Nmi);
+  TICOS_HARDFAULT_HANDLING_ASM(kTcsRebootReason_Nmi);
 }
 
 TICOS_NAKED_FUNC
 void TICOS_EXC_HANDLER_WATCHDOG(void) {
-  TICOS_HARDFAULT_HANDLING_ASM(kMfltRebootReason_SoftwareWatchdog);
+  TICOS_HARDFAULT_HANDLING_ASM(kTcsRebootReason_SoftwareWatchdog);
 }
 
 #else
@@ -541,7 +541,7 @@ void TICOS_ASSERT_TRAP(void) {
 #endif
 
 static void prv_fault_handling_assert(void *pc, void *lr, eTicosRebootReason reason) {
-  sMfltRebootTrackingRegInfo info = {
+  sTcsRebootTrackingRegInfo info = {
     .pc = (uint32_t)pc,
     .lr = (uint32_t)lr,
   };
@@ -564,7 +564,7 @@ static void prv_fault_handling_assert(void *pc, void *lr, eTicosRebootReason rea
 // difficult (such as ignoring ABI requirements to preserve callee-saved registers)
 TICOS_NO_OPT
 void ticos_fault_handling_assert(void *pc, void *lr) {
-  prv_fault_handling_assert(pc, lr, kMfltRebootReason_Assert);
+  prv_fault_handling_assert(pc, lr, kTcsRebootReason_Assert);
 
 #if (defined(__clang__) && defined(__ti__))
   //! tiarmclang does not respect the no optimization request and will

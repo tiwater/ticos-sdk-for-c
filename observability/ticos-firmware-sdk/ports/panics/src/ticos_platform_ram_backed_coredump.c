@@ -62,9 +62,9 @@ static uint32_t s_ram_backed_coredump_region[TICOS_PLATFORM_COREDUMP_STORAGE_RAM
 //! Collect the active stack as part of the coredump capture.
 //! User can implement their own version to override the implementation
 TICOS_WEAK
-const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
+const sTcsCoredumpRegion *ticos_platform_coredump_get_regions(
     const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
-   static sMfltCoredumpRegion s_coredump_regions[1];
+   static sTcsCoredumpRegion s_coredump_regions[1];
 
    const size_t stack_size = ticos_platform_sanitize_address_range(
        crash_info->stack_address, TICOS_PLATFORM_ACTIVE_STACK_SIZE_TO_COLLECT);
@@ -76,14 +76,14 @@ const sMfltCoredumpRegion *ticos_platform_coredump_get_regions(
 }
 #endif
 
-void ticos_platform_coredump_storage_get_info(sMfltCoredumpStorageInfo *info) {
-  *info = (sMfltCoredumpStorageInfo) {
+void ticos_platform_coredump_storage_get_info(sTcsCoredumpStorageInfo *info) {
+  *info = (sTcsCoredumpStorageInfo) {
     .size = TICOS_PLATFORM_COREDUMP_STORAGE_RAM_SIZE,
   };
 }
 
 static bool prv_op_within_flash_bounds(uint32_t offset, size_t data_len) {
-  sMfltCoredumpStorageInfo info = { 0 };
+  sTcsCoredumpStorageInfo info = { 0 };
   ticos_platform_coredump_storage_get_info(&info);
   return (offset + data_len) <= info.size;
 }

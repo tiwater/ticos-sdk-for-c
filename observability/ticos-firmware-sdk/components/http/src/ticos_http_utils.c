@@ -27,7 +27,7 @@
 #define TICOS_DEVICE_INFO_URL_ENCODED_MAX_LEN (48)
 #endif
 
-static bool prv_write_msg(MfltHttpClientSendCb write_callback, void *ctx,
+static bool prv_write_msg(TcsHttpClientSendCb write_callback, void *ctx,
                           const char *msg, size_t msg_len, size_t max_len) {
   if (msg_len >= max_len) {
     return false;
@@ -36,7 +36,7 @@ static bool prv_write_msg(MfltHttpClientSendCb write_callback, void *ctx,
   return write_callback(msg, msg_len, ctx);
 }
 
-static bool prv_write_crlf(MfltHttpClientSendCb write_callback, void *ctx) {
+static bool prv_write_crlf(TcsHttpClientSendCb write_callback, void *ctx) {
   #define END_HEADER_SECTION "\r\n"
   const size_t end_hdr_section_len = TICOS_STATIC_STRLEN(END_HEADER_SECTION);
   return write_callback(END_HEADER_SECTION, end_hdr_section_len, ctx);
@@ -44,7 +44,7 @@ static bool prv_write_crlf(MfltHttpClientSendCb write_callback, void *ctx) {
 
 // NB: All HTTP/1.1 requests must provide a Host Header
 //    https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Host
-static bool prv_write_host_hdr(MfltHttpClientSendCb write_callback, void *ctx,
+static bool prv_write_host_hdr(TcsHttpClientSendCb write_callback, void *ctx,
                                const void *host, size_t host_len) {
   #define HOST_HDR_BEGIN "Host:"
   const size_t host_hdr_begin_len = TICOS_STATIC_STRLEN(HOST_HDR_BEGIN);
@@ -59,13 +59,13 @@ static bool prv_write_host_hdr(MfltHttpClientSendCb write_callback, void *ctx,
   return prv_write_crlf(write_callback, ctx);
 }
 
-static bool prv_write_user_agent_hdr(MfltHttpClientSendCb write_callback, void *ctx) {
+static bool prv_write_user_agent_hdr(TcsHttpClientSendCb write_callback, void *ctx) {
   #define USER_AGENT_HDR "User-Agent:TicosSDK/0.4.2\r\n"
   const size_t user_agent_hdr_len = TICOS_STATIC_STRLEN(USER_AGENT_HDR);
   return write_callback(USER_AGENT_HDR, user_agent_hdr_len, ctx);
 }
 
-static bool prv_write_project_key_hdr(MfltHttpClientSendCb write_callback, void *ctx) {
+static bool prv_write_project_key_hdr(TcsHttpClientSendCb write_callback, void *ctx) {
   #define PROJECT_KEY_HDR_BEGIN "Ticos-Project-Key:"
   const size_t project_key_begin_len = TICOS_STATIC_STRLEN(PROJECT_KEY_HDR_BEGIN);
   if (!write_callback(PROJECT_KEY_HDR_BEGIN, project_key_begin_len, ctx)) {
@@ -83,7 +83,7 @@ static bool prv_write_project_key_hdr(MfltHttpClientSendCb write_callback, void 
 }
 
 bool ticos_http_start_chunk_post(
-    MfltHttpClientSendCb write_callback, void *ctx, size_t content_body_length) {
+    TcsHttpClientSendCb write_callback, void *ctx, size_t content_body_length) {
   // Request built will look like this:
   //  POST /api/v0/chunks/<device_serial> HTTP/1.1\r\n
   //  Host:chunks.ticos.com\r\n
@@ -132,7 +132,7 @@ bool ticos_http_start_chunk_post(
       prv_write_crlf(write_callback, ctx);
 }
 
-static bool prv_write_qparam(MfltHttpClientSendCb write_callback, void *ctx,
+static bool prv_write_qparam(TcsHttpClientSendCb write_callback, void *ctx,
                              const void *name, size_t name_strlen, const char *value) {
   return write_callback("&", 1, ctx) &&
       write_callback(name, name_strlen, ctx) &&
@@ -140,7 +140,7 @@ static bool prv_write_qparam(MfltHttpClientSendCb write_callback, void *ctx,
       write_callback(value, strlen(value), ctx);
 }
 
-bool ticos_http_get_latest_ota_payload_url(MfltHttpClientSendCb write_callback, void *ctx) {
+bool ticos_http_get_latest_ota_payload_url(TcsHttpClientSendCb write_callback, void *ctx) {
   // Request built will look like this:
   //  GET /api/v0/releases/latest/url&device_serial=<>&hardware_version=<>&software_type=<>&current_version=<> HTTP/1.1\r\n
   //  Host:<ota download url host>\r\n
@@ -389,7 +389,7 @@ static bool prv_parse_http_response(sTicosHttpResponseContext *ctx, const void *
   char *line_buf = &ctx->line_buf[0];
   for (size_t i = 0; i < data_len; i++, ctx->data_bytes_processed++) {
     const char c = chars[i];
-    if (ctx->phase == kMfltHttpParsePhase_ExpectingBody) {
+    if (ctx->phase == kTcsHttpParsePhase_ExpectingBody) {
       if (parse_header_only) {
         return true;
       }
@@ -413,7 +413,7 @@ static bool prv_parse_http_response(sTicosHttpResponseContext *ctx, const void *
     }
 
     if (ctx->line_len >= sizeof(ctx->line_buf)) {
-      if (ctx->phase == kMfltHttpParsePhase_ExpectingHeader) {
+      if (ctx->phase == kTcsHttpParsePhase_ExpectingHeader) {
         // We want to truncate headers at index sizeof(line_buf)-2
         // so we can place the source's CR/LF sequence at the end
         // when the source is finally exhausted.
@@ -426,7 +426,7 @@ static bool prv_parse_http_response(sTicosHttpResponseContext *ctx, const void *
         }
       } else {
         // It's too long so set a parse error and return done.
-        ctx->parse_error = MfltHttpParseStatus_HeaderTooLongError;
+        ctx->parse_error = TcsHttpParseStatus_HeaderTooLongError;
         return true;
       }
     } else {
@@ -444,15 +444,15 @@ static bool prv_parse_http_response(sTicosHttpResponseContext *ctx, const void *
       line_buf[len] = '\0';
 
       // The first line in a http response is the HTTP "Status-Line"
-      if (ctx->phase == kMfltHttpParsePhase_ExpectingStatusLine) {
+      if (ctx->phase == kTcsHttpParsePhase_ExpectingStatusLine) {
         if (!prv_parse_status_line(line_buf, len, &ctx->http_status_code)) {
-          ctx->parse_error = MfltHttpParseStatus_ParseStatusLineError;
+          ctx->parse_error = TcsHttpParseStatus_ParseStatusLineError;
           return true;
         }
-        ctx->phase = kMfltHttpParsePhase_ExpectingHeader;
-      } else if (ctx->phase == kMfltHttpParsePhase_ExpectingHeader) {
+        ctx->phase = kTcsHttpParsePhase_ExpectingHeader;
+      } else if (ctx->phase == kTcsHttpParsePhase_ExpectingHeader) {
         if (!prv_parse_header(line_buf, len, &ctx->content_length)) {
-          ctx->parse_error = MfltHttpParseStatus_ParseHeaderError;
+          ctx->parse_error = TcsHttpParseStatus_ParseHeaderError;
           return true;
         }
 
@@ -464,7 +464,7 @@ static bool prv_parse_http_response(sTicosHttpResponseContext *ctx, const void *
           // no body to read
           return true;
         }
-        ctx->phase = kMfltHttpParsePhase_ExpectingBody;
+        ctx->phase = kTcsHttpParsePhase_ExpectingBody;
       }
     }
   }
@@ -618,7 +618,7 @@ bool ticos_http_parse_uri(
   return true;
 }
 
-bool ticos_http_get_ota_payload(MfltHttpClientSendCb write_callback, void *ctx,
+bool ticos_http_get_ota_payload(TcsHttpClientSendCb write_callback, void *ctx,
                                    const char *url, size_t url_len) {
   // Request built will look like this:
   //  GET <Request-URI from url> HTTP/1.1\r\n
