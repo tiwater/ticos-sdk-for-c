@@ -34,6 +34,20 @@ typedef enum TcsCoredumpRegionType {
   kTcsCoredumpRegionType_CachedMemory,
 } eTcsCoredumpRegionType;
 
+typedef struct {
+  // the space available for saving a coredump
+  uint32_t storage_size;
+  // the offset within storage currently being written to
+  uint32_t offset;
+  // set to true when no writes should be performed and only the total size of the write should be
+  // computed
+  bool compute_size_only;
+  // set to true if writing a block was truncated
+  bool truncated;
+  // set to true if a call to "ticos_platform_coredump_storage_write" failed
+  bool write_error;
+} sTcsCoredumpWriteCtx;
+
 //! Convenience macro to define a sTcsCoredumpRegion of type kTcsCoredumpRegionType_Memory.
 #define TICOS_COREDUMP_MEMORY_REGION_INIT(_start, _size) \
   (sTcsCoredumpRegion) { \
@@ -161,6 +175,10 @@ extern bool ticos_coredump_read(uint32_t offset, void *buf, size_t buf_len);
 //!   - give watchdog one last feed prior to storage code getting called it
 //! @return true if to continue saving the coredump, false to abort
 extern bool ticos_platform_coredump_save_begin(void);
+
+bool prv_platform_coredump_write(const void *data, size_t len, sTcsCoredumpWriteCtx *write_ctx);
+bool platform_coredump_write_bin(sTcsCoredumpWriteCtx *write_ctx);
+size_t calculate_coredump_bin_size();
 
 #ifdef __cplusplus
 }

@@ -44,12 +44,15 @@ list(APPEND TICOS_COMPONENTS_SRCS
     ${TICOS_ESP_IDF_PORT_COMMON}/ticos_platform_http_client.c
     ${TICOS_ESP_IDF_PORT_COMMON}/ticos_platform_http_client_buffer.c
     ${TICOS_ESP_IDF_PORT_COMMON}/ticos_platform_metrics.c
+    ${TICOS_ESP_IDF_PORT_COMMON}/ticos_platform_bin_coredump.c
 )
 
 list(APPEND TICOS_COMPONENTS_INC_FOLDERS
    include
    include/${TICOS_ESP_IDF_PORT}
    $ENV{TICOS_PLATFORM_EXTRA_INCLUDES}
+   $ENV{IDF_PATH}/components/espcoredump/include_core_dump
+   $ENV{IDF_PATH}/components/espcoredump/include_core_dump/port/xtensa
 )
 
 # Register Ticos SDK Component

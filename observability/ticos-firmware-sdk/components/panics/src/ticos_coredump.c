@@ -84,20 +84,6 @@ typedef TICOS_PACKED_STRUCT TcsMachineTypeBlock {
   uint32_t machine_type;
 } sTcsMachineTypeBlock;
 
-typedef struct {
-  // the space available for saving a coredump
-  uint32_t storage_size;
-  // the offset within storage currently being written to
-  uint32_t offset;
-  // set to true when no writes should be performed and only the total size of the write should be
-  // computed
-  bool compute_size_only;
-  // set to true if writing a block was truncated
-  bool truncated;
-  // set to true if a call to "ticos_platform_coredump_storage_write" failed
-  bool write_error;
-} sTcsCoredumpWriteCtx;
-
 // Checks to see if the block is a cached region and applies
 // required fixups to allow the coredump to properly record
 // the original cached address and its associated data. Will
@@ -129,7 +115,7 @@ static bool prv_fixup_if_cached_block(sTcsCoredumpRegion *region, uint32_t *cach
   return true;
 }
 
-static bool prv_platform_coredump_write(const void *data, size_t len, sTcsCoredumpWriteCtx *write_ctx) {
+bool prv_platform_coredump_write(const void *data, size_t len, sTcsCoredumpWriteCtx *write_ctx) {
   // if we are just computing the size needed, don't write any data but keep
   // a count of how many bytes would be written.
   if (!write_ctx->compute_size_only &&
@@ -142,6 +128,19 @@ static bool prv_platform_coredump_write(const void *data, size_t len, sTcsCoredu
   return true;
 }
 
+static eTcsCoredumpBlockType prv_region_type_to_storage_type(eTcsCoredumpRegionType type) {
+  switch (type) {
+    case kTcsCoredumpRegionType_ArmV6orV7MpuUnrolled:
+      return kTcsCoredumpRegionType_ArmV6orV7Mpu;
+    case kTcsCoredumpRegionType_ImageIdentifier:
+    case kTcsCoredumpRegionType_Memory:
+    case kTcsCoredumpRegionType_MemoryWordAccessOnly:
+    case kTcsCoredumpRegionType_CachedMemory:
+    default:
+      return kTcsCoredumpBlockType_MemoryRegion;
+  }
+}
+
 static bool prv_write_block_with_address(
     eTcsCoredumpBlockType block_type, const void *block_payload, size_t block_payload_size,
     uint32_t address, sTcsCoredumpWriteCtx *write_ctx, bool word_aligned_reads_only) {
@@ -149,6 +148,10 @@ static bool prv_write_block_with_address(
   if (block_payload_size == 0 || (block_payload == NULL)) {
     return true;
   }
+
+	if(block_type == prv_region_type_to_storage_type(kTcsCoredumpRegionType_Memory)){
+			block_payload_size = calculate_coredump_bin_size();
+	}
 
   const size_t total_length = sizeof(sTcsCoredumpBlock) + block_payload_size;
   const size_t storage_bytes_free =
@@ -179,6 +182,10 @@ static bool prv_write_block_with_address(
     return false;
   }
 
+
+	if(block_type == prv_region_type_to_storage_type(kTcsCoredumpRegionType_Memory)){
+			return platform_coredump_write_bin(write_ctx);
+	} else
   if (!word_aligned_reads_only || ((block_payload_size % 4) != 0)) {
     // no requirements on how the 'address' is read so whatever the user implementation does is fine
     return prv_platform_coredump_write(block_payload, block_payload_size, write_ctx);
@@ -204,19 +211,6 @@ static bool prv_write_non_memory_block(eTcsCoredumpBlockType block_type,
   const bool word_aligned_reads_only = false;
   return prv_write_block_with_address(block_type, block_payload, block_payload_size,
                                       0, ctx, word_aligned_reads_only);
-}
-
-static eTcsCoredumpBlockType prv_region_type_to_storage_type(eTcsCoredumpRegionType type) {
-  switch (type) {
-    case kTcsCoredumpRegionType_ArmV6orV7MpuUnrolled:
-      return kTcsCoredumpRegionType_ArmV6orV7Mpu;
-    case kTcsCoredumpRegionType_ImageIdentifier:
-    case kTcsCoredumpRegionType_Memory:
-    case kTcsCoredumpRegionType_MemoryWordAccessOnly:
-    case kTcsCoredumpRegionType_CachedMemory:
-    default:
-      return kTcsCoredumpBlockType_MemoryRegion;
-  }
 }
 
 static eTcsCoredumpMachineType prv_get_machine_type(void) {
