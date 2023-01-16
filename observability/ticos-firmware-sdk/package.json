@@ -1,0 +1,24 @@
+{
+  "name": "docs",
+  "version": "0.6.0",
+  "description": "可观测性数据 MCU SDK",
+  "keywords": [],
+  "license": "",
+  "author": "Tiwater Team",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "docs:build": "vitepress build docs",
+    "docs:dev": "vitepress dev docs",
+    "docs:preview": "vitepress preview docs",
+		"changelog": "conventional-changelog -p angular -i CHANGELOG.md -w"
+  },
+  "dependencies": {
+		"commitizen": "^2.20.0",
+		"conventional-changelog": "^3.1.25",
+		"conventional-changelog-cli": "^2.2.2"
+
+  },
+  "devDependencies": {
+  }
+}

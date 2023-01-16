@@ -38,7 +38,7 @@ static char _buff[1024];
 sTcsHttpClientConfig g_tcs_http_client_config = {
   .api_key = CONFIG_TICOS_PROJECT_KEY,
   // .chunks_api = { .host = "api.ticos.cn", .port = 80 },
-  .chunks_api = { .host = "api.dev.ticos.cc", .port = 80 },
+  // .chunks_api = { .host = "api.dev.ticos.cc", .port = 80 },
   .disable_tls = true,
 };
 

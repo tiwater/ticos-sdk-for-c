@@ -15,6 +15,7 @@
 #include "ticos/panics/coredump.h"
 #include "ticos/panics/fault_handling.h"
 
+
 #ifndef ESP_PLATFORM
 #  error "The port assumes the esp-idf is in use!"
 #endif
@@ -42,7 +43,9 @@ void ticos_fault_handling_assert_extra(void *pc, void *lr, sTicosAssertInfo *ext
 //! version check (see static assert below for verifying the signature is
 //! correct)
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4,2,3)
+panic_info_t *global_panic_info = NULL;
 void __wrap_esp_core_dump_to_flash(panic_info_t *info) {
+	global_panic_info = info;
   XtExcFrame *fp = (void *)info->frame;
 #else
 void __wrap_esp_core_dump_to_flash(XtExcFrame *fp) {

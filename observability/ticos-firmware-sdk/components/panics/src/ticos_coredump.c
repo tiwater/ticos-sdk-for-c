@@ -12,6 +12,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "esp_private/panic_internal.h"
+
 #include "ticos/core/build_info.h"
 #include "ticos/core/compiler.h"
 #include "ticos/core/data_packetizer_source.h"
@@ -84,20 +86,6 @@ typedef TICOS_PACKED_STRUCT TcsMachineTypeBlock {
   uint32_t machine_type;
 } sTcsMachineTypeBlock;
 
-typedef struct {
-  // the space available for saving a coredump
-  uint32_t storage_size;
-  // the offset within storage currently being written to
-  uint32_t offset;
-  // set to true when no writes should be performed and only the total size of the write should be
-  // computed
-  bool compute_size_only;
-  // set to true if writing a block was truncated
-  bool truncated;
-  // set to true if a call to "ticos_platform_coredump_storage_write" failed
-  bool write_error;
-} sTcsCoredumpWriteCtx;
-
 // Checks to see if the block is a cached region and applies
 // required fixups to allow the coredump to properly record
 // the original cached address and its associated data. Will
@@ -142,6 +130,19 @@ static bool prv_platform_coredump_write(const void *data, size_t len, sTcsCoredu
   return true;
 }
 
+static eTcsCoredumpBlockType prv_region_type_to_storage_type(eTcsCoredumpRegionType type) {
+  switch (type) {
+    case kTcsCoredumpRegionType_ArmV6orV7MpuUnrolled:
+      return kTcsCoredumpRegionType_ArmV6orV7Mpu;
+    case kTcsCoredumpRegionType_ImageIdentifier:
+    case kTcsCoredumpRegionType_Memory:
+    case kTcsCoredumpRegionType_MemoryWordAccessOnly:
+    case kTcsCoredumpRegionType_CachedMemory:
+    default:
+      return kTcsCoredumpBlockType_MemoryRegion;
+  }
+}
+
 static bool prv_write_block_with_address(
     eTcsCoredumpBlockType block_type, const void *block_payload, size_t block_payload_size,
     uint32_t address, sTcsCoredumpWriteCtx *write_ctx, bool word_aligned_reads_only) {
@@ -168,6 +169,35 @@ static bool prv_write_block_with_address(
       return false;
     }
   }
+
+	extern panic_info_t *global_panic_info;
+
+#if	defined(CONFIG_IDF_TARGET_ESP32)||defined(CONFIG_IDF_TARGET_ESP32S2)||defined(CONFIG_IDF_TARGET_ESP32S3)
+	if(global_panic_info != NULL && block_type == prv_region_type_to_storage_type(kTcsCoredumpRegionType_Memory) &&
+		!write_ctx->compute_size_only){
+			// If it's memory region, write header later for the size calculation
+			uint32_t hdr_offset = write_ctx->offset;
+			write_ctx->offset += sizeof(sTcsCoredumpBlock);
+			uint32_t region_offset = write_ctx->offset;
+			platform_write_coredump_region(write_ctx);
+			
+			block_payload_size = write_ctx->offset - region_offset;
+
+			const sTcsCoredumpBlock blk = {
+				.block_type = block_type,
+				.address = address,
+				.length = block_payload_size,
+			};
+
+			write_ctx->offset = hdr_offset;
+
+			if (!prv_platform_coredump_write(&blk, sizeof(blk), write_ctx)) {
+				return false;
+			}
+			write_ctx->offset += block_payload_size;
+			return true;
+	}
+#endif
 
   const sTcsCoredumpBlock blk = {
     .block_type = block_type,
@@ -204,19 +234,6 @@ static bool prv_write_non_memory_block(eTcsCoredumpBlockType block_type,
   const bool word_aligned_reads_only = false;
   return prv_write_block_with_address(block_type, block_payload, block_payload_size,
                                       0, ctx, word_aligned_reads_only);
-}
-
-static eTcsCoredumpBlockType prv_region_type_to_storage_type(eTcsCoredumpRegionType type) {
-  switch (type) {
-    case kTcsCoredumpRegionType_ArmV6orV7MpuUnrolled:
-      return kTcsCoredumpRegionType_ArmV6orV7Mpu;
-    case kTcsCoredumpRegionType_ImageIdentifier:
-    case kTcsCoredumpRegionType_Memory:
-    case kTcsCoredumpRegionType_MemoryWordAccessOnly:
-    case kTcsCoredumpRegionType_CachedMemory:
-    default:
-      return kTcsCoredumpBlockType_MemoryRegion;
-  }
 }
 
 static eTcsCoredumpMachineType prv_get_machine_type(void) {

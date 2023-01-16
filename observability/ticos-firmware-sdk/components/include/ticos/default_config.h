@@ -270,7 +270,7 @@ extern "C" {
 //! interval is once per hour but the value can be overriden to be as low as
 //! once every 15 minutes.
 #ifndef TICOS_METRICS_HEARTBEAT_INTERVAL_SECS
-#define TICOS_METRICS_HEARTBEAT_INTERVAL_SECS 60
+#define TICOS_METRICS_HEARTBEAT_INTERVAL_SECS 600
 #endif
 
 #ifndef TICOS_METRICS_USER_HEARTBEAT_DEFS_FILE
@@ -389,7 +389,7 @@ extern "C" {
 //
 
 #ifndef TICOS_HTTP_CHUNKS_API_HOST
-#define TICOS_HTTP_CHUNKS_API_HOST "chunks.ticos.com"
+#define TICOS_HTTP_CHUNKS_API_HOST "api.dev.ticos.cc"
 #endif
 
 #ifndef TICOS_HTTP_DEVICE_API_HOST
