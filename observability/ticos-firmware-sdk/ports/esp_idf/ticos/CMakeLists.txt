@@ -44,13 +44,21 @@ list(APPEND TICOS_COMPONENTS_SRCS
     ${TICOS_ESP_IDF_PORT_COMMON}/ticos_platform_http_client.c
     ${TICOS_ESP_IDF_PORT_COMMON}/ticos_platform_http_client_buffer.c
     ${TICOS_ESP_IDF_PORT_COMMON}/ticos_platform_metrics.c
+		${TICOS_ESP_IDF_PORT_COMMON}/ticos_platform_dump_flash.c
 )
 
 list(APPEND TICOS_COMPONENTS_INC_FOLDERS
    include
    include/${TICOS_ESP_IDF_PORT}
    $ENV{TICOS_PLATFORM_EXTRA_INCLUDES}
+   $ENV{IDF_PATH}/components/espcoredump/include_core_dump
 )
+
+if(CONFIG_IDF_TARGET_ARCH_XTENSA)
+  list(APPEND TICOS_COMPONENTS_INC_FOLDERS "$ENV{IDF_PATH}/components/espcoredump/include_core_dump/port/xtensa")
+elseif(CONFIG_IDF_TARGET_ARCH_RISCV)
+  list(APPEND TICOS_COMPONENTS_INC_FOLDERS "$ENV{IDF_PATH}/components/espcoredump/include_core_dump/port/riscv")
+endif()
 
 # Register Ticos SDK Component
 set(COMPONENT_SRCS ${TICOS_COMPONENTS_SRCS})
@@ -85,7 +93,7 @@ component_compile_options(-DTICOS_ESP_HTTP_CLIENT_ENABLE=$ENV{TICOS_ESP_HTTP_CLI
 #   FreeRTOS task list is walked server side instead of on device (so you can get crash data even if the lists are corrupted)
 #   Much more flexibility in debug information collected (e.g. all RAM, just the current stack trace, select stacks and variables)
 #   Data can be posted directly from device to Ticos cloud for deduplication and analysis
-target_link_libraries(${this_component} INTERFACE "-Wl,--wrap=esp_core_dump_to_flash -Wl,--wrap=esp_core_dump_init -Wl,--wrap=esp_core_dump_image_get")
+target_link_libraries(${this_component} INTERFACE "-Wl,--wrap=esp_core_dump_to_flash -Wl,--wrap=esp_core_dump_init -Wl,--wrap=esp_core_dump_image_get -Wl,--wrap=esp_core_dump_write")
 
 # Include a linker script fragment to support compact logs, when enabled
 get_filename_component(compact_log_linker_script ${TICOS_ESP_IDF_PORT_COMMON}/ticos_compact_log.ld ABSOLUTE)
