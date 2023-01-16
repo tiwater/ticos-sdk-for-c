@@ -143,6 +143,8 @@ static eTcsCoredumpBlockType prv_region_type_to_storage_type(eTcsCoredumpRegionT
   }
 }
 
+extern panic_info_t *global_panic_info;
+
 static bool prv_write_block_with_address(
     eTcsCoredumpBlockType block_type, const void *block_payload, size_t block_payload_size,
     uint32_t address, sTcsCoredumpWriteCtx *write_ctx, bool word_aligned_reads_only) {
@@ -169,8 +171,6 @@ static bool prv_write_block_with_address(
       return false;
     }
   }
-
-	extern panic_info_t *global_panic_info;
 
 #if	defined(CONFIG_IDF_TARGET_ESP32)||defined(CONFIG_IDF_TARGET_ESP32S2)||defined(CONFIG_IDF_TARGET_ESP32S3)
 	if(global_panic_info != NULL && block_type == prv_region_type_to_storage_type(kTcsCoredumpRegionType_Memory) &&
