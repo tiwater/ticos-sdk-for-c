@@ -1,3 +1,13 @@
+# [0.9.0](https://github.com/tiwater/ticos-sdk-for-c/compare/v0.0.2...v0.9.0) (2023-01-20)
+
+### Bug Fixes
+
+* 调整全局变量位置 ([871bfe4](https://github.com/tiwater/ticos-sdk-for-c/commit/871bfe4e191596dc1f54db7d601042974081368b))
+
+### Features
+
+* 补充替换 ([610df5b](https://github.com/tiwater/ticos-sdk-for-c/commit/610df5ba9aec41358ccb0ef0639afc853f2b63e9))
+
 # [0.6.0](https://github.com/tiwater/ticos-sdk-for-c/compare/v0.0.2...v0.6.0) (2023-01-15)
 
 
