@@ -40,11 +40,11 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
 
 开发者集成本 SDK 接入 Ticos Cloud 需要做的工作有：
 
-1. 在[河图](https://console.ticos.cn)中创建硬件产品，并根据产品需求定义出物模型；
+1. 在[Ticos Cloud](https://console.ticos.cn)中创建硬件产品，并根据产品需求定义出物模型；
    
 2. 为物模型添加相应的业务处理逻辑：
 
-   - 从 [河图](https://console.ticos.cn) `-> 产品 -> 硬件开发 -> SDK 下载`项中进行下载, 将下载的 zip 包解压缩后，将其中的文件移入用户工程中的源文件目录；
+   - 从 [Ticos Cloud](https://console.ticos.cn) `-> 产品 -> 硬件开发 -> SDK 下载`项中进行下载, 将下载的 zip 包解压缩后，将其中的文件移入用户工程中的源文件目录；
    - 或者也可按如下步骤手动操作，从而可以对物模型代码的生成过程中的步骤根据需要进行调整：
      - 要求: 已安装 python3 运行环境；
      - 将从服务端下载的物模型文件(例: thing_model.json)放到 scripts/codegen 目录下；
@@ -59,7 +59,7 @@ Ticos SDK 封装了协议实现细节和数据传输过程，让开发者可以�
    - 提供 ticos_hal_mqtt_subscribe() 函数，订阅mqtt相关的主题
    - 提供 ticos_hal_mqtt_stop() 函数，停止平台相关的 MQTT client 服务
    - MQTT在接收到数据后，需要调用sdk中的 ticos_msg_recv() 函数进行数据的处理；
-   - 根据河图中的产品定义信息，为 MQTT 连接提供产品 ID、设备 ID、设备密钥这三组值，在调用 ticos_cloud_start() 时传入此三元组信息。
+   - 根据 Ticos Cloud 中的产品定义信息，为 MQTT 连接提供产品 ID、设备 ID、设备密钥这三组值，在调用 ticos_cloud_start() 时传入此三元组信息。
 
 执行以上步骤后，即完成了对 SDK 的集成工作，可以尝试编译运行你的项目，应可直接接入 Ticos Cloud 进行操作。
 

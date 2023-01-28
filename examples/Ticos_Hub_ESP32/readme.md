@@ -10,7 +10,7 @@
     - ESP32 并不是 Arduino IDE 原生支持的，你需要额外安装。
     - 你也可以安装 Ticos 版的 [ESP32 板级支持包](https://github.com/tiwater/arduino-esp32)，以更好地适配 [Ticos Kit 开发套件](https://www.tiwater.com/ticos/kit/)。
         - 安装方法：打开 Arduino IDE 菜单：`Arduino`，`Preferences...`，将 `https://assets.ticos.cc/tiwater/package_ticos_kit_index.json` 添加至`附加开发板管理器网址`，保存选项并等待 Arduino IDE 更新完成后，即可在开发板中选择和 Ticos Kit 对应的开发板。 
-- 在[河图](https://console.ticos.cn)中创建硬件产品，并根据产品需求定义出物模型：
+- 在[Ticos Cloud](https://console.ticos.cn)中创建硬件产品，并根据产品需求定义出物模型：
     - 本示例假设该产品具有一个只读的 `switch` 属性，类型为 boolean，用于反映设备上轻触开关的状态；
     - 本示例假设该产品具有一个可读写的 `led` 属性，类型为 boolean，用于反映及控制设备上 LED 灯的状态。
 
@@ -132,9 +132,9 @@
             Subscribed for cloud-to-device messages
         ```
 9. 测试：
-    - 在[河图](https://console.ticos.cn)中进入`设备管理`，选择你正在测试的设备，进入`详情`页面，选择`数字孪生`，观察设备状态；
+    - 在[Ticos Cloud](https://console.ticos.cn)中进入`设备管理`，选择你正在测试的设备，进入`详情`页面，选择`数字孪生`，观察设备状态；
     - 按动开发板上的按钮，观察 LED 的亮灭，并刷新`详情`页面，观察云端的状态更新；
-    - 在[河图](https://console.ticos.cn)中进入`设备管理`，选择你正在测试的设备，进入`调试`页面，设置和 `led` 对应的属性，并按下`下发`按钮，注意观察开发板上 LED 的亮灭。
+    - 在[Ticos Cloud](https://console.ticos.cn)中进入`设备管理`，选择你正在测试的设备，进入`调试`页面，设置和 `led` 对应的属性，并按下`下发`按钮，注意观察开发板上 LED 的亮灭。
 
 ### License
 
