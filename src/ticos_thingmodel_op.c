@@ -1,7 +1,21 @@
 #include "ticos_thingmodel_type.h"
 #include <string.h>
 #include "cJSON.h"
+#include "esp_qcloud_prov.h"
+#include "ticos_api.h"
+#include "esp_qcloud_storage.h"
+//#include "ticos_thingmodel.h"
+extern const ticos_telemetry_info_t ticos_telemetry_tab[];
+extern const ticos_property_info_t ticos_property_tab[];
+extern const ticos_command_info_t ticos_command_tab[];
+extern const int ticos_telemetry_cnt;
+extern const int ticos_property_cnt;
+extern const int ticos_command_cnt;
 
+extern char ticos_property_report_topic[];
+extern char ticos_telemery_topic[];
+extern char ticos_system_user_id[];
+extern char ticos_system_user_bind_topic[];
 typedef int (*_ticos_send_int_t)();
 typedef int (*_ticos_send_bool_t)();
 typedef float (*_ticos_send_float_t)();
@@ -12,15 +26,8 @@ typedef void (*_ticos_recv_bool_t)(int);
 typedef void (*_ticos_recv_float_t)(float);
 typedef void (*_ticos_recv_string_t)(const char*);
 
-extern const ticos_telemetry_info_t ticos_telemetry_tab[];
-extern const ticos_property_info_t ticos_property_tab[];
-extern const ticos_command_info_t ticos_command_tab[];
-extern const int ticos_telemetry_cnt;
-extern const int ticos_property_cnt;
-extern const int ticos_command_cnt;
 
-extern char ticos_property_report_topic[];
-extern char ticos_telemery_topic[];
+
 int ticos_hal_mqtt_publish(const char *topic, const char *data, int len, int qos, int retain);
 
 int ticos_telemetry_report(void)
@@ -94,6 +101,15 @@ void ticos_command_receive(const char *dat, int len)
     cJSON_Delete(commands);
 }
 
+void ticos_system_user_response_receive(const char *dat, int len)
+{
+    ticos_device_bind_cb(1);
+    esp_qcloud_prov_ble_report_bind_status(0);
+    vTaskDelay(10);
+    esp_qcloud_prov_ble_stop();
+    
+}
+
 void ticos_property_receive(const char *dat, int len)
 {
     cJSON *propretys = cJSON_Parse(dat);
@@ -132,7 +148,17 @@ void ticos_property_receive(const char *dat, int len)
     }
     cJSON_Delete(propretys);
 }
+int ticos_system_user_bind(void)
+{
+    cJSON *user_bind = cJSON_CreateObject();
+    cJSON_AddStringToObject(user_bind, "userId", ticos_system_user_id);
+    char *user_bind_str = cJSON_PrintUnformatted(user_bind);
+    int ret = ticos_hal_mqtt_publish(ticos_system_user_bind_topic, user_bind_str, strlen(user_bind_str), 1, 0);
+    cJSON_free(user_bind_str);
+    cJSON_Delete(user_bind);
+    return ret;
 
+}
 int ticos_property_report(void)
 {
     cJSON *propretys = cJSON_CreateObject();
@@ -228,3 +254,45 @@ int ticos_telemetry_report_by_index(int index)
     cJSON_Delete(telemetries);
     return ret;
 }
+
+extern esp_ticos_ota_info_t ticos_ota_info;
+extern char *esp_version_get();
+void ticos_ota_response(const char *topic, int topic_len, const char *data, int data_len)
+{
+    //if (strncmp(topic, ticos_ota_cloud_response, topic_len) == 0) {
+        cJSON *response  = cJSON_Parse(data);
+        if(response == NULL){
+            ticloud_ota_report_measure(OTA_MEASURE_FAIL);
+            //ESP_LOGE(TAG, "response data is not a json");
+            return;
+        } 
+
+        const char *version = cJSON_GetObjectItem(response, "targetVersion")->valuestring;
+        const char *file_url = cJSON_GetObjectItem(response, "fileUrl")->valuestring;
+        const char *md5 = cJSON_GetObjectItem(response, "fileSign")->valuestring;
+        uint32_t file_size = cJSON_GetObjectItem(response, "fileSize")->valueint;
+        if(version == NULL || file_url == NULL || file_size == 0 || md5 == NULL){
+            ticloud_ota_report_measure(OTA_MEASURE_FAIL);
+            //ESP_LOGE(TAG, "response data node is invaild");
+        }else{
+            ticos_ota_info.file_size = file_size;
+            strcpy(ticos_ota_info.md5sum, md5);
+            strcpy(ticos_ota_info.url, file_url);
+            strcpy(ticos_ota_info.version, version);
+            //ESP_LOGI(TAG, "md5:%s url:%s version:%s size:%d", md5, file_url, version, file_size);
+            if(strcmp(version, esp_version_get()))
+            {
+                esp_qcloud_storage_get( "ota_varsion" , version , 32 );
+                ticloud_ota_report_measure(OTA_MEASURE_SUCCESS_NEED_UPDATE);
+            }else{
+                ticloud_ota_report_measure(OTA_MEASURE_SUCCESS_NO_UPDATE);
+            }
+        }
+    //}
+}
+
+
+
+
+
+

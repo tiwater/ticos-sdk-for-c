@@ -1,0 +1,301 @@
+[
+    {
+        "@id": "dtmi:ORGDU87MONG:n3zz;1",
+        "@type": "Interface",
+        "@context": "dtmi:dtdl:context;2",
+        "contents": [
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:volume;1",
+                "name": "volume",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "integer",
+                "writable": true,
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "音量"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:brightness;1",
+                "name": "brightness",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "integer",
+                "writable": true,
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "亮度"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:sleep_time;1",
+                "name": "sleep_time",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "double",
+                "writable": true,
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "熄屏时间"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:skin_detection_start;1",
+                "name": "skin_detection_start",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "boolean",
+                "trueName": {
+                    "zh": "开"
+                },
+                "writable": true,
+                "falseName": {
+                    "zh": "关"
+                },
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "开始皮肤检测"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:spray_enable;1",
+                "name": "spray_enable",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "boolean",
+                "trueName": {
+                    "zh": "开"
+                },
+                "writable": true,
+                "falseName": {
+                    "zh": "关"
+                },
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "定时喷雾启用"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:spray_begin;1",
+                "name": "spray_begin",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "string",
+                "writable": true,
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "喷雾开始时间"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:spray_duration;1",
+                "name": "spray_duration",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "integer",
+                "writable": true,
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "喷雾持续时间"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:battery;1",
+                "name": "battery",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "integer",
+                "writable": true,
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "电量"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:user_id;1",
+                "name": "user_id",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "string",
+                "writable": true,
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "设备绑定用户ID"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:user_name;1",
+                "name": "user_name",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "string",
+                "writable": true,
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "设备绑定用户昵称"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:env_temperature;1",
+                "name": "env_temperature",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "double",
+                "writable": true,
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "环境温度"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:env_humidity;1",
+                "name": "env_humidity",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "double",
+                "writable": true,
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "环境湿度"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:music_type;1",
+                "name": "music_type",
+                "unit": "None",
+                "@type": "Property",
+                "schema": {
+                    "@id": "dtmi:ORGDU87MONG:n3zz:music_type:schema;1",
+                    "@type": "Enum",
+                    "enumValues": [
+                        {
+                            "@id": "dtmi:ORGDU87MONG:n3zz:music_type:schema:m1;1",
+                            "name": "m1",
+                            "enumValue": "0",
+                            "displayName": {
+                                "zh": "纯音乐"
+                            }
+                        },
+                        {
+                            "@id": "dtmi:ORGDU87MONG:n3zz:music_type:schema:m2;1",
+                            "name": "m2",
+                            "enumValue": "1",
+                            "displayName": {
+                                "zh": "轻快"
+                            }
+                        },
+                        {
+                            "@id": "dtmi:ORGDU87MONG:n3zz:music_type:schema:m3;1",
+                            "name": "m3",
+                            "enumValue": "2",
+                            "displayName": {
+                                "zh": "舒缓"
+                            }
+                        }
+                    ],
+                    "displayName": {
+                        "zh": "Enum"
+                    },
+                    "valueSchema": "integer"
+                },
+                "writable": true,
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "音乐类型"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            },
+            {
+                "@id": "dtmi:ORGDU87MONG:n3zz:music_start;1",
+                "name": "music_start",
+                "unit": "None",
+                "@type": "Property",
+                "schema": "boolean",
+                "trueName": {
+                    "zh": "开"
+                },
+                "writable": true,
+                "falseName": {
+                    "zh": "关"
+                },
+                "description": {
+                    "zh": ""
+                },
+                "displayName": {
+                    "zh": "音乐播放"
+                },
+                "modeName": {
+                    "zh": "主模型"
+                }
+            }
+        ],
+        "displayName": {
+            "zh": "烟雾报警器"
+        }
+    }
+]

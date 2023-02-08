@@ -15,6 +15,9 @@
 extern "C"
 {
 #endif
+#include "ticos_thingmodel_type.h"
+void ticos_cloud_set_bind_user_ID(char *token, int token_len);
+int ticos_system_user_bind(void);
 /**
  * @brief 启动 ticos 云服务.
  * @note  此接口需要用户实现，提供一个mqtt客户端服务，并启动连接到ticos cloud.
@@ -31,7 +34,7 @@ int ticos_cloud_start(const char* product_id, const char* device_id, const char 
  * @return void
  */
 void ticos_cloud_stop();
-
+int ticos_cloud_connected();
 /**
  * @brief  上报物模型属性到云端
  * @note   此接口会上报用户在ti_thingmodel.c里面定义的属性值到云端
@@ -77,7 +80,7 @@ int ticos_mqtt_subscribe(void);
  * @param len 接收到的数据长度
  * @return void
  */
-void ticos_msg_recv(const char *topic, const char *dat, int len);
+void ticos_msg_recv(const char *topic, int topic_len, const char *dat, int dat_len);
 
 typedef enum {
     TICOS_EVENT_CONNECT,
@@ -102,7 +105,19 @@ void set_ticos_event_cb(ticos_event_cb_t evt_cb, void *user_data);
  * @return void
  */
 void ticos_event_notify(ticos_evt_t evt);
+void ticos_device_bind_cb(int bind_result);
+void ticos_ota_request(const char* productID, const char* deviceID, const char* currVer);
+void ticos_ota_response(const char *topic, int topic_len, const char *data, int data_len);
+void ticloud_ota_report_measure(OTAMeasureStatus_t measure);
+void ticloud_ota_report_update(OTAUpdateStatus_t update);
+void ticloud_ota_report_progress(OTAUpdateStatus_t percent);
+OTAMeasureStatus_t ota_measure_get();
 
+OTAUpdateStatus_t ota_progress_get(int *ota_progress);
+void ticloud_ota_finnish_callback_register( void (*cb)(void*) );
+char *esp_version_get();
+char *ticloud_ota_version_get();
+void ticos_ota_start_update();
 #ifdef __cplusplus
 }
 #endif
