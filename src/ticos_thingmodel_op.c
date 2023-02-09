@@ -25,7 +25,7 @@ typedef void (*_ticos_recv_int_t)(int);
 typedef void (*_ticos_recv_bool_t)(int);
 typedef void (*_ticos_recv_float_t)(float);
 typedef void (*_ticos_recv_string_t)(const char*);
-
+static ticos_skin_res_t g_skin_res;
 
 
 int ticos_hal_mqtt_publish(const char *topic, const char *data, int len, int qos, int retain);
@@ -292,7 +292,34 @@ void ticos_ota_response(const char *topic, int topic_len, const char *data, int 
 }
 
 
+void ticos_data_response(const char *topic, int topic_len, const char *data, int data_len)
+{
+    
+    cJSON *root_json  = cJSON_Parse(data);
+    #define MIN(a,b) (((a)<(b))?(a):(b))
+    if(!root_json){
+         cJSON_Delete(root_json);
+         return;
+    }
+
+    int skinscore = cJSON_GetObjectItem(root_json, "skinScore")->valueint;
+    int status = cJSON_GetObjectItem(root_json, "status")->valueint;
+    char *summary = cJSON_GetObjectItem(root_json, "summary")->valuestring;
+    if(!summary){
+        cJSON_Delete(root_json);
+        return;
+    }
+
+    g_skin_res.skinscore = skinscore;
+    g_skin_res.status = status;
+    memset (g_skin_res.summary, 0x00, sizeof (g_skin_res.summary));
+    memcpy (g_skin_res.summary, summary, MIN(strlen(summary), sizeof (g_skin_res.summary)));
+
+}
 
 
-
+ticos_skin_res_t *ticos_get_skin_res(void)
+{
+    return &g_skin_res;
+}
 

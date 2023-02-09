@@ -19,6 +19,7 @@ char ticos_telemery_topic[128];
 char ticos_system_user_bind_topic[128];
 char ticos_system_user_response_topic[128];
 char ticos_system_user_id[128];
+char ticos_data_topic[128];
 /*
 ota
 */
@@ -37,8 +38,9 @@ int ticos_cloud_start(const char* product_id, const char* device_id, const char 
     sprintf(ticos_system_user_bind_topic,"devices/%s@@@%s/user/bind", device_id, product_id);
     sprintf(ticos_system_user_response_topic,"devices/%s@@@%s/user/response", device_id, product_id);
     sprintf(ticos_telemery_topic, "devices/%s@@@%s/telemetry", device_id, product_id);
-    snprintf(ticos_ota_cloud_response, 256, "devices/%s@@@%s/cloud/response", device_id, product_id);
-    snprintf(ticos_ota_cloud_request, 256, "devices/%s@@@%s/cloud/request", device_id, product_id);
+    sprintf(ticos_ota_cloud_response, "devices/%s@@@%s/cloud/response", device_id, product_id);
+    sprintf(ticos_ota_cloud_request,  "devices/%s@@@%s/cloud/request", device_id, product_id);
+    sprintf(ticos_data_topic,"%s/%s/data", product_id, device_id);
     return ticos_hal_mqtt_start("mqtt://hub.ticos.cn", 1883, ticos_client_id, ticos_device_id, ticos_device_secret);
 }
 
@@ -61,6 +63,7 @@ int ticos_mqtt_subscribe()
     int ret = ticos_hal_mqtt_subscribe(ticos_property_desired_topic, 1);
     ret |= ticos_hal_mqtt_subscribe(ticos_system_user_response_topic, 1);
     ret |= ticos_hal_mqtt_subscribe(ticos_ota_cloud_response, 1);
+    ret |= ticos_hal_mqtt_subscribe(ticos_data_topic, 1);
     //if (!ret)
        // return ticos_hal_mqtt_subscribe(ticos_command_request_topic, 1)|ticos_hal_mqtt_subscribe(ticos_system_user_response_topic, 1);
     return ret;
@@ -82,7 +85,9 @@ void ticos_msg_recv(const char *topic, int topic_len, const char *dat, int dat_l
     }else if (!strncmp(topic, ticos_ota_cloud_response, strlen(ticos_ota_cloud_response))) {
         ticos_ota_response(topic, topic_len, dat, dat_len);
     }
-    
+    else if (!strncmp(topic, ticos_data_topic, strlen(ticos_data_topic))) {
+        ticos_data_response(topic, topic_len, dat, dat_len);
+    }
     
 }
 

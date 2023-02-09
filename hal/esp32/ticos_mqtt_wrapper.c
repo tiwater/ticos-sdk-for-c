@@ -57,6 +57,7 @@ int ticos_hal_mqtt_subscribe(const char *topic, int qos)
 {
     if (!mqtt_client)
       return -1;
+    ESP_LOGI(TAG, "subscribe ,topic = %s, qos = %d ", topic,  qos );
     return esp_mqtt_client_subscribe(mqtt_client, topic, qos);
 }
 

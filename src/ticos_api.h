@@ -108,6 +108,7 @@ void ticos_event_notify(ticos_evt_t evt);
 void ticos_device_bind_cb(int bind_result);
 void ticos_ota_request(const char* productID, const char* deviceID, const char* currVer);
 void ticos_ota_response(const char *topic, int topic_len, const char *data, int data_len);
+void ticos_data_response(const char *topic, int topic_len, const char *data, int data_len);
 void ticloud_ota_report_measure(OTAMeasureStatus_t measure);
 void ticloud_ota_report_update(OTAUpdateStatus_t update);
 void ticloud_ota_report_progress(OTAUpdateStatus_t percent);
@@ -118,6 +119,7 @@ void ticloud_ota_finnish_callback_register( void (*cb)(void*) );
 char *esp_version_get();
 char *ticloud_ota_version_get();
 void ticos_ota_start_update();
+ticos_skin_res_t *ticos_get_skin_res(void);
 #ifdef __cplusplus
 }
 #endif
