@@ -259,35 +259,38 @@ extern esp_ticos_ota_info_t ticos_ota_info;
 extern char *esp_version_get();
 void ticos_ota_response(const char *topic, int topic_len, const char *data, int data_len)
 {
-    //if (strncmp(topic, ticos_ota_cloud_response, topic_len) == 0) {
-        cJSON *response  = cJSON_Parse(data);
-        if(response == NULL){
-            ticloud_ota_report_measure(OTA_MEASURE_FAIL);
-            //ESP_LOGE(TAG, "response data is not a json");
-            return;
-        } 
+    if (strncmp(data, "{}", data_len) == 0) {
+        ticloud_ota_report_measure(OTA_MEASURE_SUCCESS_NO_UPDATE);
+        return;
+    }
+    cJSON *response  = cJSON_Parse(data);
+    if(response == NULL){
+        ticloud_ota_report_measure(OTA_MEASURE_FAIL);
+        //ESP_LOGE(TAG, "response data is not a json");
+        return;
+    } 
 
-        const char *version = cJSON_GetObjectItem(response, "targetVersion")->valuestring;
-        const char *file_url = cJSON_GetObjectItem(response, "fileUrl")->valuestring;
-        const char *md5 = cJSON_GetObjectItem(response, "fileSign")->valuestring;
-        uint32_t file_size = cJSON_GetObjectItem(response, "fileSize")->valueint;
-        if(version == NULL || file_url == NULL || file_size == 0 || md5 == NULL){
-            ticloud_ota_report_measure(OTA_MEASURE_FAIL);
-            //ESP_LOGE(TAG, "response data node is invaild");
+    const char *version = cJSON_GetObjectItem(response, "targetVersion")->valuestring;
+    const char *file_url = cJSON_GetObjectItem(response, "fileUrl")->valuestring;
+    const char *md5 = cJSON_GetObjectItem(response, "fileSign")->valuestring;
+    uint32_t file_size = cJSON_GetObjectItem(response, "fileSize")->valueint;
+    if(version == NULL || file_url == NULL || file_size == 0 || md5 == NULL){
+        ticloud_ota_report_measure(OTA_MEASURE_FAIL);
+        //ESP_LOGE(TAG, "response data node is invaild");
+    }else{
+        ticos_ota_info.file_size = file_size;
+        strcpy(ticos_ota_info.md5sum, md5);
+        strcpy(ticos_ota_info.url, file_url);
+        strcpy(ticos_ota_info.version, version);
+        //ESP_LOGI(TAG, "md5:%s url:%s version:%s size:%d", md5, file_url, version, file_size);
+        if(strcmp(version, esp_version_get()))
+        {
+            esp_qcloud_storage_get( "ota_varsion" , version , 32 );
+            ticloud_ota_report_measure(OTA_MEASURE_SUCCESS_NEED_UPDATE);
         }else{
-            ticos_ota_info.file_size = file_size;
-            strcpy(ticos_ota_info.md5sum, md5);
-            strcpy(ticos_ota_info.url, file_url);
-            strcpy(ticos_ota_info.version, version);
-            //ESP_LOGI(TAG, "md5:%s url:%s version:%s size:%d", md5, file_url, version, file_size);
-            if(strcmp(version, esp_version_get()))
-            {
-                esp_qcloud_storage_get( "ota_varsion" , version , 32 );
-                ticloud_ota_report_measure(OTA_MEASURE_SUCCESS_NEED_UPDATE);
-            }else{
-                ticloud_ota_report_measure(OTA_MEASURE_SUCCESS_NO_UPDATE);
-            }
+            ticloud_ota_report_measure(OTA_MEASURE_SUCCESS_NO_UPDATE);
         }
+    }
     //}
 }
 
