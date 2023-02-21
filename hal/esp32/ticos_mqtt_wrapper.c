@@ -4,13 +4,13 @@
 #include <esp_ota_ops.h>
 #include <esp_https_ota.h>
 #include <esp_partition.h>
-#include "esp_qcloud_storage.h"
+#include "ticos_esp_storage.h"
+#include "ticos_import.h"
 static const char *TAG = "ticos-mqtt-wrapper";
 static esp_mqtt_client_handle_t mqtt_client = NULL;
 static bool ticos_mqtt_connected;
 static void (*ota_finnish_callback)(void*) = NULL;
 extern esp_ticos_ota_info_t ticos_ota_info;
-extern OTAMeasureStatus_t  ota_measure;
 extern OTAUpdateStatus_t   ota_update;
 extern uint8_t progress;
 #define TICLOUD_ERROR_GOTO(con, lable, format, ...) do { \
@@ -290,22 +290,9 @@ void ticos_ota_start_update()
     xTaskCreatePinnedToCore(ticloud_iotbub_ota_task, "ticos_ota", 4 * 1024, &ticos_ota_info, 1, NULL, 0);
     return;
 }
-char esp_version[32] = {0};
 
-char *esp_version_get()
-{
-    if(esp_version[0] != 0) return esp_version;
-    const esp_partition_t *running = esp_ota_get_running_partition();
-    esp_app_desc_t running_app_info;
 
-    if (esp_ota_get_partition_description(running, &running_app_info) == ESP_OK) {
-        strncpy(esp_version, running_app_info.version, 32);
-        ESP_LOGI(TAG, "Running firmware version: %s", running_app_info.version);
-    }else{
-        ESP_LOGE(TAG, "Get running_app_info fail");
-    }
-    return esp_version;
-}
+
 
 char *ticloud_ota_version_get()
 {
@@ -315,23 +302,4 @@ char *ticloud_ota_version_get()
 
 void ticloud_ota_finnish_callback_register( void (*cb)(void*) ){
     ota_finnish_callback = cb;
-}
-
-OTAMeasureStatus_t ota_measure_get()
-{
-    if( ota_measure == OTA_MEASURE_IDLE){
-        char last_ota_version[32];
-        if( esp_qcloud_storage_get( "ota_varsion" , last_ota_version , 32 ) == ESP_OK ){
-            if( strcmp( last_ota_version , esp_version_get() ) != 0 ){
-                return OTA_MEASURE_SUCCESS_NEED_UPDATE;
-            }
-        }
-    }
-    return ota_measure;
-}
-
-OTAUpdateStatus_t ota_progress_get(int *ota_progress)
-{
-    *ota_progress = progress;
-    return ota_update;
 }

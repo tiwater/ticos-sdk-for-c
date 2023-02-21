@@ -16,8 +16,13 @@ extern "C"
 {
 #endif
 #include "ticos_thingmodel_type.h"
+#include "ticos_import.h"
+extern char ticos_property_report_topic[];
+extern char ticos_telemery_topic[];
+extern char ticos_system_user_id[];
+extern char ticos_system_user_bind_topic[];
 void ticos_cloud_set_bind_user_ID(char *token, int token_len);
-int ticos_system_user_bind(void);
+
 /**
  * @brief 启动 ticos 云服务.
  * @note  此接口需要用户实现，提供一个mqtt客户端服务，并启动连接到ticos cloud.
@@ -105,10 +110,35 @@ void set_ticos_event_cb(ticos_event_cb_t evt_cb, void *user_data);
  * @return void
  */
 void ticos_event_notify(ticos_evt_t evt);
-void ticos_device_bind_cb(int bind_result);
+
+typedef struct {
+    size_t file_size;
+    char md5sum[33];
+    char url[512];
+    char version[32];
+    uint32_t start_timetemp;
+    size_t download_size;
+    uint8_t download_percent;
+} esp_ticos_ota_info_t;
+typedef enum {
+    OTA_MEASURE_IDLE = 0,
+    OTA_MEASURE_PROCESSING,
+    OTA_MEASURE_FAIL,
+    OTA_MEASURE_SUCCESS_NO_UPDATE,
+    OTA_MEASURE_SUCCESS_NEED_UPDATE,
+} OTAMeasureStatus_t;
+
+typedef enum {
+    OTA_UPDATE_IDLE = 0,
+    OTA_UPDATE_DOWNLOAD,
+    OTA_UPDATE_FLASH,
+    OTA_UPDATE_FAIL,
+    OTA_UPDATE_SUCCESS,
+} OTAUpdateStatus_t;
+
 void ticos_ota_request(const char* productID, const char* deviceID, const char* currVer);
 void ticos_ota_response(const char *topic, int topic_len, const char *data, int data_len);
-void ticos_data_response(const char *topic, int topic_len, const char *data, int data_len);
+
 void ticloud_ota_report_measure(OTAMeasureStatus_t measure);
 void ticloud_ota_report_update(OTAUpdateStatus_t update);
 void ticloud_ota_report_progress(OTAUpdateStatus_t percent);
@@ -116,10 +146,9 @@ OTAMeasureStatus_t ota_measure_get();
 
 OTAUpdateStatus_t ota_progress_get(int *ota_progress);
 void ticloud_ota_finnish_callback_register( void (*cb)(void*) );
-char *esp_version_get();
+
 char *ticloud_ota_version_get();
 void ticos_ota_start_update();
-ticos_skin_res_t *ticos_get_skin_res(void);
 #ifdef __cplusplus
 }
 #endif
