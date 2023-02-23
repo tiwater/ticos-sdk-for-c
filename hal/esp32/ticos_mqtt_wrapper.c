@@ -303,3 +303,19 @@ char *ticloud_ota_version_get()
 void ticloud_ota_finnish_callback_register( void (*cb)(void*) ){
     ota_finnish_callback = cb;
 }
+
+char esp_version[32] = {0};
+char *esp_version_get()
+{
+    if(esp_version[0] != 0) return esp_version;
+    const esp_partition_t *running = esp_ota_get_running_partition();
+    esp_app_desc_t running_app_info;
+
+    if (esp_ota_get_partition_description(running, &running_app_info) == ESP_OK) {
+        strncpy(esp_version, running_app_info.version, 32);
+        ESP_LOGI(TAG, "Running firmware version: %s", running_app_info.version);
+    }else{
+        ESP_LOGE(TAG, "Get running_app_info fail");
+    }
+    return esp_version;
+}

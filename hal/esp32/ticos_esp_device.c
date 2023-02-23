@@ -18,8 +18,8 @@
 
 #include "ticos_esp_iothub.h"
 #include "ticos_esp_utils.h"
-#include "BoardSupport.h"
 #include "esp_bt_device.h"
+#include "ticos_api.h"
 #ifdef CONFIG_QCLOUD_MASS_MANUFACTURE
 #include "nvs.h"
 #include "nvs_flash.h"
@@ -84,7 +84,7 @@ esp_err_t ticos_esp_device_cert(const char *cert_crt, const char *private_key)
     return ESP_OK;
 }
 
-esp_err_t ticos_esp_create_device()
+esp_err_t ticos_esp_create_device(char* _product_id, char* _device_id, char* _device_secret)
 {
     g_device_profile = ticos_esp_CALLOC(1, sizeof(ticos_esp_profile_t));
 
@@ -120,8 +120,8 @@ esp_err_t ticos_esp_create_device()
     ESP_ERROR_CHECK(nvs_get_str(handle, "device_secret", g_device_profile->device_secret, &required_size));
 #else
 
-    g_device_profile->product_id    = qcloud_pid;
-    g_device_profile->device_name   = qcloud_name;
+    g_device_profile->product_id    = _product_id;
+    g_device_profile->device_name   = _device_id;
 
 #ifdef CONFIG_AUTH_MODE_KEY
     g_device_profile->auth_mode = QCLOUD_AUTH_MODE_KEY;
@@ -131,7 +131,7 @@ esp_err_t ticos_esp_create_device()
      *        2. Select key authentication
      *        3. Enter device secret key
      */
-    g_device_profile->device_secret = qcloud_secret;
+    g_device_profile->device_secret = _device_secret;
     ESP_LOGI(TAG, "product_id: %s; device_name: %s; device_secret: %s",
             g_device_profile->product_id, 
             g_device_profile->device_name, 

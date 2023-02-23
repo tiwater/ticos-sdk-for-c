@@ -4,6 +4,7 @@
 #include "ticos_import.h"
 
 static char ticos_client_id[128];
+//static char ticos_product_id[128];
 static char ticos_device_id[128];
 static char ticos_device_secret[64];
 static char ticos_command_request_topic[128];

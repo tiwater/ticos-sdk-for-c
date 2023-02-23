@@ -209,7 +209,7 @@ esp_err_t ticos_esp_device_add_action_cb(const char *action_id, const ticos_esp_
  *     - ESP_OK: succeed
  *     - others: fail
  */
-esp_err_t ticos_esp_create_device(void);
+esp_err_t ticos_esp_create_device(char* _product_id, char* _device_id, char* _device_secret);
 
 /**
  * @brief Add firmware version information.

@@ -17,6 +17,9 @@ extern "C"
 #endif
 #include "ticos_thingmodel_type.h"
 #include "ticos_import.h"
+char* get_ticos_product_id(void);
+char* get_ticos_device_id(void);
+char* get_ticos_device_secret(void);
 extern char ticos_property_report_topic[];
 extern char ticos_telemery_topic[];
 extern char ticos_system_user_id[];
